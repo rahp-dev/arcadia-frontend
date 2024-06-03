@@ -22,6 +22,7 @@ export interface InputProps
     disabled?: boolean
     invalid?: boolean
     prefix?: string | ReactNode
+    rows?: number
     size?: TypeAttributes.ControlSize
     suffix?: string | ReactNode
     textArea?: boolean
@@ -45,6 +46,7 @@ const Input = forwardRef<ElementType | HTMLInputElement, InputProps>(
             suffix,
             textArea,
             type = 'text',
+            rows,
             style,
             unstyle = false,
             field,
@@ -177,7 +179,7 @@ const Input = forwardRef<ElementType | HTMLInputElement, InputProps>(
         }
 
         const renderTextArea = (
-            <textarea style={style} {...inputProps}></textarea>
+            <textarea style={style} rows={rows} {...inputProps}></textarea>
         )
 
         const renderInput = (

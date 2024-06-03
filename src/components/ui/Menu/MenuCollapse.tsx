@@ -49,17 +49,6 @@ const MenuCollapse = (props: MenuCollapseProps) => {
         setIsExpanded(!isExpanded)
     }
 
-    const getChildrenHeight = () => {
-        let height: string | number = 0
-        if (isExpanded && children && (children as ReactNode[]).length) {
-            height = (children as ReactNode[]).length * (menuItemHeight || 0)
-        }
-        if (isExpanded && children && !(children as ReactNode[]).length) {
-            height = menuItemHeight || 0
-        }
-        return height
-    }
-
     const menuCollapseItemClass = classNames(
         'menu-collapse-item',
         `menu-collapse-item-${variant}`,
@@ -93,7 +82,7 @@ const MenuCollapse = (props: MenuCollapseProps) => {
                     initial={{ opacity: 0, height: 0, overflow: 'hidden' }}
                     animate={{
                         opacity: isExpanded ? 1 : 0,
-                        height: isExpanded ? getChildrenHeight() : 0,
+                        height: isExpanded ? 'auto' : 0,
                     }}
                     transition={{ duration: 0.15 }}
                 >

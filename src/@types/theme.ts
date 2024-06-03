@@ -5,6 +5,10 @@ export type ControlSize = 'lg' | 'md' | 'sm'
 export type LayoutType =
     | 'blank'
     | 'classic'
+    | 'modern'
+    | 'simple'
+    | 'decked'
+    | 'stackedSide'
 export type ColorLevel =
     | 50
     | 100

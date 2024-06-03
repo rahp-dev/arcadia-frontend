@@ -59,6 +59,7 @@ const DefaultItem = (props: DefaultItemProps) => {
                             path: nav.path,
                         })
                     }
+                    target={nav.isExternalLink ? '_blank' :  ''}
                 >
                     <VerticalMenuIcon icon={nav.icon} />
                     {!sideCollapsed && (

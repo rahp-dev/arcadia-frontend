@@ -1,4 +1,5 @@
 import View from '@/views'
+import SidePanel from '@/components/template/SidePanel'
 import { setPanelExpand, useAppSelector, useAppDispatch } from '@/store'
 import { HiOutlineCog } from 'react-icons/hi'
 import classNames from 'classnames'
@@ -30,6 +31,7 @@ const BlankLayout = () => {
         <div className="app-layout-blank flex flex-auto flex-col h-[100vh]">
             <View />
             <ConfiguratorToggle />
+            <SidePanel className="hidden" />
         </div>
     )
 }

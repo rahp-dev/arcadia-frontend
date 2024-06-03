@@ -3,6 +3,10 @@ export const DIR_LTR = 'ltr'
 export const MODE_LIGHT = 'light'
 export const MODE_DARK = 'dark'
 export const LAYOUT_TYPE_CLASSIC = 'classic'
+export const LAYOUT_TYPE_MODERN = 'modern'
+export const LAYOUT_TYPE_STACKED_SIDE = 'stackedSide'
+export const LAYOUT_TYPE_DECKED = 'decked'
+export const LAYOUT_TYPE_SIMPLE = 'simple'
 export const LAYOUT_TYPE_BLANK = 'blank'
 export const NAV_MODE_LIGHT = 'light'
 export const NAV_MODE_DARK = 'dark'
@@ -25,6 +29,10 @@ export const THEME_ENUM = {
     MODE_LIGHT: MODE_LIGHT,
     MODE_DARK: MODE_DARK,
     LAYOUT_TYPE_CLASSIC: LAYOUT_TYPE_CLASSIC,
+    LAYOUT_TYPE_MODERN: LAYOUT_TYPE_MODERN,
+    LAYOUT_TYPE_SIMPLE: LAYOUT_TYPE_SIMPLE,
+    LAYOUT_TYPE_STACKED_SIDE: LAYOUT_TYPE_STACKED_SIDE,
+    LAYOUT_TYPE_DECKED: LAYOUT_TYPE_DECKED,
     LAYOUT_TYPE_BLANK: LAYOUT_TYPE_BLANK,
     SIDE_NAV_WIDTH: SIDE_NAV_WIDTH,
     SIDE_NAV_COLLAPSED_WIDTH: SIDE_NAV_COLLAPSED_WIDTH,

@@ -1,5 +1,5 @@
 .header {
-  @apply bg-white flex z-30 sticky top-0 w-full dark:bg-gray-800;
+  @apply bg-white flex z-30 sticky top-0 w-full dark:bg-gray-800 print:hidden;
 }
 
 .header-wrapper {

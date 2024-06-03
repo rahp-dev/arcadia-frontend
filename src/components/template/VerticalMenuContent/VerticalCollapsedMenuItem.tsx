@@ -62,6 +62,7 @@ const DefaultItem = ({ nav, onLinkClick, userAuthority }: DefaultItemProps) => {
                                             path: subNav.path,
                                         })
                                     }
+                                    target={subNav.isExternalLink ? '_blank' :  ''}
                                 >
                                     <span>
                                         <Trans
@@ -125,6 +126,7 @@ const CollapsedItem = ({
                                             path: subNav.path,
                                         })
                                     }
+                                    target={subNav.isExternalLink ? '_blank' :  ''}
                                 >
                                     <span>
                                         <Trans

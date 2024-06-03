@@ -1,13 +1,16 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { themeConfig } from '@/configs/theme.config'
 import {
+    LAYOUT_TYPE_MODERN,
     LAYOUT_TYPE_CLASSIC,
+    LAYOUT_TYPE_STACKED_SIDE,
     NAV_MODE_TRANSPARENT,
     NAV_MODE_LIGHT,
     NAV_MODE_DARK,
     NAV_MODE_THEMED,
     MODE_DARK,
     MODE_LIGHT,
+    LAYOUT_TYPE_DECKED,
 } from '@/constants/theme.constant'
 import type {
     LayoutType,
@@ -16,6 +19,17 @@ import type {
     ColorLevel,
     Direction,
 } from '@/@types/theme'
+
+const initialNavMode = () => {
+    if (
+        themeConfig.layout.type === LAYOUT_TYPE_MODERN &&
+        themeConfig.navMode !== NAV_MODE_THEMED
+    ) {
+        return NAV_MODE_TRANSPARENT
+    }
+
+    return themeConfig.navMode
+}
 
 export type ThemeState = {
     themeColor: string
@@ -39,12 +53,14 @@ const initialState: ThemeState = {
     primaryColorLevel: themeConfig.primaryColorLevel,
     panelExpand: themeConfig.panelExpand,
     cardBordered: themeConfig.cardBordered,
-    navMode: themeConfig.navMode,
+    navMode: initialNavMode(),
     layout: themeConfig.layout,
 }
 
 const availableNavColorLayouts = [
     LAYOUT_TYPE_CLASSIC,
+    LAYOUT_TYPE_STACKED_SIDE,
+    LAYOUT_TYPE_DECKED,
 ]
 
 export const themeSlice = createSlice({
@@ -76,6 +92,10 @@ export const themeSlice = createSlice({
             state.mode = action.payload
         },
         setLayout: (state, action: PayloadAction<LayoutType>) => {
+            state.cardBordered = action.payload === LAYOUT_TYPE_MODERN
+            if (action.payload === LAYOUT_TYPE_MODERN) {
+                state.navMode = NAV_MODE_TRANSPARENT
+            }
 
             const availableColorNav = availableNavColorLayouts.includes(
                 action.payload
@@ -107,6 +127,9 @@ export const themeSlice = createSlice({
             if (action.payload !== 'default') {
                 state.navMode = action.payload
             } else {
+                if (state.layout.type === LAYOUT_TYPE_MODERN) {
+                    state.navMode = NAV_MODE_TRANSPARENT
+                }
 
                 const availableColorNav = availableNavColorLayouts.includes(
                     state.layout.type
