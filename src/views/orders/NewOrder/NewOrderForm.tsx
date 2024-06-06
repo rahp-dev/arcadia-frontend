@@ -1,4 +1,5 @@
 import {
+    Button,
     Checkbox,
     DatePicker,
     FormContainer,
@@ -8,7 +9,6 @@ import {
     Select,
 } from '@/components/ui'
 import { Field, FieldProps, Form, Formik } from 'formik'
-import { useCallback, useMemo, useState } from 'react'
 import * as Yup from 'yup'
 
 type Option = {
@@ -19,15 +19,15 @@ type Option = {
 type FormModel = {
     salida: string
     destino: string
-    date: Date | null
-    tipoIda: Array<string | number>
+    fechaIda: Date | null
+    fechaRegreso: Date | null
+    tipoIda: number
     personasAdultas: number
     maletas23: number
     maletas10: number
     claseVuelo: string
-    cuotas: number
-    contado: number
-    cuantasCuotas: string
+    formaDePago: number
+    cuantasCuotas: number | null
     niños: number
     bebes: number
 }
@@ -44,6 +44,7 @@ const tipoVuelo: Option[] = [
 const cuotas: Option[] = [
     { value: 1, label: '2 cuotas' },
     { value: 2, label: '3 cuotas' },
+    { value: 3, label: 'Ninguna' },
 ]
 
 const validationSchema = Yup.object().shape({
@@ -55,36 +56,35 @@ const validationSchema = Yup.object().shape({
         .min(3, 'Muy corto')
         .max(40, 'Muy largo')
         .required('Por favor, ingrese el destino de llegada'),
-    date: Yup.date().required('La fecha es requerida').nullable(),
-    tipoIda: Yup.array().min(1, 'Debes escoger uno'),
+    fechaIda: Yup.date().required('La fecha es requerida').nullable(),
+    fechaRegreso: Yup.date().required('La fecha es requerida').nullable(),
+    // tipoIda: Yup.array().min(1, 'Debes escoger uno'),
     personasAdultas: Yup.number()
         .min(1, 'Debe ser minimo 1 adulto')
         .max(9, 'El maximo de adultos es 9.')
         .required('Ingresa un numero'),
     maletas23: Yup.number()
-        .min(1)
-        .max(18)
+        .min(1, 'Minimo 1 maleta de 23kg')
+        .max(18, 'Máximo 18 maletas de 23kg.')
         .required('Ingresa la cantidad de maletas.'),
     maletas10: Yup.number()
-        .min(1)
-        .max(9)
+        .min(1, 'Mínimo 1 maleta de 10kg')
+        .max(9, 'Máximo 9 maletas de 10kg')
         .required('Ingresa la cantidad de maletas.'),
     claseVuelo: Yup.string().required('Seleccione uno'),
-    formaDePago: Yup.array().min(1, 'Debes escoger uno'),
-    cuantasCuotas: Yup.string().required('Seleccione uno'),
+    formaDePago: Yup.number().required('Requerido'),
+    cuantasCuotas: Yup.number().nullable(),
     niños: Yup.number()
-        .min(1)
+        .min(0)
         .max(9)
         .required('Ingrese la cantidad de niños que viajarán con usted.'),
     bebes: Yup.number()
-        .min(1)
+        .min(0)
         .max(9)
         .required('Ingrese la cantidad de bebes que viajarán con usted.'),
 })
 
 const OrderForm = () => {
-    const [showCuotasSelect, setShowCuotasSelect] = useState(false)
-
     return (
         <div>
             <Formik
@@ -92,14 +92,15 @@ const OrderForm = () => {
                 initialValues={{
                     salida: '',
                     destino: '',
-                    date: null,
-                    tipoIda: [],
+                    fechaIda: null,
+                    fechaRegreso: null,
+                    tipoIda: 1,
                     personasAdultas: 0,
                     maletas23: 0,
                     maletas10: 0,
                     claseVuelo: '',
-                    formaDePago: [],
-                    cuantasCuotas: '',
+                    formaDePago: 1,
+                    cuantasCuotas: null,
                     niños: 0,
                     bebes: 0,
                 }}
@@ -118,7 +119,7 @@ const OrderForm = () => {
                             <div className="flex items-center gap-6">
                                 <FormItem
                                     asterisk
-                                    className="w-[30%]"
+                                    className="w-1/5"
                                     label="Salida"
                                     invalid={errors.salida && touched.salida}
                                     errorMessage={errors.salida}
@@ -132,7 +133,7 @@ const OrderForm = () => {
                                 </FormItem>
                                 <FormItem
                                     asterisk
-                                    className="w-[30%]"
+                                    className="w-1/5"
                                     label="Destino"
                                     invalid={errors.destino && touched.destino}
                                     errorMessage={errors.destino}
@@ -146,11 +147,14 @@ const OrderForm = () => {
                                 </FormItem>
                                 <FormItem
                                     asterisk
-                                    label="Fecha"
-                                    invalid={errors.date && touched.date}
-                                    errorMessage={errors.date}
+                                    className="w-1/6"
+                                    label="Fecha de Salida"
+                                    invalid={
+                                        errors.fechaIda && touched.fechaIda
+                                    }
+                                    errorMessage={errors.fechaIda}
                                 >
-                                    <Field name="date" placeholder="Fecha">
+                                    <Field name="fechaIda" placeholder="Fecha">
                                         {({
                                             field,
                                             form,
@@ -158,7 +162,7 @@ const OrderForm = () => {
                                             <DatePicker
                                                 field={field}
                                                 form={form}
-                                                value={values.date}
+                                                value={values.fechaIda}
                                                 onChange={(date) => {
                                                     form.setFieldValue(
                                                         field.name,
@@ -170,6 +174,41 @@ const OrderForm = () => {
                                     </Field>
                                 </FormItem>
                                 <FormItem
+                                    asterisk
+                                    className="w-1/6"
+                                    label="Fecha de Regreso"
+                                    invalid={
+                                        errors.fechaRegreso &&
+                                        touched.fechaRegreso
+                                    }
+                                    errorMessage={errors.fechaRegreso}
+                                >
+                                    <Field
+                                        name="fechaRegreso"
+                                        placeholder="Fecha"
+                                    >
+                                        {({
+                                            field,
+                                            form,
+                                        }: FieldProps<FormModel>) => (
+                                            <DatePicker
+                                                field={field}
+                                                form={form}
+                                                value={values.fechaRegreso}
+                                                onChange={(date) => {
+                                                    form.setFieldValue(
+                                                        field.name,
+                                                        date,
+                                                    )
+                                                }}
+                                                disabled={values.tipoIda === 2}
+                                            />
+                                        )}
+                                    </Field>
+                                </FormItem>
+                                <FormItem
+                                    asterisk
+                                    label="Tipo de Viaje"
                                     invalid={Boolean(
                                         errors.tipoIda && touched.tipoIda,
                                     )}
@@ -182,12 +221,18 @@ const OrderForm = () => {
                                         }: FieldProps<FormModel>) => (
                                             <Radio.Group
                                                 value={values.tipoIda}
-                                                onChange={(val) =>
+                                                onChange={(val) => {
                                                     form.setFieldValue(
                                                         field.name,
                                                         val,
                                                     )
-                                                }
+                                                    if (val === 2) {
+                                                        form.setFieldValue(
+                                                            'fechaRegreso',
+                                                            null,
+                                                        )
+                                                    }
+                                                }}
                                             >
                                                 <Radio value={1}>
                                                     Ida y vuelta
@@ -203,7 +248,7 @@ const OrderForm = () => {
                             <div className="flex items-center gap-6">
                                 <FormItem
                                     asterisk
-                                    className="w-1/4"
+                                    className="w-[15%]"
                                     label="Cantidad de Adultos"
                                     invalid={
                                         errors.personasAdultas &&
@@ -220,7 +265,7 @@ const OrderForm = () => {
                                 </FormItem>
                                 <FormItem
                                     asterisk
-                                    className="w-[23%]"
+                                    className="w-1/5"
                                     label="Maletas de 23kg"
                                     invalid={
                                         errors.maletas23 && touched.maletas23
@@ -235,7 +280,7 @@ const OrderForm = () => {
                                 </FormItem>
                                 <FormItem
                                     asterisk
-                                    className="w-[23%]"
+                                    className="w-1/5"
                                     label="Maletas de 10kg"
                                     invalid={
                                         errors.maletas10 && touched.maletas10
@@ -250,7 +295,7 @@ const OrderForm = () => {
                                 </FormItem>
                                 <FormItem
                                     asterisk
-                                    className="w-[22%]"
+                                    className="w-1/5"
                                     label="Clase"
                                     invalid={
                                         errors.claseVuelo && touched.claseVuelo
@@ -284,11 +329,9 @@ const OrderForm = () => {
                                         )}
                                     </Field>
                                 </FormItem>
-                            </div>
-                            <div className="flex items-center gap-6">
                                 <FormItem
                                     asterisk
-                                    label="Formas de Pago"
+                                    label="Como cancela"
                                     invalid={Boolean(
                                         errors.formaDePago &&
                                             touched.formaDePago,
@@ -300,33 +343,33 @@ const OrderForm = () => {
                                             field,
                                             form,
                                         }: FieldProps<FormModel>) => (
-                                            <>
-                                                <Checkbox.Group
-                                                    value={values.formaDePago}
-                                                    onChange={(options) => {
+                                            <Radio.Group
+                                                value={values.formaDePago}
+                                                onChange={(val: number) => {
+                                                    form.setFieldValue(
+                                                        field.name,
+                                                        val,
+                                                    )
+                                                    if (val === 2) {
                                                         form.setFieldValue(
-                                                            field.name,
-                                                            options,
+                                                            'cuantasCuotas',
+                                                            null,
                                                         )
-                                                    }}
-                                                >
-                                                    <Checkbox
-                                                        name={field.name}
-                                                        value="Cuotas"
-                                                    >
-                                                        Por cuotas
-                                                    </Checkbox>
-                                                    <Checkbox
-                                                        name={field.name}
-                                                        value="Contado"
-                                                    >
-                                                        Contado
-                                                    </Checkbox>
-                                                </Checkbox.Group>
-                                            </>
+                                                    }
+                                                }}
+                                            >
+                                                <Radio value={1}>
+                                                    Por cuotas
+                                                </Radio>
+                                                <Radio value={2}>
+                                                    Al contado
+                                                </Radio>
+                                            </Radio.Group>
                                         )}
                                     </Field>
                                 </FormItem>
+                            </div>
+                            <div className="flex items-center gap-6 mb-4">
                                 <FormItem
                                     asterisk
                                     className="w-[22%]"
@@ -347,12 +390,10 @@ const OrderForm = () => {
                                                 field={field}
                                                 form={form}
                                                 options={cuotas}
-                                                value={cuotas.filter(
+                                                value={cuotas.find(
                                                     (option) =>
                                                         option.value ===
-                                                        parseInt(
-                                                            values.cuantasCuotas,
-                                                        ),
+                                                        values.cuantasCuotas,
                                                 )}
                                                 onChange={(option) =>
                                                     form.setFieldValue(
@@ -360,11 +401,47 @@ const OrderForm = () => {
                                                         option?.value,
                                                     )
                                                 }
+                                                isDisabled={
+                                                    values.formaDePago === 2
+                                                }
                                             />
                                         )}
                                     </Field>
                                 </FormItem>
+                                <FormItem
+                                    asterisk
+                                    className="w-1/4"
+                                    label="Cantidad de Niños"
+                                    invalid={errors.niños && touched.niños}
+                                    errorMessage={errors.niños}
+                                >
+                                    <Field
+                                        type="number"
+                                        name="niños"
+                                        placeholder="Niños"
+                                        component={Input}
+                                    />
+                                </FormItem>
+                                <FormItem
+                                    asterisk
+                                    className="w-1/4"
+                                    label="Cantidad de Bebes"
+                                    invalid={errors.bebes && touched.bebes}
+                                    errorMessage={errors.bebes}
+                                >
+                                    <Field
+                                        type="number"
+                                        name="bebes"
+                                        placeholder="Bebes"
+                                        component={Input}
+                                    />
+                                </FormItem>
                             </div>
+                            <FormItem>
+                                <Button variant="solid" type="submit">
+                                    Guardar
+                                </Button>
+                            </FormItem>
                         </FormContainer>
                     </Form>
                 )}
