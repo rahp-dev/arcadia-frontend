@@ -26,6 +26,16 @@ const navigationConfig: NavigationTree[] = [
         authority: [],
         subMenu: [],
     },
+    {
+        key: 'asignaciones',
+        path: '/asignaciones',
+        title: 'Asignaciones',
+        translateKey: 'Asignaciones',
+        icon: 'assingments',
+        type: NAV_ITEM_TYPE_ITEM,
+        authority: [],
+        subMenu: [],
+    },
 ]
 
 export default navigationConfig

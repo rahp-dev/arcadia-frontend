@@ -23,4 +23,18 @@ export const protectedRoutes = [
         component: lazy(() => import('@/views/orders/NewOrder/NewOrder')),
         authority: [],
     },
+    {
+        key: 'asignaciones',
+        path: '/asignaciones',
+        component: lazy(() => import('@/views/assignments/Assingments')),
+        authority: [],
+    },
+    {
+        key: 'crearAsignacion',
+        path: '/asignaciones/crear',
+        component: lazy(
+            () => import('@/views/assignments/NewAssingment/NewAssingment'),
+        ),
+        authority: [],
+    },
 ]
