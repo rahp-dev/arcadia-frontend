@@ -9,7 +9,7 @@ const unauthorizedCode = [401]
 
 const BaseService = axios.create({
     timeout: 60000,
-    baseURL: appConfig.apiPrefix,
+    baseURL: appConfig.apiUrl,
 })
 
 BaseService.interceptors.request.use(
@@ -18,37 +18,40 @@ BaseService.interceptors.request.use(
         const persistData = deepParseJson(rawPersistData)
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let accessToken = (persistData as any).auth.session.token
+        let accessToken = (persistData as any).auth?.session?.token
 
         if (!accessToken) {
             const { auth } = store.getState()
-            accessToken = auth.session.token
+            accessToken = auth?.session?.token
         }
 
         if (accessToken) {
-            config.headers[
-                REQUEST_HEADER_AUTH_KEY
-            ] = `${TOKEN_TYPE}${accessToken}`
+            config.headers[REQUEST_HEADER_AUTH_KEY] =
+                `${TOKEN_TYPE}${accessToken}`
         }
 
         return config
     },
     (error) => {
         return Promise.reject(error)
-    }
+    },
 )
 
 BaseService.interceptors.response.use(
     (response) => response,
-    (error) => {
+    async (error) => {
         const { response } = error
+        const { auth } = store.getState()
 
         if (response && unauthorizedCode.includes(response.status)) {
+            // for (const timeout of auth.session.refreshTimeouts) {
+            //     clearTimeout(timeout)
+            // }
             store.dispatch(signOutSuccess())
         }
 
         return Promise.reject(error)
-    }
+    },
 )
 
 export default BaseService

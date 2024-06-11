@@ -1,5 +1,5 @@
 export type AppConfig = {
-    apiPrefix: string
+    apiUrl: string
     authenticatedEntryPath: string
     unAuthenticatedEntryPath: string
     tourPath: string
@@ -8,12 +8,12 @@ export type AppConfig = {
 }
 
 const appConfig: AppConfig = {
-    apiPrefix: '/api',
+    apiUrl: `${import.meta.env.VITE_API_URL}/`,
     authenticatedEntryPath: '/dashboard',
     unAuthenticatedEntryPath: '/sign-in',
     tourPath: '/',
     locale: 'en',
-    enableMock: true,
+    enableMock: false,
 }
 
 export default appConfig

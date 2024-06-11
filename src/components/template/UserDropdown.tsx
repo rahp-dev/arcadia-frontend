@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import classNames from 'classnames'
 import { HiOutlineLogout, HiOutlineUser } from 'react-icons/hi'
 import type { CommonProps } from '@/@types/common'
+import { useGetMyInfoQuery } from '@/services/RtkQueryService'
 
 type DropdownList = {
     label: string
@@ -16,15 +17,15 @@ type DropdownList = {
 const dropdownItemList: DropdownList[] = []
 
 const _UserDropdown = ({ className }: CommonProps) => {
-
+    const { data } = useGetMyInfoQuery({}, { refetchOnMountOrArgChange: true })
     const { signOut } = useAuth()
 
     const UserAvatar = (
         <div className={classNames(className, 'flex items-center gap-2')}>
             <Avatar size={32} shape="circle" icon={<HiOutlineUser />} />
             <div className="hidden md:block">
-                <div className="text-xs capitalize">admin</div>
-                <div className="font-bold">User01</div>
+                <div className="text-xs capitalize">{data?.rol}</div>
+                <div className="font-bold">{`${data?.name} ${data?.lastName}`}</div>
             </div>
         </div>
     )
@@ -41,9 +42,9 @@ const _UserDropdown = ({ className }: CommonProps) => {
                         <Avatar shape="circle" icon={<HiOutlineUser />} />
                         <div>
                             <div className="font-bold text-gray-900 dark:text-gray-100">
-                                User01
+                                {data?.rol}
                             </div>
-                            <div className="text-xs">user01@mail.com</div>
+                            <div className="text-xs">{data?.email}</div>
                         </div>
                     </div>
                 </Dropdown.Item>
@@ -54,8 +55,8 @@ const _UserDropdown = ({ className }: CommonProps) => {
                         eventKey={item.label}
                         className="mb-1 px-0"
                     >
-                        <Link 
-                            className="flex h-full w-full px-2" 
+                        <Link
+                            className="flex h-full w-full px-2"
                             to={item.path}
                         >
                             <span className="flex gap-2 items-center w-full">
@@ -76,7 +77,7 @@ const _UserDropdown = ({ className }: CommonProps) => {
                     <span className="text-xl opacity-50">
                         <HiOutlineLogout />
                     </span>
-                    <span>Sign Out</span>
+                    <span>Cerrar sesión</span>
                 </Dropdown.Item>
             </Dropdown>
         </div>

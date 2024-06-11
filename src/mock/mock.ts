@@ -5,7 +5,7 @@ import { signInUserData } from './data/authData'
 
 import { authFakeApi } from './fakeApi'
 
-const { apiPrefix } = appConfig
+const { apiUrl } = appConfig
 
 export function mockServer({ environment = 'test' }) {
     return createServer({
@@ -24,7 +24,7 @@ export function mockServer({ environment = 'test' }) {
             })
             this.passthrough()
 
-            authFakeApi(this, apiPrefix)
+            authFakeApi(this, apiUrl)
         },
     })
 }

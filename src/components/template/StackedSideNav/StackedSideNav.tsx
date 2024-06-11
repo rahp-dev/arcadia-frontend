@@ -26,15 +26,15 @@ const StackedSideNav = () => {
 
     const themeColor = useAppSelector((state) => state.theme.themeColor)
     const primaryColorLevel = useAppSelector(
-        (state) => state.theme.primaryColorLevel
+        (state) => state.theme.primaryColorLevel,
     )
     const navMode = useAppSelector((state) => state.theme.navMode)
     const mode = useAppSelector((state) => state.theme.mode)
     const direction = useAppSelector((state) => state.theme.direction)
     const currentRouteKey = useAppSelector(
-        (state) => state.base.common.currentRouteKey
+        (state) => state.base.common.currentRouteKey,
     )
-    const userAuthority = useAppSelector((state) => state.auth.user.authority)
+    const userAuthority = ''
 
     const { larger } = useResponsive()
 
@@ -79,13 +79,13 @@ const StackedSideNav = () => {
                     <StackedSideNavMini
                         className={`stacked-side-nav-mini ${navColor(
                             'stacked-side-nav-mini',
-                            navMode
+                            navMode,
                         )}`}
                         style={stackedSideNavDefaultStyle}
                         routeKey={currentRouteKey}
                         activeKeys={activeKeys}
                         navMode={navMode}
-                        userAuthority={userAuthority as string[]}
+                        userAuthority={userAuthority as any}
                         mode={mode}
                         direction={direction}
                         onChange={handleChange}
@@ -95,7 +95,7 @@ const StackedSideNav = () => {
                         className={`stacked-side-nav-secondary ${navColor(
                             'stacked-side-nav-secondary',
                             mode,
-                            false
+                            false,
                         )}`}
                         style={{
                             width: SPLITTED_SIDE_NAV_SECONDARY_WIDTH,
@@ -108,13 +108,13 @@ const StackedSideNav = () => {
                             <StackedSideNavSecondary
                                 title={t(
                                     selectedMenu.translateKey as string,
-                                    selectedMenu.title as string
+                                    selectedMenu.title as string,
                                 )}
                                 menu={selectedMenu.menu}
                                 routeKey={currentRouteKey}
                                 navMode={NAV_MODE_TRANSPARENT}
                                 direction={direction}
-                                userAuthority={userAuthority as string[]}
+                                userAuthority={userAuthority as any}
                                 onCollapse={handleCollpase}
                             />
                         )}

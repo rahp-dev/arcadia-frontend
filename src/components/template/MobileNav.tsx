@@ -13,7 +13,7 @@ import useResponsive from '@/utils/hooks/useResponsive'
 import { useAppSelector } from '@/store'
 
 const VerticalMenuContent = lazy(
-    () => import('@/components/template/VerticalMenuContent')
+    () => import('@/components/template/VerticalMenuContent'),
 )
 
 type MobileNavToggleProps = {
@@ -37,18 +37,18 @@ const MobileNav = () => {
 
     const themeColor = useAppSelector((state) => state.theme.themeColor)
     const primaryColorLevel = useAppSelector(
-        (state) => state.theme.primaryColorLevel
+        (state) => state.theme.primaryColorLevel,
     )
     const navMode = useAppSelector((state) => state.theme.navMode)
     const mode = useAppSelector((state) => state.theme.mode)
     const direction = useAppSelector((state) => state.theme.direction)
     const currentRouteKey = useAppSelector(
-        (state) => state.base.common.currentRouteKey
+        (state) => state.base.common.currentRouteKey,
     )
     const sideNavCollapse = useAppSelector(
-        (state) => state.theme.layout.sideNavCollapse
+        (state) => state.theme.layout.sideNavCollapse,
     )
-    const userAuthority = useAppSelector((state) => state.auth.user.authority)
+    const userAuthority = ''
 
     const { smaller } = useResponsive()
 
@@ -87,7 +87,7 @@ const MobileNav = () => {
                                     collapsed={sideNavCollapse}
                                     navigationTree={navigationConfig}
                                     routeKey={currentRouteKey}
-                                    userAuthority={userAuthority as string[]}
+                                    userAuthority={userAuthority as any}
                                     direction={direction}
                                     onMenuItemClick={onDrawerClose}
                                 />

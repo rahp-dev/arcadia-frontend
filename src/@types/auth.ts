@@ -1,22 +1,20 @@
 export type SignInCredential = {
-    userName: string
+    username: string
     password: string
 }
 
 export type SignInResponse = {
-    token: string
-    user: {
-        userName: string
-        authority: string[]
-        avatar: string
-        email: string
-    }
+    access_token: string
+    refresh_token: string
+    expirationInSeconds: number
+    type: number
+    rol: number
 }
 
 export type SignUpResponse = SignInResponse
 
 export type SignUpCredential = {
-    userName: string
+    username: string
     email: string
     password: string
 }
