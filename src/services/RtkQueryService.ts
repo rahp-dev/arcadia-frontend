@@ -5,6 +5,7 @@ import type { AxiosRequestConfig, AxiosError } from 'axios'
 import BaseService from './BaseService'
 import { getMeQuery } from './getMe/getMe.service'
 import { EndpointBuilderType } from './core-entities/paginated-result.entity'
+import { getClientsQuery } from './clients/Client.service'
 
 const axiosBaseQuery =
     (): BaseQueryFn<
@@ -35,11 +36,17 @@ const axiosBaseQuery =
 const RtkQueryService = createApi({
     reducerPath: 'rtkApi',
     baseQuery: axiosBaseQuery(),
-    tagTypes: [],
+    tagTypes: ['Clients'],
     endpoints: (builder: EndpointBuilderType) => ({
         ...getMeQuery(builder),
+        ...getClientsQuery(builder),
     }),
 })
 
 export default RtkQueryService
-export const { useGetMyInfoQuery } = RtkQueryService
+export const {
+    useGetMyInfoQuery,
+    useGetAllClientsQuery,
+    useGetClientByIdQuery,
+    useCreateClientMutation,
+} = RtkQueryService

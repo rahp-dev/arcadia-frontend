@@ -37,4 +37,28 @@ export const protectedRoutes = [
         ),
         authority: [],
     },
+    {
+        key: 'usuarios',
+        path: '/usuarios',
+        component: lazy(() => import('@/views/users/Users')),
+        authority: [],
+    },
+    {
+        key: 'clientes',
+        path: '/clientes',
+        component: lazy(() => import('@/views/clients/Clients')),
+        authority: [],
+    },
+    {
+        key: 'crearClientes',
+        path: '/clientes/crear',
+        component: lazy(() => import('@/views/clients/NewClient/NewClient')),
+        authority: [],
+    },
+    {
+        key: 'crearUsuarios',
+        path: '/usuarios/crear',
+        component: lazy(() => import('@/views/users/NewUser/NewUser')),
+        authority: [],
+    },
 ]
