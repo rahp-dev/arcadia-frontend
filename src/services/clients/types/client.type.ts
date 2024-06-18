@@ -5,7 +5,7 @@ export type Client = {
     birth_date: Date | null
     identityCard: string
     passport: string
-    frequentTraveler: boolean
+    frequentTraveler: number
     email: string
     phone: string
     instagram: string
@@ -24,7 +24,7 @@ export type CreateClientBody = {
     birth_date: Date | null
     identityCard: string
     passport: string
-    frequentTraveler: boolean
+    frequentTraveler: number
     email: string
     phone: string
     instagram: string
@@ -41,7 +41,7 @@ export type CreateClientFormModel = {
     birth_date: Date | null
     identityCard: string
     passport: string
-    frequentTraveler: boolean
+    frequentTraveler: number
     email: string
     phone: string
     instagram: string

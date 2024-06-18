@@ -143,15 +143,29 @@ const Clients = () => {
 
     const columns = useMemo(
         () => [
-            { header: 'First Name', accessorKey: 'firstName' },
-            { header: 'Last Name', accessorKey: 'lastName' },
-            { header: 'Email', accessorKey: 'email' },
+            { header: 'ID del cliente', accessorKey: 'id' },
+            { header: 'Nombre del cliente', accessorKey: 'name' },
+            { header: 'Apellido del cliente', accessorKey: 'lastName' },
+            { header: 'Documento de Identidad', accessorKey: 'identityCard' },
+            { header: 'Pais de origen', accessorKey: 'country' },
+            { header: '¿Viajero frecuente?', accessorKey: 'frequentTraveler' },
         ],
         [],
     )
 
+    const dataFake = [
+        {
+            id: '#1000',
+            name: 'Felix',
+            lastName: 'Cicilia',
+            identityCard: '27557845',
+            country: 'Venezuela',
+            frequentTraveler: 'Sí',
+        },
+    ]
+
     const table = useReactTable({
-        data: data?.data,
+        data: dataFake,
         columns,
         filterFns: {
             fuzzy: fuzzyFilter,
