@@ -106,7 +106,6 @@ const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
 }
 
 const pageSizeOption: SelectType[] = [
-    { value: 5, label: '5 por página' },
     { value: 10, label: '10 por página' },
     { value: 20, label: '20 por página' },
     { value: 50, label: '50 por página' },
@@ -267,6 +266,7 @@ const Clients = () => {
                     currentPage={+data?.meta?.page}
                     total={data?.meta.totalItems}
                     onChange={onPaginationChange}
+                    pageSize={pageSize}
                 />
                 <div style={{ minWidth: 130 }}>
                     <Select<Option>

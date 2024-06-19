@@ -2,10 +2,10 @@ export type Client = {
     id: string
     name: string
     lastName: string
-    birth_date: Date | null
+    birthDate: Date
     identityCard: string
     passport: string
-    frequentTraveler: number
+    frequentTraveler: boolean
     email: string
     phone: string
     instagram: string
@@ -21,10 +21,10 @@ export type Client = {
 export type CreateClientBody = {
     name: string
     lastName: string
-    birth_date: Date | null
+    birthDate: Date | null
     identityCard: string
     passport: string
-    frequentTraveler: number
+    frequentTraveler: boolean
     email: string
     phone: string
     instagram: string
@@ -38,10 +38,10 @@ export type CreateClientBody = {
 export type CreateClientFormModel = {
     name: string
     lastName: string
-    birth_date: Date | null
+    birthDate: Date | null
     identityCard: string
     passport: string
-    frequentTraveler: number
+    frequentTraveler: boolean
     email: string
     phone: string
     instagram: string

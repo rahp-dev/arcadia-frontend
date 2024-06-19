@@ -7,6 +7,7 @@ import {
     Input,
     Radio,
     Select,
+    Switcher,
 } from '@/components/ui'
 import { useCreateClientMutation } from '@/services/RtkQueryService'
 import {
@@ -14,17 +15,22 @@ import {
     CreateClientFormModel,
 } from '@/services/clients/types/client.type'
 import { Field, FieldProps, Form, Formik } from 'formik'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import * as Yup from 'yup'
+
+import './ClientForm.css'
+import openNotification from '@/utils/useNotification'
+import { useNavigate } from 'react-router-dom'
 
 type Option = {
     value: string
     label: string
 }
 
-const options: Option[] = [
-    { value: 'Venezuela', label: 'Venezuela' },
-    { value: 'Argentina', label: 'Argentina' },
+const countrys: Option[] = [
+    { value: 'USA', label: 'United States' },
+    { value: 'CAN', label: 'Canada' },
+    { value: 'MEX', label: 'Mexico' },
 ]
 
 type FormModel = Pick<
@@ -32,7 +38,7 @@ type FormModel = Pick<
     | 'name'
     | 'lastName'
     | 'identityCard'
-    | 'birth_date'
+    | 'birthDate'
     | 'country'
     | 'email'
     | 'instagram'
@@ -47,14 +53,14 @@ const validationSchema = Yup.object().shape({
     name: Yup.string()
         .min(3, 'Muy corto')
         .max(20, 'Muy largo')
-        .required('Por favor, ingrese el nombre del cliente'),
+        .required('Por favor, ingrese el nombre'),
     lastName: Yup.string()
         .min(3, 'Muy corto')
         .max(20, 'Muy largo')
-        .required('Por favor, ingrese el nombre del cliente'),
+        .required('Por favor, ingrese el apellido'),
     identityCard: Yup.string().required('Por favor, ingrese la cedula'),
     passport: Yup.string(),
-    frequentTraveler: Yup.number().required('Seleccione uno'),
+    frequentTraveler: Yup.boolean().required('Requerido'),
     email: Yup.string().email('Formato del correo incorrecto'),
     phone: Yup.string().required('Ingrese su numero de telefono'),
     instagram: Yup.string(),
@@ -67,11 +73,19 @@ function ClientForm({
     clientData,
     setClientData,
 }: {
-    clientData: Partial<CreateClientFormModel>
+    clientData: CreateClientFormModel
     setClientData: Dispatch<SetStateAction<CreateClientFormModel>>
 }) {
+    const navigate = useNavigate()
     const [createClient, { data, isError, isSuccess, isUninitialized }] =
         useCreateClientMutation()
+
+    // const combinedInitialValues = {
+    //     ...initialValues,
+    //     ...clientData,
+    // }
+
+    const [cedulaPreffix, setCedulaPreffix] = useState('V')
 
     const onSubmit = (values: FormModel) => {
         setClientData(values)
@@ -79,7 +93,7 @@ function ClientForm({
         const {
             name,
             lastName,
-            birth_date,
+            birthDate,
             identityCard,
             passport,
             frequentTraveler,
@@ -92,20 +106,44 @@ function ClientForm({
         } = clientData
 
         const body: CreateClientBody = {
-            name: values.name,
-            lastName: values.lastName,
-            birth_date: values.birth_date,
-            identityCard: values.identityCard,
-            passport: values.passport,
-            frequentTraveler: values.frequentTraveler,
-            email: values.email,
-            phone: values.phone,
-            instagram: values.instagram,
+            name,
+            lastName,
+            birthDate,
+            identityCard,
+            passport,
+            frequentTraveler,
+            email,
+            phone,
+            instagram,
             address: { country, state, street },
         }
 
         createClient(body)
     }
+
+    useEffect(() => {
+        if (isSuccess) {
+            openNotification(
+                'success',
+                '¡Creación completada!',
+                'El cliente ha sido creado exitosamente.',
+                3,
+            )
+
+            setTimeout(() => {
+                navigate('/clientes')
+            }, 1 * 1000)
+        }
+
+        if (!isUninitialized && isError) {
+            openNotification(
+                'warning',
+                'Ha ocurrido un error',
+                'Ocurrio un error al crear el cliente, por favor intenta más tarde.',
+                3,
+            )
+        }
+    }, [isSuccess, isError])
 
     return (
         <Formik
@@ -114,175 +152,300 @@ function ClientForm({
             validationSchema={validationSchema}
             onSubmit={onSubmit}
         >
-            {({ values, touched, errors }) => (
-                <Form>
-                    <FormContainer>
-                        <div className="flex items-center gap-5">
-                            <FormItem
-                                asterisk
-                                label="Nombre"
-                                className="w-1/5"
-                                invalid={errors.name && touched.name}
-                                errorMessage={errors.name}
-                            >
-                                <Field
-                                    type="text"
-                                    name="name"
-                                    placeholder="Nombre del cliente"
-                                    component={Input}
-                                />
+            {({ values, touched, errors, setFieldValue }) => {
+                console.log('Values:', values)
+                console.log('Touched:', touched)
+                console.log('Errors:', errors)
+                return (
+                    <Form>
+                        <FormContainer>
+                            <div className="flex justify-between items-center gap-3">
+                                <FormItem
+                                    asterisk
+                                    label="Nombre"
+                                    className="w-1/5"
+                                    invalid={errors.name && touched.name}
+                                    errorMessage={errors.name}
+                                >
+                                    <Field
+                                        type="text"
+                                        name="name"
+                                        placeholder="Nombre del cliente"
+                                        component={Input}
+                                        autoComplete="off"
+                                    />
+                                </FormItem>
+                                <FormItem
+                                    asterisk
+                                    label="Apellido"
+                                    className="w-1/5"
+                                    invalid={
+                                        errors.lastName && touched.lastName
+                                    }
+                                    errorMessage={errors.lastName}
+                                >
+                                    <Field
+                                        type="text"
+                                        name="lastName"
+                                        placeholder="Apellido del cliente"
+                                        autoComplete="off"
+                                        component={Input}
+                                    />
+                                </FormItem>
+                                <FormItem
+                                    asterisk
+                                    className="z-[10] customer-personal-info-suffix w-1/5"
+                                    label="Cédula"
+                                    invalid={
+                                        errors.identityCard &&
+                                        touched.identityCard
+                                    }
+                                    errorMessage={errors.identityCard}
+                                >
+                                    <Field name="identityCard">
+                                        {({
+                                            field,
+                                            form,
+                                        }: FieldProps<FormModel>) => (
+                                            <Field
+                                                prefix={
+                                                    <Select
+                                                        className="w-[70px]"
+                                                        defaultValue={{
+                                                            value: 'V',
+                                                            label: 'V',
+                                                        }}
+                                                        options={[
+                                                            {
+                                                                value: 'V',
+                                                                label: 'V',
+                                                            },
+                                                            {
+                                                                value: 'E',
+                                                                label: 'E',
+                                                            },
+                                                        ]}
+                                                        onChange={(
+                                                            option: Option,
+                                                        ) => {
+                                                            setCedulaPreffix(
+                                                                option.value,
+                                                            )
+                                                        }}
+                                                    ></Select>
+                                                }
+                                                name="identityCard"
+                                                placeholder="Cédula"
+                                                type="number"
+                                                onChange={(e) => {
+                                                    form.setFieldValue(
+                                                        field.name,
+                                                        e.target.value,
+                                                    )
+                                                }}
+                                                component={Input}
+                                            ></Field>
+                                        )}
+                                    </Field>
+                                </FormItem>
+                                <FormItem
+                                    asterisk
+                                    label="Fecha de nacimiento"
+                                    className="w-1/5"
+                                    invalid={
+                                        errors.birthDate &&
+                                        (touched.birthDate as any)
+                                    }
+                                    errorMessage={errors.birthDate as any}
+                                >
+                                    <Field name="birthDate">
+                                        {({
+                                            field,
+                                            form,
+                                        }: FieldProps<FormModel>) => (
+                                            <DatePicker
+                                                placeholder="Selecciona la fecha"
+                                                field={field}
+                                                form={form}
+                                                onChange={(day) => {
+                                                    form.setFieldValue(
+                                                        field.name,
+                                                        day,
+                                                    )
+                                                }}
+                                                inputFormat="DD-MM-YYYY"
+                                            />
+                                        )}
+                                    </Field>
+                                </FormItem>
+                                <FormItem
+                                    label="Pasaporte"
+                                    className="w-1/5"
+                                    invalid={
+                                        errors.passport && touched.passport
+                                    }
+                                    errorMessage={errors.passport}
+                                >
+                                    <Field
+                                        type="text"
+                                        name="passport"
+                                        placeholder="Documento del cliente"
+                                        autoComplete="off"
+                                        component={Input}
+                                    />
+                                </FormItem>
+                            </div>
+                            <div className="flex justify-between items-center gap-5">
+                                <FormItem
+                                    asterisk
+                                    label="Correo electrónico"
+                                    className="w-1/5"
+                                    invalid={errors.email && touched.email}
+                                    errorMessage={errors.email}
+                                >
+                                    <Field
+                                        type="text"
+                                        name="email"
+                                        placeholder="Correo del cliente"
+                                        autoComplete="off"
+                                        component={Input}
+                                    />
+                                </FormItem>
+                                <FormItem
+                                    asterisk
+                                    label="Teléfono"
+                                    className="w-1/5"
+                                    invalid={errors.phone && touched.phone}
+                                    errorMessage={errors.phone}
+                                >
+                                    <Field
+                                        type="text"
+                                        name="phone"
+                                        placeholder="Número del cliente"
+                                        autoComplete="off"
+                                        component={Input}
+                                    />
+                                </FormItem>
+                                <FormItem
+                                    label="Instagram"
+                                    className="w-1/5"
+                                    invalid={
+                                        errors.instagram && touched.instagram
+                                    }
+                                    errorMessage={errors.instagram}
+                                >
+                                    <Field
+                                        type="text"
+                                        name="instagram"
+                                        placeholder="Instagram del cliente"
+                                        autoComplete="off"
+                                        component={Input}
+                                    />
+                                </FormItem>
+                                <FormItem
+                                    asterisk
+                                    label="País"
+                                    className="w-1/5"
+                                    invalid={errors.country && touched.country}
+                                    errorMessage={errors.country}
+                                >
+                                    <Field name="country">
+                                        {({
+                                            field,
+                                            form,
+                                        }: FieldProps<FormModel>) => (
+                                            <Select
+                                                placeholder="Selecciona el país"
+                                                options={countrys}
+                                                value={countrys?.filter(
+                                                    (option: Option) =>
+                                                        option.value ===
+                                                        values.country,
+                                                )}
+                                                onChange={(option: Option) => {
+                                                    form.setFieldValue(
+                                                        field.name,
+                                                        option?.value,
+                                                    )
+                                                }}
+                                            />
+                                        )}
+                                    </Field>
+                                </FormItem>
+                                <FormItem
+                                    asterisk
+                                    className="w-1/5 text-center"
+                                    label="¿Viajero frecuente?"
+                                    invalid={
+                                        errors.frequentTraveler &&
+                                        touched.frequentTraveler
+                                    }
+                                    errorMessage={errors.frequentTraveler}
+                                >
+                                    <Field name="frequentTraveler">
+                                        {({
+                                            form,
+                                            field,
+                                        }: FieldProps<FormModel>) => (
+                                            <div className="flex items-center justify-center gap-4">
+                                                <Switcher
+                                                    onChange={(checked) => {
+                                                        form.setFieldValue(
+                                                            field.name,
+                                                            checked,
+                                                        )
+                                                    }}
+                                                />
+                                                <label className="text-base font-semibold">
+                                                    Sí/No
+                                                </label>
+                                            </div>
+                                        )}
+                                    </Field>
+                                </FormItem>
+                            </div>
+                            <div className="flex items-center gap-5">
+                                <FormItem
+                                    asterisk
+                                    label="Estado"
+                                    className="w-[246.27px]"
+                                    invalid={errors.state && touched.state}
+                                    errorMessage={errors.state}
+                                >
+                                    <Field
+                                        type="text"
+                                        name="state"
+                                        placeholder="Estado"
+                                        autoComplete="off"
+                                        component={Input}
+                                    />
+                                </FormItem>
+                                <FormItem
+                                    asterisk
+                                    label="Calle"
+                                    className="w-[246.27px]"
+                                    invalid={errors.street && touched.street}
+                                    errorMessage={errors.street}
+                                >
+                                    <Field
+                                        type="text"
+                                        name="street"
+                                        placeholder="Calle"
+                                        autoComplete="off"
+                                        component={Input}
+                                    />
+                                </FormItem>
+                            </div>
+
+                            <FormItem>
+                                <Button type="submit" variant="solid">
+                                    Guardar
+                                </Button>
                             </FormItem>
-                            <FormItem
-                                asterisk
-                                label="Apellido"
-                                className="w-1/5"
-                                invalid={errors.lastName && touched.lastName}
-                                errorMessage={errors.lastName}
-                            >
-                                <Field
-                                    type="text"
-                                    name="lastName"
-                                    placeholder="Apellido del cliente"
-                                    component={Input}
-                                />
-                            </FormItem>
-                            <FormItem
-                                asterisk
-                                label="Documento de Identidad"
-                                className="w-1/5"
-                                invalid={
-                                    errors.identityCard && touched.identityCard
-                                }
-                                errorMessage={errors.identityCard}
-                            >
-                                <Field
-                                    type="text"
-                                    name="identityCard"
-                                    placeholder="Documento del cliente"
-                                    component={Input}
-                                />
-                            </FormItem>
-                            <FormItem
-                                label="Pasaporte"
-                                className="w-1/5"
-                                invalid={errors.passport && touched.passport}
-                                errorMessage={errors.passport}
-                            >
-                                <Field
-                                    type="text"
-                                    name="passport"
-                                    placeholder="Documento del cliente"
-                                    component={Input}
-                                />
-                            </FormItem>
-                            {/* <FormItem
-                                asterisk
-                                label="¿Viajero frecuente?"
-                                invalid={
-                                    errors.frequentTraveler &&
-                                    touched.frequentTraveler
-                                }
-                                errorMessage={errors.frequentTraveler}
-                            >
-                                <Field name="frequentTraveler">
-                                    {({
-                                        field,
-                                        form,
-                                    }: FieldProps<FormModel>) => (
-                                        <Radio.Group
-                                            value={values.frequentTraveler}
-                                            onChange={(val) =>
-                                                form.setFieldValue(
-                                                    field.name,
-                                                    val,
-                                                )
-                                            }
-                                        >
-                                            <Radio value={1}>Paypal</Radio>
-                                            <Radio value={2}>Stripe</Radio>
-                                        </Radio.Group>
-                                    )}
-                                </Field>
-                            </FormItem> */}
-                        </div>
-                        <div className="flex items-center gap-5">
-                            <FormItem
-                                asterisk
-                                label="Correo electrónico"
-                                className="w-1/5"
-                                invalid={errors.email && touched.email}
-                                errorMessage={errors.email}
-                            >
-                                <Field
-                                    type="text"
-                                    name="email"
-                                    placeholder="Correo del cliente"
-                                    component={Input}
-                                />
-                            </FormItem>
-                            <FormItem
-                                asterisk
-                                label="Teléfono"
-                                className="w-1/5"
-                                invalid={errors.phone && touched.phone}
-                                errorMessage={errors.phone}
-                            >
-                                <Field
-                                    type="number"
-                                    name="phone"
-                                    placeholder="Número del cliente"
-                                    component={Input}
-                                />
-                            </FormItem>
-                            <FormItem
-                                label="Instagram"
-                                className="w-1/5"
-                                invalid={errors.instagram && touched.instagram}
-                                errorMessage={errors.instagram}
-                            >
-                                <Field
-                                    type="text"
-                                    name="instagram"
-                                    placeholder="Instagram del cliente"
-                                    component={Input}
-                                />
-                            </FormItem>
-                        </div>
-                        {/* <div className="flex items-center gap-5">
-                            <FormItem
-                                asterisk
-                                label="Select"
-                                invalid={errors.country && touched.country}
-                                errorMessage={errors.country}
-                            >
-                                <Field name="country">
-                                    {({
-                                        field,
-                                        form,
-                                    }: FieldProps<FormModel>) => (
-                                        <Select
-                                            field={field}
-                                            form={form}
-                                            options={options}
-                                            value={options.filter(
-                                                (option) =>
-                                                    option.value ===
-                                                    values.country,
-                                            )}
-                                            onChange={(option) =>
-                                                form.setFieldValue(
-                                                    field.name,
-                                                    option?.value,
-                                                )
-                                            }
-                                        />
-                                    )}
-                                </Field>
-                            </FormItem>
-                        </div> */}
-                    </FormContainer>
-                </Form>
-            )}
+                        </FormContainer>
+                    </Form>
+                )
+            }}
         </Formik>
     )
 }

@@ -1,11 +1,26 @@
 import { Button, Card } from '@/components/ui'
-import React from 'react'
+import React, { useState } from 'react'
 import { HiArrowLeft } from 'react-icons/hi'
 import ClientForm from './ClientForm'
 import { useNavigate } from 'react-router-dom'
+import { CreateClientFormModel } from '@/services/clients/types/client.type'
 
 const NewClient = () => {
     const navigate = useNavigate()
+    const [clientData, setClientData] = useState<CreateClientFormModel>({
+        name: '',
+        lastName: '',
+        birthDate: null,
+        identityCard: '',
+        passport: '',
+        frequentTraveler: false,
+        email: '',
+        phone: '',
+        instagram: '',
+        country: '',
+        state: '',
+        street: '',
+    })
 
     return (
         <>
@@ -33,7 +48,10 @@ const NewClient = () => {
 
             <div className="container mt-6">
                 <Card>
-                    <ClientForm />
+                    <ClientForm
+                        clientData={clientData}
+                        setClientData={setClientData}
+                    />
                 </Card>
             </div>
         </>
