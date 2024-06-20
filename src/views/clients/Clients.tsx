@@ -2,284 +2,263 @@ import { useMemo, useState, useEffect } from 'react'
 import Table from '@/components/ui/Table'
 import Input from '@/components/ui/Input'
 import {
-    useReactTable,
-    getCoreRowModel,
-    getFilteredRowModel,
-    getFacetedRowModel,
-    getFacetedUniqueValues,
-    getFacetedMinMaxValues,
-    getPaginationRowModel,
-    flexRender,
+  useReactTable,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFacetedMinMaxValues,
+  getPaginationRowModel,
+  flexRender,
 } from '@tanstack/react-table'
 import { rankItem } from '@tanstack/match-sorter-utils'
-import type {
-    ColumnDef,
-    FilterFn,
-    ColumnFiltersState,
-} from '@tanstack/react-table'
+import type { FilterFn, ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
 import { Button, Pagination, Select } from '@/components/ui'
 import { Select as SelectType } from '@/@types/select'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useGetAllClientsQuery } from '@/services/RtkQueryService'
-import { PaginateResult } from '@/services/core-entities/paginated-result.entity'
-import { Client } from '@/services/clients/types/client.type'
+import { HiOutlineSearch } from 'react-icons/hi'
+import { TableRowSkeleton } from '@/components/shared'
 
 interface DebouncedInputProps
-    extends Omit<
-        InputHTMLAttributes<HTMLInputElement>,
-        'onChange' | 'size' | 'prefix'
-    > {
-    value: string | number
-    onChange: (value: string | number) => void
-    debounce?: number
+  extends Omit<
+    InputHTMLAttributes<HTMLInputElement>,
+    'onChange' | 'size' | 'prefix'
+  > {
+  value: string
+  onChange: (value: string) => void
+  debounce?: number
 }
 
-const { Tr, Th, Td, THead, TBody, Sorter } = Table
+const { Tr, Th, Td, THead, TBody } = Table
 
 type Option = {
-    value: number
-    label: string
+  value: number
+  label: string
 }
 
 function DebouncedInput({
-    value: initialValue,
-    onChange,
-    debounce = 500,
-    ...props
+  value: initialValue,
+  onChange,
+  debounce = 500,
+  ...props
 }: DebouncedInputProps) {
-    const [value, setValue] = useState(initialValue)
+  const [value, setValue] = useState(initialValue)
 
-    useEffect(() => {
-        setValue(initialValue)
-    }, [initialValue])
+  useEffect(() => {
+    setValue(initialValue)
+  }, [initialValue])
 
-    useEffect(() => {
-        const timeout = setTimeout(() => {
-            onChange(value)
-        }, debounce)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      onChange(value)
+    }, debounce)
 
-        return () => clearTimeout(timeout)
-    }, [value])
+    return () => clearTimeout(timeout)
+  }, [value])
 
-    const navigate = useNavigate()
+  const navigate = useNavigate()
 
-    return (
-        <div className="flex justify-between">
-            <div>
-                <h3>Clientes</h3>
-            </div>
+  return (
+    <div className="flex justify-between">
+      <div>
+        <h3>Clientes</h3>
+      </div>
 
-            <div className="flex items-center gap-4 mb-4">
-                <Input
-                    {...props}
-                    value={value}
-                    size="sm"
-                    onChange={(e) => setValue(e.target.value)}
-                />
-                <Button
-                    size="sm"
-                    variant="solid"
-                    onClick={() => {
-                        navigate('crear')
-                    }}
-                >
-                    Crear cliente
-                </Button>
-            </div>
-        </div>
-    )
-}
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const fuzzyFilter: FilterFn<any> = (row, columnId, value, addMeta) => {
-    // Rank the item
-    const itemRank = rankItem(row.getValue(columnId), value)
-
-    // Store the itemRank info
-    addMeta({
-        itemRank,
-    })
-
-    // Return if the item should be filtered in/out
-    return itemRank.passed
+      <div className="flex items-center gap-4 mb-4">
+        <Input
+          {...props}
+          prefix={<HiOutlineSearch className="text-lg p-0 shadow-none" />}
+          size="sm"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+        <Button
+          size="sm"
+          variant="solid"
+          onClick={() => {
+            navigate('crear')
+          }}
+        >
+          Crear cliente
+        </Button>
+      </div>
+    </div>
+  )
 }
 
 const pageSizeOption: SelectType[] = [
-    { value: 10, label: '10 por página' },
-    { value: 20, label: '20 por página' },
-    { value: 50, label: '50 por página' },
+  { value: 5, label: '5 por página' },
+  { value: 10, label: '10 por página' },
+  { value: 20, label: '20 por página' },
+  { value: 50, label: '50 por página' },
 ]
 
 const Clients = () => {
-    const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-    const [globalFilter, setGlobalFilter] = useState('')
-    const [searchParams, setSearchParams] = useSearchParams()
-    const [search, setSearch] = useState(searchParams.get('search') || '')
-    const [currentPage, setCurrentPage] = useState(
-        +searchParams.get('page') || 1,
-    )
-    const [pageSize, setPageSize] = useState(pageSizeOption[0].value)
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [search, setSearch] = useState(searchParams.get('search') || '')
+  const [currentPage, setCurrentPage] = useState(+searchParams.get('page') || 1)
+  const [pageSize, setPageSize] = useState(pageSizeOption[0].value)
 
-    const { data, isFetching } = useGetAllClientsQuery(
-        {
-            page: currentPage || 1,
-            limit: pageSize,
-            ...(search && { search: search }),
-        },
-        { refetchOnMountOrArgChange: true },
-    )
+  const { data, isFetching } = useGetAllClientsQuery(
+    {
+      page: currentPage || 1,
+      limit: pageSize,
+      ...(search && { search: search }),
+    },
+    { refetchOnMountOrArgChange: true },
+  )
 
-    useEffect(() => {
-        const queryParams = new URLSearchParams({
-            limit: String(pageSize),
-            page: String(currentPage),
-            ...(search && { search: search }),
-        })
-
-        setSearchParams(queryParams)
-    }, [pageSize, currentPage, search])
-
-    const columns = useMemo(
-        () => [
-            { header: 'ID del cliente', accessorKey: 'id' },
-            { header: 'Nombre del cliente', accessorKey: 'name' },
-            { header: 'Apellido del cliente', accessorKey: 'lastName' },
-            { header: 'Documento de Identidad', accessorKey: 'identityCard' },
-            { header: 'Pais de origen', accessorKey: 'country' },
-            { header: '¿Viajero frecuente?', accessorKey: 'frequentTraveler' },
-        ],
-        [],
-    )
-
-    const dataFake = [
-        {
-            id: '#1000',
-            name: 'Felix',
-            lastName: 'Cicilia',
-            identityCard: '27557845',
-            country: 'Venezuela',
-            frequentTraveler: 'Sí',
-        },
-    ]
-
-    const table = useReactTable({
-        data: dataFake,
-        columns,
-        filterFns: {
-            fuzzy: fuzzyFilter,
-        },
-        state: {
-            columnFilters,
-            globalFilter,
-        },
-        onColumnFiltersChange: setColumnFilters,
-        onGlobalFilterChange: setGlobalFilter,
-        globalFilterFn: fuzzyFilter,
-        getCoreRowModel: getCoreRowModel(),
-        getFilteredRowModel: getFilteredRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        getFacetedRowModel: getFacetedRowModel(),
-        getFacetedUniqueValues: getFacetedUniqueValues(),
-        getFacetedMinMaxValues: getFacetedMinMaxValues(),
-        debugHeaders: true,
-        debugColumns: false,
+  useEffect(() => {
+    const queryParams = new URLSearchParams({
+      limit: String(pageSize),
+      page: String(currentPage),
+      ...(search && { search: search }),
     })
 
-    const onPaginationChange = (page: number) => {
-        table.setPageIndex(page - 1)
-    }
+    setSearchParams(queryParams)
+  }, [pageSize, currentPage, search])
 
-    const onSelectChange = (value = 0) => {
-        table.setPageSize(Number(value))
-    }
+  const columns = useMemo(
+    () => [
+      {
+        header: 'Nombre del cliente',
+        accessorKey: 'name',
+        cell: (cellProps: any) => (
+          <span className="font-bold cursor-pointer">
+            {cellProps.row.original.name}
+          </span>
+        ),
+      },
+      {
+        header: 'Apellido del cliente',
+        accessorKey: 'lastName',
+      },
+      {
+        header: 'Documento de Identidad',
+        cell: (cellProps: any) => (
+          <>{cellProps.row.original.identityCard || 'N/A'}</>
+        ),
+      },
+      {
+        header: 'Pais de origen',
+        cell: (cellProps: any) => (
+          <>{cellProps.row.original.address.country || 'N/A'}</>
+        ),
+      },
+      {
+        header: '¿Viajero frecuente?',
+        cell: (cellProps: any) => (
+          <>{cellProps.row.original.frequentTraveler ? 'Sí' : 'No'}</>
+        ),
+      },
+    ],
+    [],
+  )
 
-    return (
-        <>
-            <DebouncedInput
-                value={globalFilter ?? ''}
-                className="p-2 font-lg shadow-sm"
-                placeholder="Buscar cliente..."
-                onChange={(value) => setGlobalFilter(String(value))}
-            />
-            <Table>
-                <THead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <Tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                return (
-                                    <Th
-                                        key={header.id}
-                                        colSpan={header.colSpan}
-                                    >
-                                        {header.isPlaceholder ? null : (
-                                            <div
-                                                {...{
-                                                    className:
-                                                        header.column.getCanSort()
-                                                            ? 'cursor-pointer select-none'
-                                                            : '',
-                                                    onClick:
-                                                        header.column.getToggleSortingHandler(),
-                                                }}
-                                            >
-                                                {flexRender(
-                                                    header.column.columnDef
-                                                        .header,
-                                                    header.getContext(),
-                                                )}
-                                                {
-                                                    <Sorter
-                                                        sort={header.column.getIsSorted()}
-                                                    />
-                                                }
-                                            </div>
-                                        )}
-                                    </Th>
-                                )
-                            })}
-                        </Tr>
-                    ))}
-                </THead>
-                <TBody>
-                    {table.getRowModel().rows.map((row) => {
-                        return (
-                            <Tr key={row.id}>
-                                {row.getVisibleCells().map((cell) => {
-                                    return (
-                                        <Td key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext(),
-                                            )}
-                                        </Td>
-                                    )
-                                })}
-                            </Tr>
-                        )
-                    })}
-                </TBody>
-            </Table>
+  const table = useReactTable({
+    data: data?.data,
+    columns,
+    state: {
+      columnFilters,
+    },
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    getFacetedMinMaxValues: getFacetedMinMaxValues(),
+    debugColumns: false,
+    debugHeaders: false,
+    debugRows: false,
+    debugTable: false,
+  })
 
-            <div className="flex items-center justify-between mt-5">
-                <Pagination
-                    currentPage={+data?.meta?.page}
-                    total={data?.meta.totalItems}
-                    onChange={onPaginationChange}
-                    pageSize={pageSize}
-                />
-                <div style={{ minWidth: 130 }}>
-                    <Select<Option>
-                        size="sm"
-                        isSearchable={false}
-                        defaultValue={pageSizeOption[0]}
-                        options={pageSizeOption}
-                        onChange={(option) => onSelectChange(option?.value)}
-                    />
-                </div>
-            </div>
-        </>
-    )
+  const onPaginationChange = (page: number) => {
+    table.setPageIndex(page - 1)
+    setCurrentPage(page)
+  }
+
+  const onPageSelect = ({ value }: SelectType) => {
+    setPageSize(value)
+    table.setPageSize(Number(value))
+  }
+
+  return (
+    <>
+      <DebouncedInput
+        value={search}
+        className="p-2 font-lg shadow-sm"
+        placeholder="Buscar cliente..."
+        onChange={setSearch}
+      />
+      <Table>
+        <THead>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <Tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <Th key={header.id} colSpan={header.colSpan}>
+                    {header.isPlaceholder ? null : (
+                      <div>
+                        {flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                      </div>
+                    )}
+                  </Th>
+                )
+              })}
+            </Tr>
+          ))}
+        </THead>
+        {isFetching ? (
+          <TableRowSkeleton columns={5} rows={pageSize} />
+        ) : (
+          <TBody>
+            {table.getRowModel().rows.map((row) => {
+              return (
+                <Tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <Td key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </Td>
+                    )
+                  })}
+                </Tr>
+              )
+            })}
+          </TBody>
+        )}
+      </Table>
+
+      <div className="flex items-center justify-between mt-5">
+        <Pagination
+          currentPage={+data?.meta?.page}
+          total={data?.meta.totalItems}
+          pageSize={pageSize}
+          onChange={onPaginationChange}
+        />
+        <div style={{ minWidth: 130 }}>
+          <Select
+            size="sm"
+            isSearchable={false}
+            defaultValue={pageSizeOption[0]}
+            options={pageSizeOption}
+            onChange={(selected) => onPageSelect(selected as SelectType)}
+          />
+        </div>
+      </div>
+    </>
+  )
 }
 
 export default Clients

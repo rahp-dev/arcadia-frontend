@@ -6,56 +6,53 @@ import { useNavigate } from 'react-router-dom'
 import { CreateClientFormModel } from '@/services/clients/types/client.type'
 
 const NewClient = () => {
-    const navigate = useNavigate()
-    const [clientData, setClientData] = useState<CreateClientFormModel>({
-        name: '',
-        lastName: '',
-        birthDate: null,
-        identityCard: '',
-        passport: '',
-        frequentTraveler: false,
-        email: '',
-        phone: '',
-        instagram: '',
-        country: '',
-        state: '',
-        street: '',
-    })
+  const navigate = useNavigate()
+  const [clientData, setClientData] = useState<CreateClientFormModel>({
+    name: '',
+    lastName: '',
+    birthDate: null,
+    identityCard: '',
+    passport: '',
+    frequentTraveler: false,
+    email: '',
+    phone: '',
+    instagram: '',
+    country: '',
+    state: '',
+    street: '',
+  })
 
-    return (
-        <>
-            <div className="flex justify-between">
-                <div>
-                    <h3>Crear cliente</h3>
-                </div>
+  return (
+    <>
+      <div className="flex justify-between">
+        <div>
+          <h3>Crear cliente</h3>
+        </div>
 
-                <div className="flex flex-row gap-4">
-                    <div>
-                        <Button
-                            size="sm"
-                            variant="solid"
-                            color="red-500"
-                            icon={<HiArrowLeft />}
-                            onClick={() => {
-                                navigate(-1)
-                            }}
-                        >
-                            Regresar
-                        </Button>
-                    </div>
-                </div>
-            </div>
+        <div className="flex flex-row gap-4">
+          <div>
+            <Button
+              size="sm"
+              variant="solid"
+              color="red-500"
+              icon={<HiArrowLeft />}
+              onClick={() => {
+                navigate(-1)
+              }}
+            >
+              Regresar
+            </Button>
+          </div>
+        </div>
+      </div>
 
-            <div className="container mt-6">
-                <Card>
-                    <ClientForm
-                        clientData={clientData}
-                        setClientData={setClientData}
-                    />
-                </Card>
-            </div>
-        </>
-    )
+      <div className="container mt-6">
+        <Card>
+          <ClientForm clientData={clientData} />
+        </Card>
+      </div>
+    </>
+  )
 }
 
 export default NewClient
