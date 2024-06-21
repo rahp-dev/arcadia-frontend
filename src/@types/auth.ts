@@ -1,28 +1,28 @@
 export type SignInCredential = {
-    username: string
-    password: string
+  username: string
+  password: string
 }
 
 export type SignInResponse = {
-    access_token: string
-    refresh_token: string
-    expirationInSeconds: number
-    type: number
-    rol: number
+  access_token: string
+  refresh_token: string
+  expirationInSeconds: number
+  type: number
+  rol: number
 }
 
 export type SignUpResponse = SignInResponse
 
 export type SignUpCredential = {
-    username: string
-    email: string
-    password: string
+  userName: string
+  email: string
+  password: string
 }
 
 export type ForgotPassword = {
-    email: string
+  email: string
 }
 
 export type ResetPassword = {
-    password: string
+  password: string
 }

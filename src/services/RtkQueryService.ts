@@ -3,9 +3,11 @@ import type { BaseQueryFn } from '@reduxjs/toolkit/query'
 import type { AxiosRequestConfig, AxiosError } from 'axios'
 
 import BaseService from './BaseService'
-import { getMeQuery } from './getMe/getMe.service'
 import { EndpointBuilderType } from './core-entities/paginated-result.entity'
+
+import { getMeQuery } from './getMe/getMe.service'
 import { getClientsQuery } from './clients/Client.service'
+import { getUsersQuery } from './users/Users.service'
 
 const axiosBaseQuery =
   (): BaseQueryFn<
@@ -36,10 +38,11 @@ const axiosBaseQuery =
 const RtkQueryService = createApi({
   reducerPath: 'rtkApi',
   baseQuery: axiosBaseQuery(),
-  tagTypes: ['Customers'],
+  tagTypes: ['Customers', 'Users'],
   endpoints: (builder: EndpointBuilderType) => ({
     ...getMeQuery(builder),
     ...getClientsQuery(builder),
+    ...getUsersQuery(builder),
   }),
 })
 
@@ -48,5 +51,6 @@ export const {
   useGetMyInfoQuery,
   useGetAllClientsQuery,
   useGetClientByIdQuery,
+  useGetAllUsersQuery,
   useCreateClientMutation,
 } = RtkQueryService

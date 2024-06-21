@@ -11,8 +11,7 @@ import {
   getPaginationRowModel,
   flexRender,
 } from '@tanstack/react-table'
-import { rankItem } from '@tanstack/match-sorter-utils'
-import type { FilterFn, ColumnFiltersState } from '@tanstack/react-table'
+import type { ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
 import { Button, Pagination, Select } from '@/components/ui'
 import { Select as SelectType } from '@/@types/select'
@@ -32,11 +31,6 @@ interface DebouncedInputProps
 }
 
 const { Tr, Th, Td, THead, TBody } = Table
-
-type Option = {
-  value: number
-  label: string
-}
 
 function DebouncedInput({
   value: initialValue,
@@ -69,9 +63,10 @@ function DebouncedInput({
       <div className="flex items-center gap-4 mb-4">
         <Input
           {...props}
-          prefix={<HiOutlineSearch className="text-lg p-0 shadow-none" />}
+          prefix={<HiOutlineSearch className="text-lg" />}
           size="sm"
           value={value}
+          className="shadow-none"
           onChange={(e) => setValue(e.target.value)}
         />
         <Button
