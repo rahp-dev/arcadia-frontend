@@ -1,0 +1,3 @@
+.customer-personal-info-suffix :is([dir='ltr'] .input-suffix-start) {
+    left: 0 !important;
+}

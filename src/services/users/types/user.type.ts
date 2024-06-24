@@ -21,3 +21,24 @@ export type User = {
     status: { id: number; name: string }
   }
 }
+
+export type CreateUserFormModel = {
+  name: string
+  lastName: string
+  email: string
+  password: string
+  identityCard: string
+  primaryPhone: string
+  imgUrl?: string
+  rolId: number
+}
+
+export type CreateUserBody = {
+  name: string
+  lastName: string
+  email: string
+  password: string
+  identityCard: string
+  primaryPhone: string
+  rolId: number
+}

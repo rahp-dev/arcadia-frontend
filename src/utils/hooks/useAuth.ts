@@ -10,6 +10,7 @@ import { REDIRECT_URL_KEY } from '@/constants/app.constant'
 import { useNavigate } from 'react-router-dom'
 import useQuery from './useQuery'
 import type { SignInCredential, SignUpCredential } from '@/@types/auth'
+import { RolesEnum } from '@/enums/roles.enum'
 
 type Status = 'success' | 'failed'
 
@@ -20,7 +21,7 @@ function useAuth() {
 
   const query = useQuery()
 
-  const { token, signedIn, refreshTimeouts } = useAppSelector(
+  const { token, signedIn, refreshTimeouts, rol } = useAppSelector(
     (state) => state.auth.session,
   )
 
@@ -109,6 +110,7 @@ function useAuth() {
 
   return {
     authenticated: token && signedIn,
+    isSuperAdmin: rol === RolesEnum.SUPER_ADMIN,
     signIn,
     signUp,
     signOut,

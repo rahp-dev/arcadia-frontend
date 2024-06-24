@@ -141,7 +141,6 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
       onSubmit={onSubmit}
     >
       {({ values, touched, errors }) => {
-        console.log(values)
         return (
           <Form>
             <FormContainer>
@@ -176,6 +175,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                     component={Input}
                   />
                 </FormItem>
+
                 <FormItem
                   asterisk
                   className="z-[10] customer-personal-info-suffix w-1/5"

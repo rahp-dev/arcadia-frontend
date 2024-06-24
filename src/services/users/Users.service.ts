@@ -4,6 +4,7 @@ import {
   PaginateResult,
 } from '../core-entities/paginated-result.entity'
 import { User } from './types/user.type'
+import { Select } from '@/@types/select'
 
 export function getUsersQuery(builder: EndpointBuilderType) {
   return {
@@ -17,6 +18,53 @@ export function getUsersQuery(builder: EndpointBuilderType) {
         params: { limit, page, search },
       }),
       providesTags: ['Users'] as any,
+    }),
+
+    getUserRoles: builder.query<
+      Array<{ id: number; name: string } | Select>,
+      { transformToSelectOptions?: boolean }
+    >({
+      query: () => ({ url: 'users/roles', method: 'get' }),
+      transformResponse: (
+        baseQueryReturnValue: { data: Array<{ id: number; name: string }> },
+        meta,
+        arg: { transformToSelectOptions?: boolean },
+      ) => {
+        const data = baseQueryReturnValue.data
+
+        if (Array.isArray(data)) {
+          if (arg.transformToSelectOptions) {
+            return data.map((item) => ({
+              value: item.id,
+              label: item.name,
+            }))
+          }
+          return data
+        }
+
+        console.error('Expected an array but got:', typeof data)
+        return []
+      },
+    }),
+
+    createUser: builder.mutation<
+      User,
+      {
+        name: string
+        lastName: string
+        email: string
+        password: string
+        identityCard: string
+        primaryPhone: string
+        rolId: number
+      }
+    >({
+      query: (body) => ({
+        url: 'users',
+        method: 'post',
+        data: body,
+      }),
+      invalidatesTags: ['Users'] as any,
     }),
   }
 }

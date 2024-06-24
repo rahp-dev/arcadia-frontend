@@ -52,5 +52,7 @@ export const {
   useGetAllClientsQuery,
   useGetClientByIdQuery,
   useGetAllUsersQuery,
+  useGetUserRolesQuery,
   useCreateClientMutation,
+  useCreateUserMutation,
 } = RtkQueryService

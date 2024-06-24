@@ -1,16 +1,21 @@
 import { Button, Card, Tabs } from '@/components/ui'
-import TabContent from '@/components/ui/Tabs/TabContent'
-import TabList from '@/components/ui/Tabs/TabList'
-import TabNav from '@/components/ui/Tabs/TabNav'
 import React, { useState } from 'react'
 import { HiArrowLeft, HiOutlineLockClosed, HiOutlineUser } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
 import UserProfileForm from './UserProfileForm'
-import UserPasswordForm from './UserPasswordForm'
+import { CreateUserFormModel } from '@/services/users/types/user.type'
 
 const NewUser = () => {
   const navigate = useNavigate()
-  const [currentTab, setCurrentTab] = useState('tab1')
+  const [userData, setUserData] = useState<CreateUserFormModel>({
+    name: '',
+    lastName: '',
+    email: '',
+    password: '',
+    identityCard: '',
+    primaryPhone: '',
+    rolId: null,
+  })
 
   return (
     <div className="container mx-auto">
@@ -25,26 +30,9 @@ const NewUser = () => {
           Regresar
         </Button>
       </div>
-      <div className="flex justify-center">
+      <div className="container mt-6">
         <Card>
-          <Tabs value={currentTab} onChange={(value) => setCurrentTab(value)}>
-            <TabList>
-              <TabNav value="tab1" icon={<HiOutlineUser />}>
-                Perfil del usuario
-              </TabNav>
-              <TabNav value="tab2" disabled icon={<HiOutlineLockClosed />}>
-                Contraseña
-              </TabNav>
-            </TabList>
-            <div className="p-4">
-              <TabContent value="tab1">
-                <UserProfileForm />
-              </TabContent>
-              <TabContent value="tab2">
-                <UserPasswordForm />
-              </TabContent>
-            </div>
-          </Tabs>
+          <UserProfileForm newUserData={userData} />
         </Card>
       </div>
     </div>
