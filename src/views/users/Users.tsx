@@ -54,7 +54,7 @@ function DebouncedInput({
   return (
     <div className="flex justify-between">
       <div>
-        <h3>Clientes</h3>
+        <h3>Usuarios</h3>
       </div>
 
       <div className="flex items-center gap-4 mb-4">
@@ -73,7 +73,7 @@ function DebouncedInput({
             navigate('crear')
           }}
         >
-          Crear cliente
+          Crear usuario
         </Button>
       </div>
     </div>
