@@ -118,6 +118,10 @@ const Users = () => {
         header: 'Telefono del usuario',
         accessorKey: 'primaryPhone',
       },
+      {
+        header: 'Rol del usuario',
+        accessorKey: 'session.rol.name',
+      },
     ],
     [],
   )
