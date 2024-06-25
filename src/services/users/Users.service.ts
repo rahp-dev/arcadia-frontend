@@ -26,24 +26,18 @@ export function getUsersQuery(builder: EndpointBuilderType) {
     >({
       query: () => ({ url: 'users/roles', method: 'get' }),
       transformResponse: (
-        baseQueryReturnValue: { data: Array<{ id: number; name: string }> },
+        response: { data: Array<{ id: number; name: string }> },
         meta,
         arg: { transformToSelectOptions?: boolean },
       ) => {
-        const data = baseQueryReturnValue.data
-
-        if (Array.isArray(data)) {
-          if (arg.transformToSelectOptions) {
-            return data.map((item) => ({
-              value: item.id,
-              label: item.name,
-            }))
-          }
-          return data
+        const baseQueryReturnValue = response.data
+        if (arg.transformToSelectOptions) {
+          return baseQueryReturnValue.map((item) => ({
+            value: item.id,
+            label: item.name,
+          }))
         }
-
-        console.error('Expected an array but got:', typeof data)
-        return []
+        return baseQueryReturnValue
       },
     }),
 

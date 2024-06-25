@@ -106,7 +106,7 @@ const Users = () => {
       },
       {
         header: 'Correo electronico',
-        accessorKey: 'email',
+        accessorKey: 'session.email',
       },
       {
         header: 'Documento de Identidad',

@@ -1,10 +1,7 @@
 import { Button, FormContainer, FormItem, Input, Select } from '@/components/ui'
-import {
-  CreateUserBody,
-  CreateUserFormModel,
-} from '@/services/users/types/user.type'
+import { CreateUserBody } from '@/services/users/types/user.type'
 import { Field, FieldProps, Form, Formik } from 'formik'
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 
@@ -22,20 +19,15 @@ type FormModel = {
   name: string
   lastName: string
   email: string
-  password: string
   identityCard: string
   primaryPhone: string
-  rolId: number | null
-  imgUrl?: string
+  rolId: number
 }
 
 type Option = {
   value: string
   label: string
 }
-
-// const MIN_UPLOAD = 0
-// const MAX_UPLOAD = 1
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Nombre requerido.'),
@@ -46,31 +38,29 @@ const validationSchema = Yup.object().shape({
   identityCard: Yup.string().required('Ingrese el documento de identidad.'),
   primaryPhone: Yup.string().required('Ingrese el número.'),
   rolId: Yup.number().required('Rol requerido'),
-  // imgUrl: Yup.array().min(MIN_UPLOAD, 'Debe añadir un solo archivo'),
 })
 
 const UserProfileForm = ({
   newUserData,
+  setNewUserData,
+  navigationTabs,
 }: {
+  navigationTabs: Dispatch<SetStateAction<string>>
+  setNewUserData: any
   newUserData: {
     name: string
     lastName: string
     email: string
     primaryPhone: string
     password: string
+    confirmPassword: string
     identityCard: string
     rolId: number | null
   }
 }) => {
-  const navigate = useNavigate()
-
   const { isSuperAdmin } = useAuth()
-
   const [cedulaPreffix, setCedulaPreffix] = useState('')
   const [identityCardValue, setIdentityCardValue] = useState('')
-
-  const [createUser, { data, isError, isSuccess, isUninitialized }] =
-    useCreateUserMutation()
 
   const { data: rolOptions } = useGetUserRolesQuery(
     { transformToSelectOptions: true },
@@ -86,66 +76,21 @@ const UserProfileForm = ({
     )
   }
 
-  const onSubmit = (values: FormModel) => {
-    const {
-      name,
-      lastName,
-      identityCard,
-      password,
-      primaryPhone,
-      rolId,
-      email,
-    } = values
-
-    const body: CreateUserBody = {
-      name,
-      lastName,
-      identityCard,
-      email,
-      password,
-      primaryPhone,
-      rolId,
-    }
-
-    createUser(body)
-  }
-
-  useEffect(() => {
-    if (isSuccess) {
-      openNotification(
-        'success',
-        '¡Creación completada!',
-        'El usuario ha sido creado exitosamente.',
-        3,
-      )
-
-      setTimeout(() => {
-        navigate('/usuarios')
-      }, 1 * 1000)
-    }
-
-    if (!isUninitialized && isError) {
-      openNotification(
-        'warning',
-        'Ha ocurrido un error',
-        'Ocurrio un error al crear el usuario, por favor intenta más tarde.',
-        3,
-      )
-    }
-  }, [isSuccess, isError])
-
   return (
     <Formik
       enableReinitialize
       initialValues={newUserData}
       validationSchema={validationSchema}
-      onSubmit={onSubmit}
+      onSubmit={(values) => {
+        setNewUserData(values)
+        navigationTabs('tab2')
+      }}
     >
       {({ values, touched, errors }) => {
         return (
           <Form>
             <FormContainer>
-              <div className="flex justify-between items-center gap-3">
+              <div className="flex items-center gap-3">
                 <FormItem
                   asterisk
                   label="Nombre"
@@ -187,21 +132,6 @@ const UserProfileForm = ({
                     type="text"
                     name="email"
                     placeholder="Correo del usuario"
-                    autoComplete="off"
-                    component={Input}
-                  />
-                </FormItem>
-                <FormItem
-                  asterisk
-                  label="Contraseña"
-                  className="w-1/5"
-                  invalid={errors.password && touched.password}
-                  errorMessage={errors.password}
-                >
-                  <Field
-                    type="password"
-                    name="password"
-                    placeholder="********"
                     autoComplete="off"
                     component={Input}
                   />
@@ -280,7 +210,7 @@ const UserProfileForm = ({
                   invalid={errors.rolId && touched.rolId}
                   errorMessage={errors.rolId}
                 >
-                  <Field>
+                  <Field name="rolId">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
                         field={field}
@@ -288,8 +218,12 @@ const UserProfileForm = ({
                         options={setRolOptions()}
                         placeholder="Selecciona el rol..."
                         onChange={(option: SelectType) => {
-                          form.setFieldValue(field.name, option?.value)
+                          console.log(option)
+                          form.setFieldValue(field.name, option.value)
                         }}
+                        value={rolOptions?.filter(
+                          (option: SelectType) => option.value === values.rolId,
+                        )}
                       />
                     )}
                   </Field>
