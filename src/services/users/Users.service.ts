@@ -41,6 +41,34 @@ export function getUsersQuery(builder: EndpointBuilderType) {
       },
     }),
 
+    getOneUser: builder.query<
+      Array<{ id: number; name: string } | Select>,
+      { transformToSelectOptions?: boolean }
+    >({
+      query: () => ({ url: 'customers', method: 'get' }),
+      transformResponse: (
+        response: {
+          data: Array<{
+            id: number
+            name: string
+            lastName: string
+            identityCard: string
+          }>
+        },
+        meta,
+        arg: { transformToSelectOptions?: boolean },
+      ) => {
+        const baseQueryReturnValue = response.data
+        if (arg.transformToSelectOptions) {
+          return baseQueryReturnValue.map((item) => ({
+            value: item.id,
+            label: `${item.name} ${item.lastName} - ${item.identityCard}`,
+          }))
+        }
+        return baseQueryReturnValue
+      },
+    }),
+
     createUser: builder.mutation<
       User,
       {
