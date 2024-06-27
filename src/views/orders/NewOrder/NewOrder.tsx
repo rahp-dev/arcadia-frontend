@@ -16,6 +16,8 @@ import { BsAirplaneEngines } from 'react-icons/bs'
 import TabContent from '@/components/ui/Tabs/TabContent'
 import FlightTab from './Tabs/FlightTab'
 import { CreateTicketFormModel } from '@/services/tickets/types/tickets.type'
+import InsuranceTab from './Tabs/InsuranceTab'
+import LodgingTab from './Tabs/LodgingTab'
 
 const NewOrder = () => {
   const navigate = useNavigate()
@@ -26,11 +28,10 @@ const NewOrder = () => {
     customerId: 0,
     origin: '',
     destination: '',
-    exist: '',
     flightDate: null,
-    flightPrice: 0,
-    typeFlight: '',
-    handBaggage: 0,
+    price: 0,
+    type_flight_class: '',
+    hand_baggage: 0,
     baggage: 0,
     lodgingName: '',
     lodgingPlace: '',
@@ -101,6 +102,20 @@ const NewOrder = () => {
             <div className="py-4">
               <TabContent value="tab1">
                 <FlightTab
+                  ticketData={ticketData}
+                  setTicketData={setTicketData}
+                  setCurrentTab={setCurrentTab}
+                />
+              </TabContent>
+              <TabContent value="tab2">
+                <InsuranceTab
+                  ticketData={ticketData}
+                  setTicketData={setTicketData}
+                  setCurrentTab={setCurrentTab}
+                />
+              </TabContent>
+              <TabContent value="tab3">
+                <LodgingTab
                   ticketData={ticketData}
                   setTicketData={setTicketData}
                   setCurrentTab={setCurrentTab}
