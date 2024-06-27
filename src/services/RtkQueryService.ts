@@ -8,6 +8,7 @@ import { EndpointBuilderType } from './core-entities/paginated-result.entity'
 import { getMeQuery } from './getMe/getMe.service'
 import { getClientsQuery } from './clients/Client.service'
 import { getUsersQuery } from './users/Users.service'
+import { getTicketsQuery } from './tickets/Tickets.service'
 
 const axiosBaseQuery =
   (): BaseQueryFn<
@@ -38,11 +39,12 @@ const axiosBaseQuery =
 const RtkQueryService = createApi({
   reducerPath: 'rtkApi',
   baseQuery: axiosBaseQuery(),
-  tagTypes: ['Customers', 'Users'],
+  tagTypes: ['Customers', 'Users', 'Tickets'],
   endpoints: (builder: EndpointBuilderType) => ({
     ...getMeQuery(builder),
     ...getClientsQuery(builder),
     ...getUsersQuery(builder),
+    ...getTicketsQuery(builder),
   }),
 })
 
@@ -56,4 +58,5 @@ export const {
   useGetOneUserQuery,
   useCreateClientMutation,
   useCreateUserMutation,
+  useCreateTicketMutation,
 } = RtkQueryService

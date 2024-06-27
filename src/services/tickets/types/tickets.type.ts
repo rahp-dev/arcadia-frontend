@@ -1,4 +1,5 @@
 export type Ticket = {
+  id: number
   customerId: number
   origin: string
   destination: string
@@ -54,8 +55,8 @@ export type CreateTicketFormModel = {
   flightDate: Date | null
   price: number
 
-  type_flight_class: string
-  hand_baggage: number
+  flightClass: string
+  handBaggage: number
   baggage: number
 
   lodgingName: string

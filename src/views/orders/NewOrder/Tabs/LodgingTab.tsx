@@ -1,10 +1,12 @@
 import { Button, FormContainer, FormItem, Input } from '@/components/ui'
+import { useCreateTicketMutation } from '@/services/RtkQueryService'
 import {
   CreateTicketBody,
   CreateTicketFormModel,
 } from '@/services/tickets/types/tickets.type'
+import openNotification from '@/utils/useNotification'
 import { Form, Field, Formik } from 'formik'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import * as Yup from 'yup'
 
 const validationSchema = Yup.object().shape({
@@ -23,18 +25,23 @@ function LodgingTab({
   submitButtonText,
   setTicketData,
   setCurrentTab,
+  setTicketId,
 }: {
-  ticketData: Partial<CreateTicketFormModel>
+  ticketData: CreateTicketFormModel
   submitButtonText?: string
   setTicketData: Dispatch<SetStateAction<Partial<CreateTicketFormModel>>>
   setCurrentTab?: Dispatch<SetStateAction<'tab1' | 'tab2' | 'tab3' | 'tab4'>>
+  setTicketId: Dispatch<SetStateAction<number | null>>
 }) {
+  const [createTicket, { data, isError, isSuccess, isUninitialized }] =
+    useCreateTicketMutation()
+
   const onSubmit = (values: FormModel) => {
     setTicketData({ ...ticketData, ...values })
 
     const {
-      type_flight_class,
-      hand_baggage,
+      flightClass,
+      handBaggage,
       baggage,
       insuranceName,
       insuranceLocation,
@@ -48,8 +55,8 @@ function LodgingTab({
     const body: CreateTicketBody = {
       ...ticketBody,
       details_ticket: {
-        type_flight_class,
-        hand_baggage,
+        type_flight_class: flightClass,
+        hand_baggage: handBaggage,
         baggage,
       },
       accommodation: {
@@ -64,8 +71,35 @@ function LodgingTab({
       },
     }
 
-    // createTicket(body)
+    createTicket(body)
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      const newTicketId = data.id
+      setTicketId(newTicketId)
+
+      openNotification(
+        'success',
+        'El ticket de vuelo ha sido creado exitosamente!',
+        'Ha creado el ticket con exito, será redirigido a la siguiente pestaña para completar la orden.',
+        8,
+      )
+
+      setTimeout(() => {
+        setCurrentTab('tab4')
+      }, 1 * 2000)
+    }
+
+    if (!isUninitialized && isError) {
+      openNotification(
+        'warning',
+        'Ha ocurrido un error al crear el ticket :(',
+        'Verifique la información e intentelo nuevamente.',
+        8,
+      )
+    }
+  }, [isSuccess, isError])
 
   return (
     <Formik

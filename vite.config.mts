@@ -1,18 +1,18 @@
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
 import dynamicImport from 'vite-plugin-dynamic-import'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react({
-    babel: {
-      plugins: [
-        'babel-plugin-macros'
-      ]
-    }
-  }),
-  dynamicImport()],
+  plugins: [
+    react({
+      babel: {
+        plugins: ['babel-plugin-macros'],
+      },
+    }),
+    dynamicImport(),
+  ],
   assetsInclude: ['**/*.md'],
   resolve: {
     alias: {
@@ -20,6 +20,22 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: 'build'
-  }
-});
+    outDir: 'build',
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            return id
+              .toString()
+              .split('node_modules/')[1]
+              .split('/')[0]
+              .toString()
+          }
+        },
+      },
+    },
+  },
+  server: {
+    host: true,
+  },
+})

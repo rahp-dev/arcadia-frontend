@@ -26,18 +26,18 @@ type FormModel = Pick<
   | 'destination'
   | 'flightDate'
   | 'price'
-  | 'type_flight_class'
-  | 'hand_baggage'
+  | 'flightClass'
+  | 'handBaggage'
   | 'baggage'
 >
 
 const flights: Option[] = [
-  { value: 'Economy (Coach)', label: 'Economy (Coach)' },
-  { value: 'Premium Economy', label: 'Premium Economy' },
+  { value: 'Economy', label: 'Economy (Coach)' },
+  { value: 'PremiumEconomy', label: 'Premium Economy' },
   { value: 'Business', label: 'Business' },
-  { value: 'Premium Business', label: 'Premium Business' },
+  { value: 'PremiumBusiness', label: 'Premium Business' },
   { value: 'First', label: 'First' },
-  { value: 'First Premium', label: 'First Premium' },
+  { value: 'PremiumFirst', label: 'First Premium' },
 ]
 
 function FlightTab({
@@ -56,10 +56,18 @@ function FlightTab({
     origin: Yup.string().required('Origen requerido.'),
     destination: Yup.string().required('Destino requerido.'),
     flightDate: Yup.date().required('Fecha de vuelo requerida.'),
-    price: Yup.number().required('Precio requerido.'),
-    typeFlight: Yup.string().required('Seleccione uno.'),
-    handBaggage: Yup.number().min(1, 'Minimo 1').max(8, 'Maximo 8.'),
-    baggage: Yup.number().min(1, 'Minimo 1').max(8, 'Maximo 8.'),
+    price: Yup.number()
+      .min(1, 'El precio no puede ser menor a 0')
+      .required('Precio requerido.'),
+    flightClass: Yup.string().required('Seleccione uno.'),
+    handBaggage: Yup.number()
+      .min(1, 'Minimo 1')
+      .max(8, 'Maximo 8.')
+      .required('Este campo es requerido.'),
+    baggage: Yup.number()
+      .min(1, 'Minimo 1')
+      .max(8, 'Maximo 8.')
+      .required('Este campo es requerido.'),
   })
 
   const { data: userOptions } = useGetOneUserQuery(
@@ -189,12 +197,10 @@ function FlightTab({
                   asterisk
                   label="Tipo de Vuelo"
                   className="w-1/5"
-                  invalid={
-                    errors.type_flight_class && touched.type_flight_class
-                  }
-                  errorMessage={errors.type_flight_class}
+                  invalid={errors.flightClass && touched.flightClass}
+                  errorMessage={errors.flightClass}
                 >
-                  <Field name="type_flight_class">
+                  <Field name="flightClass">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
                         field={field}
@@ -202,7 +208,7 @@ function FlightTab({
                         options={flights}
                         placeholder="Seleccione uno"
                         value={flights.filter(
-                          (option) => option.value === values.type_flight_class,
+                          (option) => option.value === values.flightClass,
                         )}
                         onChange={(option) =>
                           form.setFieldValue(field.name, option?.value)
@@ -215,12 +221,12 @@ function FlightTab({
                   asterisk
                   label="Maletas de mano"
                   className="w-1/5"
-                  errorMessage={errors.hand_baggage}
-                  invalid={errors.hand_baggage && touched.hand_baggage}
+                  errorMessage={errors.handBaggage}
+                  invalid={errors.handBaggage && touched.handBaggage}
                 >
                   <Field
                     type="number"
-                    name="hand_baggage"
+                    name="handBaggage"
                     placeholder="Ingrese las maletas de mano"
                     component={Input}
                   />
@@ -241,11 +247,9 @@ function FlightTab({
                 </FormItem>
               </div>
               <FormItem>
-                <div className="flex">
-                  <Button variant="solid" type="submit">
-                    {submitButtonText ? submitButtonText : 'Siguiente'}
-                  </Button>
-                </div>
+                <Button variant="solid" type="submit">
+                  {submitButtonText ? submitButtonText : 'Siguiente'}
+                </Button>
               </FormItem>
             </FormContainer>
           </Form>

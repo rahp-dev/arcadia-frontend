@@ -18,6 +18,8 @@ import FlightTab from './Tabs/FlightTab'
 import { CreateTicketFormModel } from '@/services/tickets/types/tickets.type'
 import InsuranceTab from './Tabs/InsuranceTab'
 import LodgingTab from './Tabs/LodgingTab'
+import FinishTab from './Tabs/FinishTab'
+import { CreateOrderFormModel } from '@/services/orders/types/orders.type'
 
 const NewOrder = () => {
   const navigate = useNavigate()
@@ -30,8 +32,8 @@ const NewOrder = () => {
     destination: '',
     flightDate: null,
     price: 0,
-    type_flight_class: '',
-    hand_baggage: 0,
+    flightClass: '',
+    handBaggage: 0,
     baggage: 0,
     lodgingName: '',
     lodgingPlace: '',
@@ -39,6 +41,19 @@ const NewOrder = () => {
     insuranceName: '',
     insuranceLocation: '',
     insurancePrice: 0,
+  })
+
+  const [ticketId, setTicketId] = useState<number | null>(null)
+
+  const [orderData, setOrderData] = useState<CreateOrderFormModel>({
+    amount: 0,
+    paymentMethod: 'string',
+    paymentReference: 'string',
+    status: 'string',
+    numQuotes: 0,
+    financed: true,
+    transactionDate: null,
+    ticketsIds: [],
   })
   return (
     <>
@@ -93,7 +108,7 @@ const NewOrder = () => {
               </TabNav>
               <TabNav
                 value="tab4"
-                disabled={currentTab !== 'tab4'}
+                // disabled={currentTab !== 'tab4'}
                 icon={<HiOutlineClipboardCheck />}
               >
                 Finalizar pedido
@@ -119,6 +134,14 @@ const NewOrder = () => {
                   ticketData={ticketData}
                   setTicketData={setTicketData}
                   setCurrentTab={setCurrentTab}
+                  setTicketId={setTicketId}
+                />
+              </TabContent>
+              <TabContent value="tab4">
+                <FinishTab
+                  orderData={orderData}
+                  setOrderData={setOrderData}
+                  ticketId={ticketId}
                 />
               </TabContent>
             </div>
