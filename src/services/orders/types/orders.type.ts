@@ -15,7 +15,7 @@ export type CreateOrderBody = {
   paymentMethod: string
   paymentReference: string
   status: string
-  numQuotes: number
+  numQuotes: number | null
   financed: boolean
   transactionDate: Date | null
   ticketsIds: Array<number>
@@ -26,7 +26,7 @@ export type CreateOrderFormModel = {
   paymentMethod: string
   paymentReference: string
   status: string
-  numQuotes: number
+  numQuotes: number | null
   financed: boolean
   transactionDate: Date | null
   ticketsIds: Array<number>

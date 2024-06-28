@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from 'react'
 import { Select as SelectTypes } from '@/@types/select'
 import {
   Button,
@@ -6,11 +7,11 @@ import {
   FormItem,
   Input,
   Select,
+  Switcher,
 } from '@/components/ui'
 import { useGetOneUserQuery } from '@/services/RtkQueryService'
 import { CreateTicketFormModel } from '@/services/tickets/types/tickets.type'
 import { Field, FieldProps, Form, Formik } from 'formik'
-import React, { Dispatch, SetStateAction, useState } from 'react'
 
 import * as Yup from 'yup'
 
@@ -26,6 +27,7 @@ type FormModel = Pick<
   | 'destination'
   | 'flightDate'
   | 'price'
+  | 'child'
   | 'flightClass'
   | 'handBaggage'
   | 'baggage'
@@ -68,6 +70,7 @@ function FlightTab({
       .min(1, 'Minimo 1')
       .max(8, 'Maximo 8.')
       .required('Este campo es requerido.'),
+    child: Yup.boolean().required('Requerido'),
   })
 
   const { data: userOptions } = useGetOneUserQuery(
@@ -233,7 +236,7 @@ function FlightTab({
                 </FormItem>
                 <FormItem
                   asterisk
-                  label="Maletas"
+                  label="Maletas de 23kg"
                   className="w-1/5"
                   errorMessage={errors.baggage}
                   invalid={errors.baggage && touched.baggage}
@@ -244,6 +247,27 @@ function FlightTab({
                     placeholder="Ingrese las maletas"
                     component={Input}
                   />
+                </FormItem>
+                <FormItem
+                  asterisk
+                  className="w-1/5 text-center"
+                  label="Niños"
+                  invalid={errors.child && touched.child}
+                  errorMessage={errors.child}
+                >
+                  <Field name="child">
+                    {({ form, field }: FieldProps<FormModel>) => (
+                      <div className="flex gap-4">
+                        <Switcher
+                          onChange={(checked) => {
+                            form.setFieldValue(field.name, checked)
+                            console.log(checked)
+                          }}
+                        />
+                        <label className="text-base font-semibold">No/Sí</label>
+                      </div>
+                    )}
+                  </Field>
                 </FormItem>
               </div>
               <FormItem>

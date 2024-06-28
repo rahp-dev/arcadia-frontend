@@ -32,6 +32,7 @@ const NewOrder = () => {
     destination: '',
     flightDate: null,
     price: 0,
+    child: false,
     flightClass: '',
     handBaggage: 0,
     baggage: 0,
@@ -47,11 +48,11 @@ const NewOrder = () => {
 
   const [orderData, setOrderData] = useState<CreateOrderFormModel>({
     amount: 0,
-    paymentMethod: 'string',
-    paymentReference: 'string',
-    status: 'string',
-    numQuotes: 0,
-    financed: true,
+    paymentMethod: '',
+    paymentReference: '',
+    status: '',
+    numQuotes: null,
+    financed: false,
     transactionDate: null,
     ticketsIds: [],
   })
@@ -108,7 +109,7 @@ const NewOrder = () => {
               </TabNav>
               <TabNav
                 value="tab4"
-                // disabled={currentTab !== 'tab4'}
+                disabled={currentTab !== 'tab4'}
                 icon={<HiOutlineClipboardCheck />}
               >
                 Finalizar pedido
