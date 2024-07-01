@@ -17,9 +17,9 @@ import { Button, Pagination, Select } from '@/components/ui'
 import { Select as SelectType } from '@/@types/select'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
-  useGetAllAssingmentsQuery,
   useGetAllClientsQuery,
-  useGetAllUsersQuery,
+  useGetAllOrdersQuery,
+  useGetAllTicketsQuery,
 } from '@/services/RtkQueryService'
 import { HiOutlineSearch } from 'react-icons/hi'
 import { TableRowSkeleton } from '@/components/shared'
@@ -61,7 +61,7 @@ function DebouncedInput({
   return (
     <div className="flex justify-between">
       <div>
-        <h3>Asignaciones</h3>
+        <h3>Ordenes</h3>
       </div>
 
       <div className="flex items-center gap-4 mb-4">
@@ -80,7 +80,7 @@ function DebouncedInput({
             navigate('crear')
           }}
         >
-          Crear asignación
+          Crear orden
         </Button>
       </div>
     </div>
@@ -94,14 +94,14 @@ const pageSizeOption: SelectType[] = [
   { value: 50, label: '50 por página' },
 ]
 
-const Assingments = () => {
+const Orders = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [searchParams, setSearchParams] = useSearchParams()
   const [search, setSearch] = useState(searchParams.get('search') || '')
   const [currentPage, setCurrentPage] = useState(+searchParams.get('page') || 1)
   const [pageSize, setPageSize] = useState(pageSizeOption[0].value)
 
-  const { data, isFetching } = useGetAllAssingmentsQuery(
+  const { data, isFetching } = useGetAllOrdersQuery(
     {
       page: currentPage || 1,
       limit: pageSize,
@@ -123,50 +123,39 @@ const Assingments = () => {
   const columns = useMemo(
     () => [
       {
-        header: 'Cliente',
-        accessorKey: 'client_name',
-        cell: (cellProps: any) => (
-          <span className="font-bold cursor-pointer">
-            {cellProps.row.original.client_name}
-          </span>
-        ),
+        header: 'ID',
+        accessorKey: 'id',
       },
       {
-        header: 'N° del cliente',
-        accessorKey: 'client_number',
-      },
-      {
-        header: 'Usuario asignado',
+        header: 'Nombre del cliente',
         cell: (cellProps: any) => {
-          const user = cellProps.row.original.user
-          const userName = user ? `${user.name} ${user.lastName} ` : 'N/A'
+          const tickets = cellProps.row.original.tickets
+          const customerName =
+            tickets && tickets.length > 0
+              ? `${tickets[0].customer.name} ${tickets[0].customer.last_name}`
+              : 'N/A'
 
-          return <span>{userName}</span>
+          return (
+            <span className="font-bold cursor-pointer">{customerName}</span>
+          )
         },
       },
       {
-        header: 'Fecha de registro',
-        accessorKey: 'date',
+        header: 'Fecha de la transacción',
+        accessorKey: 'transactionDate',
       },
       {
-        header: 'Origen del cliente',
-        accessorKey: 'origin',
-      },
-      {
-        header: 'Observaciones',
-        accessorKey: 'notes',
-        cell: (cellProps: any) => (
-          <span className="text-sm">{cellProps.row.original.notes}</span>
-        ),
+        header: 'Forma de pago',
+        accessorKey: 'paymentMethod',
       },
       {
         header: 'Estatus',
         accessorKey: 'status',
-        cell: (cellProps: any) => (
-          <Button variant="solid" size="sm" block>
-            {cellProps.row.original.status}
-          </Button>
-        ),
+      },
+      {
+        header: 'Monto total',
+        accessorKey: 'amount',
+        cell: (cellProps: any) => <span>{cellProps.row.original.amount}$</span>,
       },
     ],
     [],
@@ -275,4 +264,4 @@ const Assingments = () => {
   )
 }
 
-export default Assingments
+export default Orders

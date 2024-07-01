@@ -7,6 +7,7 @@ import {
 import openNotification from '@/utils/useNotification'
 import { Form, Field, Formik } from 'formik'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 
 const validationSchema = Yup.object().shape({
@@ -25,14 +26,13 @@ function LodgingTab({
   submitButtonText,
   setTicketData,
   setCurrentTab,
-  setTicketId,
 }: {
   ticketData: CreateTicketFormModel
   submitButtonText?: string
   setTicketData: Dispatch<SetStateAction<Partial<CreateTicketFormModel>>>
-  setCurrentTab?: Dispatch<SetStateAction<'tab1' | 'tab2' | 'tab3' | 'tab4'>>
-  setTicketId: Dispatch<SetStateAction<number | null>>
+  setCurrentTab?: Dispatch<SetStateAction<'tab1' | 'tab2' | 'tab3'>>
 }) {
+  const navigate = useNavigate()
   const [createTicket, { data, isError, isSuccess, isUninitialized }] =
     useCreateTicketMutation()
 
@@ -76,19 +76,15 @@ function LodgingTab({
 
   useEffect(() => {
     if (isSuccess) {
-      const newTicketId = data.id
-      console.log(newTicketId)
-      setTicketId(newTicketId)
-
       openNotification(
         'success',
         'El ticket de vuelo ha sido creado exitosamente!',
-        'Ha creado el ticket con exito, será redirigido a la siguiente pestaña para completar la orden.',
+        'Ha creado el ticket con exito.',
         8,
       )
 
       setTimeout(() => {
-        setCurrentTab('tab4')
+        navigate('/pedidos')
       }, 1 * 2000)
     }
 

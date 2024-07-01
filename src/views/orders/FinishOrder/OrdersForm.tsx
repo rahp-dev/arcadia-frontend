@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Field, FieldProps, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 
@@ -79,36 +79,42 @@ function FinishTab({
   setOrderData: Dispatch<SetStateAction<CreateOrderFormModel>>
 }) {
   const navigate = useNavigate()
+  const [effectExecuted, setEffectExecuted] = useState(false)
 
   const [createOrder, { data, isError, isSuccess, isUninitialized }] =
     useCreateOrderMutation()
 
   useEffect(() => {
     if (
-      !ticketData.price &&
-      !ticketData.insurancePrice &&
-      !ticketData.lodgingPrice
+      !effectExecuted &&
+      ticketId &&
+      ticketData.price &&
+      ticketData.insurancePrice &&
+      ticketData.lodgingPrice
     ) {
+      const totalAmount =
+        (ticketData.price || 0) +
+        (ticketData.insurancePrice || 0) +
+        (ticketData.lodgingPrice || 0)
+
+      console.log(totalAmount)
+
+      setOrderData((prevOrderData) => {
+        const updatedTicketsIds = prevOrderData.ticketIds.includes(ticketId)
+          ? prevOrderData.ticketIds
+          : [...prevOrderData.ticketIds, ticketId]
+        console.log(prevOrderData)
+
+        return {
+          ...prevOrderData,
+          ticketIds: updatedTicketsIds,
+          amount: totalAmount,
+        }
+      })
+
+      setEffectExecuted(true)
     }
-    const totalAmount =
-      ticketData.price + ticketData.insurancePrice + ticketData.lodgingPrice
-
-    console.log(totalAmount)
-
-    setOrderData((prevOrderData) => {
-      const updatedTicketsIds = prevOrderData.ticketIds.includes(ticketId)
-        ? prevOrderData.ticketIds
-        : [...prevOrderData.ticketIds, ticketId]
-      // console.log(updatedTicketsIds)
-      console.log(prevOrderData)
-
-      return {
-        ...prevOrderData,
-        ticketIds: updatedTicketsIds,
-        amount: totalAmount,
-      }
-    })
-  }, [ticketId, ticketData, setOrderData])
+  }, [effectExecuted, ticketId])
 
   const onSubmit = (values: FormModel) => {
     setOrderData({ ...orderData, ...values })

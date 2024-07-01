@@ -59,6 +59,8 @@ export const {
   useGetClientByIdQuery,
   useGetAllUsersQuery,
   useGetAllAssingmentsQuery,
+  useGetAllTicketsQuery,
+  useGetAllOrdersQuery,
   useGetUserRolesQuery,
   useGetOneUserQuery,
   useGetOneUserForAssingmentQuery,

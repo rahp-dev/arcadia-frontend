@@ -17,9 +17,8 @@ import { Button, Pagination, Select } from '@/components/ui'
 import { Select as SelectType } from '@/@types/select'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
-  useGetAllAssingmentsQuery,
   useGetAllClientsQuery,
-  useGetAllUsersQuery,
+  useGetAllTicketsQuery,
 } from '@/services/RtkQueryService'
 import { HiOutlineSearch } from 'react-icons/hi'
 import { TableRowSkeleton } from '@/components/shared'
@@ -61,7 +60,7 @@ function DebouncedInput({
   return (
     <div className="flex justify-between">
       <div>
-        <h3>Asignaciones</h3>
+        <h3>Tickets</h3>
       </div>
 
       <div className="flex items-center gap-4 mb-4">
@@ -80,7 +79,7 @@ function DebouncedInput({
             navigate('crear')
           }}
         >
-          Crear asignación
+          Crear ticket
         </Button>
       </div>
     </div>
@@ -94,14 +93,14 @@ const pageSizeOption: SelectType[] = [
   { value: 50, label: '50 por página' },
 ]
 
-const Assingments = () => {
+const Tickets = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [searchParams, setSearchParams] = useSearchParams()
   const [search, setSearch] = useState(searchParams.get('search') || '')
   const [currentPage, setCurrentPage] = useState(+searchParams.get('page') || 1)
   const [pageSize, setPageSize] = useState(pageSizeOption[0].value)
 
-  const { data, isFetching } = useGetAllAssingmentsQuery(
+  const { data, isFetching } = useGetAllTicketsQuery(
     {
       page: currentPage || 1,
       limit: pageSize,
@@ -123,50 +122,30 @@ const Assingments = () => {
   const columns = useMemo(
     () => [
       {
-        header: 'Cliente',
-        accessorKey: 'client_name',
+        header: 'Nombre del cliente',
         cell: (cellProps: any) => (
           <span className="font-bold cursor-pointer">
-            {cellProps.row.original.client_name}
+            {cellProps.row.original.customer.name}{' '}
+            {cellProps.row.original.customer.last_name}
           </span>
         ),
       },
       {
-        header: 'N° del cliente',
-        accessorKey: 'client_number',
-      },
-      {
-        header: 'Usuario asignado',
-        cell: (cellProps: any) => {
-          const user = cellProps.row.original.user
-          const userName = user ? `${user.name} ${user.lastName} ` : 'N/A'
-
-          return <span>{userName}</span>
-        },
-      },
-      {
-        header: 'Fecha de registro',
-        accessorKey: 'date',
-      },
-      {
-        header: 'Origen del cliente',
+        header: 'Origen',
         accessorKey: 'origin',
       },
       {
-        header: 'Observaciones',
-        accessorKey: 'notes',
-        cell: (cellProps: any) => (
-          <span className="text-sm">{cellProps.row.original.notes}</span>
-        ),
+        header: 'Destino',
+        accessorKey: 'destination',
       },
       {
-        header: 'Estatus',
-        accessorKey: 'status',
-        cell: (cellProps: any) => (
-          <Button variant="solid" size="sm" block>
-            {cellProps.row.original.status}
-          </Button>
-        ),
+        header: 'Fecha del vuelo',
+        accessorKey: 'flightDate',
+      },
+      {
+        header: 'Precio del vuelo',
+        accessorKey: 'price',
+        cell: (cellProps: any) => <span>{cellProps.row.original.price}$</span>,
       },
     ],
     [],
@@ -239,7 +218,7 @@ const Assingments = () => {
                 <Tr key={row.id}>
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <Td key={cell.id}>
+                      <Td key={cell.id} className="w-1/5">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
@@ -275,4 +254,4 @@ const Assingments = () => {
   )
 }
 
-export default Assingments
+export default Tickets

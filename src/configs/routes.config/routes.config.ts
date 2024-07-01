@@ -12,16 +12,21 @@ export const protectedRoutes = [
     authority: [],
   },
   {
-    key: 'pedidos',
-    path: '/pedidos',
-    component: lazy(() => import('@/views/orders/Orders')),
+    key: 'tickets',
+    path: '/tickets',
+    component: lazy(() => import('@/views/orders/Tickets')),
     authority: [],
   },
   {
-    key: 'crearPedido',
-    path: '/pedidos/crear',
+    key: 'crearTicket',
+    path: '/tickets/crear',
     component: lazy(() => import('@/views/orders/NewOrder/NewOrder')),
     authority: [],
+  },
+  {
+    key: 'orders',
+    path: '/ordenes',
+    component: lazy(() => import('@/views/orders/FinishOrder/Orders')),
   },
   {
     key: 'asignaciones',

@@ -18,8 +18,6 @@ import FlightTab from './Tabs/FlightTab'
 import { CreateTicketFormModel } from '@/services/tickets/types/tickets.type'
 import InsuranceTab from './Tabs/InsuranceTab'
 import LodgingTab from './Tabs/LodgingTab'
-import FinishTab from './Tabs/FinishTab'
-import { CreateOrderFormModel } from '@/services/orders/types/orders.type'
 
 const NewOrder = () => {
   const navigate = useNavigate()
@@ -44,24 +42,11 @@ const NewOrder = () => {
     insurancePrice: 0,
   })
 
-  const [ticketId, setTicketId] = useState<number | null>(null)
-
-  const [orderData, setOrderData] = useState<CreateOrderFormModel>({
-    amount: 0,
-    paymentMethod: '',
-    paymentReference: '',
-    status: '',
-    numQuotes: null,
-    financed: false,
-    transactionDate: null,
-    ticketIds: [],
-  })
-
   return (
     <>
       <div className="flex justify-between">
         <div>
-          <h3>Crear pedido</h3>
+          <h3>Crear ticket</h3>
         </div>
 
         <div className="flex flex-row gap-4">
@@ -103,17 +88,10 @@ const NewOrder = () => {
               </TabNav>
               <TabNav
                 value="tab3"
-                disabled={currentTab !== 'tab3' && currentTab !== 'tab4'}
+                disabled={currentTab !== 'tab3'}
                 icon={<HiOutlineHome />}
               >
                 Agregar hospedaje
-              </TabNav>
-              <TabNav
-                value="tab4"
-                disabled={currentTab !== 'tab4'}
-                icon={<HiOutlineClipboardCheck />}
-              >
-                Finalizar pedido
               </TabNav>
             </TabList>
             <div className="py-4">
@@ -136,15 +114,6 @@ const NewOrder = () => {
                   ticketData={ticketData}
                   setTicketData={setTicketData}
                   setCurrentTab={setCurrentTab}
-                  setTicketId={setTicketId}
-                />
-              </TabContent>
-              <TabContent value="tab4">
-                <FinishTab
-                  ticketData={ticketData}
-                  orderData={orderData}
-                  setOrderData={setOrderData}
-                  ticketId={ticketId}
                 />
               </TabContent>
             </div>
