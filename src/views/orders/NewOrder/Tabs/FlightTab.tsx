@@ -83,11 +83,11 @@ function FlightTab({
   }
 
   const onSubmit = (values: FormModel) => {
-    console.log(values)
-    setTicketData({
-      ...ticketData,
+    setTicketData((prevData) => ({
+      ...prevData,
       ...values,
-    })
+    }))
+    console.log(values)
     setCurrentTab('tab2')
   }
 
@@ -261,7 +261,6 @@ function FlightTab({
                         <Switcher
                           onChange={(checked) => {
                             form.setFieldValue(field.name, checked)
-                            console.log(checked)
                           }}
                         />
                         <label className="text-base font-semibold">No/Sí</label>

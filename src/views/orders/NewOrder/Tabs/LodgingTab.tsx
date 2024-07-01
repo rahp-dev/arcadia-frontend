@@ -70,13 +70,14 @@ function LodgingTab({
         price: insurancePrice,
       },
     }
-
+    console.log(body)
     createTicket(body)
   }
 
   useEffect(() => {
     if (isSuccess) {
       const newTicketId = data.id
+      console.log(newTicketId)
       setTicketId(newTicketId)
 
       openNotification(

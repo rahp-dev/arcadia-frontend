@@ -9,6 +9,8 @@ import { getMeQuery } from './getMe/getMe.service'
 import { getClientsQuery } from './clients/Client.service'
 import { getUsersQuery } from './users/Users.service'
 import { getTicketsQuery } from './tickets/Tickets.service'
+import { getOrdersQuery } from './orders/Orders.service'
+import { getAssingmentsQuery } from './assingment/Assingments.service'
 
 const axiosBaseQuery =
   (): BaseQueryFn<
@@ -39,12 +41,14 @@ const axiosBaseQuery =
 const RtkQueryService = createApi({
   reducerPath: 'rtkApi',
   baseQuery: axiosBaseQuery(),
-  tagTypes: ['Customers', 'Users', 'Tickets'],
+  tagTypes: ['Customers', 'Users', 'Tickets', 'Orders', 'Assingments'],
   endpoints: (builder: EndpointBuilderType) => ({
     ...getMeQuery(builder),
     ...getClientsQuery(builder),
     ...getUsersQuery(builder),
     ...getTicketsQuery(builder),
+    ...getOrdersQuery(builder),
+    ...getAssingmentsQuery(builder),
   }),
 })
 
@@ -54,9 +58,13 @@ export const {
   useGetAllClientsQuery,
   useGetClientByIdQuery,
   useGetAllUsersQuery,
+  useGetAllAssingmentsQuery,
   useGetUserRolesQuery,
   useGetOneUserQuery,
+  useGetOneUserForAssingmentQuery,
   useCreateClientMutation,
   useCreateUserMutation,
   useCreateTicketMutation,
+  useCreateOrderMutation,
+  useCreateAssingmentMutation,
 } = RtkQueryService

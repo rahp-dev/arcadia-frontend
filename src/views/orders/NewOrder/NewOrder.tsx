@@ -54,8 +54,9 @@ const NewOrder = () => {
     numQuotes: null,
     financed: false,
     transactionDate: null,
-    ticketsIds: [],
+    ticketIds: [],
   })
+
   return (
     <>
       <div className="flex justify-between">
@@ -140,6 +141,7 @@ const NewOrder = () => {
               </TabContent>
               <TabContent value="tab4">
                 <FinishTab
+                  ticketData={ticketData}
                   orderData={orderData}
                   setOrderData={setOrderData}
                   ticketId={ticketId}

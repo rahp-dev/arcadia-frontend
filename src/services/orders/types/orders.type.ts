@@ -7,7 +7,7 @@ export type Order = {
   numQuotes: number
   financed: boolean
   transactionDate: Date
-  ticketsIds: Array<number>
+  ticketIds: Array<number>
 }
 
 export type CreateOrderBody = {
@@ -18,7 +18,7 @@ export type CreateOrderBody = {
   numQuotes: number | null
   financed: boolean
   transactionDate: Date | null
-  ticketsIds: Array<number>
+  ticketIds: Array<number>
 }
 
 export type CreateOrderFormModel = {
@@ -29,5 +29,5 @@ export type CreateOrderFormModel = {
   numQuotes: number | null
   financed: boolean
   transactionDate: Date | null
-  ticketsIds: Array<number>
+  ticketIds: Array<number>
 }

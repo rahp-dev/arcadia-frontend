@@ -11,20 +11,26 @@ import {
   getPaginationRowModel,
   flexRender,
 } from '@tanstack/react-table'
-
 import type { ColumnFiltersState } from '@tanstack/react-table'
 import type { InputHTMLAttributes } from 'react'
-import { Button } from '@/components/ui'
-import { HiOutlinePlus } from 'react-icons/hi'
-import { useNavigate } from 'react-router-dom'
+import { Button, Pagination, Select } from '@/components/ui'
+import { Select as SelectType } from '@/@types/select'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import {
+  useGetAllAssingmentsQuery,
+  useGetAllClientsQuery,
+  useGetAllUsersQuery,
+} from '@/services/RtkQueryService'
+import { HiOutlineSearch } from 'react-icons/hi'
+import { TableRowSkeleton } from '@/components/shared'
 
 interface DebouncedInputProps
   extends Omit<
     InputHTMLAttributes<HTMLInputElement>,
     'onChange' | 'size' | 'prefix'
   > {
-  value: string | number
-  onChange: (value: string | number) => void
+  value: string
+  onChange: (value: string) => void
   debounce?: number
 }
 
@@ -37,7 +43,6 @@ function DebouncedInput({
   ...props
 }: DebouncedInputProps) {
   const [value, setValue] = useState(initialValue)
-  const navigate = useNavigate()
 
   useEffect(() => {
     setValue(initialValue)
@@ -51,61 +56,107 @@ function DebouncedInput({
     return () => clearTimeout(timeout)
   }, [value])
 
+  const navigate = useNavigate()
+
   return (
     <div className="flex justify-between">
       <div>
         <h3>Asignaciones</h3>
       </div>
 
-      <div className="flex flex-row gap-4">
-        <div className="flex items-center mb-4">
-          <Input
-            {...props}
-            size="sm"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
-        </div>
-        <div>
-          <Button
-            size="sm"
-            variant="solid"
-            icon={<HiOutlinePlus />}
-            onClick={() => {
-              navigate('crear')
-            }}
-          >
-            Crear asignación
-          </Button>
-        </div>
+      <div className="flex items-center gap-4 mb-4">
+        <Input
+          {...props}
+          prefix={<HiOutlineSearch className="text-lg" />}
+          size="sm"
+          value={value}
+          className="shadow-none"
+          onChange={(e) => setValue(e.target.value)}
+        />
+        <Button
+          size="sm"
+          variant="solid"
+          onClick={() => {
+            navigate('crear')
+          }}
+        >
+          Crear asignación
+        </Button>
       </div>
     </div>
   )
 }
 
-const Orders = () => {
+const pageSizeOption: SelectType[] = [
+  { value: 5, label: '5 por página' },
+  { value: 10, label: '10 por página' },
+  { value: 20, label: '20 por página' },
+  { value: 50, label: '50 por página' },
+]
+
+const Assingments = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
-  const [globalFilter, setGlobalFilter] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [search, setSearch] = useState(searchParams.get('search') || '')
+  const [currentPage, setCurrentPage] = useState(+searchParams.get('page') || 1)
+  const [pageSize, setPageSize] = useState(pageSizeOption[0].value)
+
+  const { data, isFetching } = useGetAllAssingmentsQuery(
+    {
+      page: currentPage || 1,
+      limit: pageSize,
+      ...(search && { search: search }),
+    },
+    { refetchOnMountOrArgChange: true },
+  )
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams({
+      limit: String(pageSize),
+      page: String(currentPage),
+      ...(search && { search: search }),
+    })
+
+    setSearchParams(queryParams)
+  }, [pageSize, currentPage, search])
 
   const columns = useMemo(
     () => [
       {
-        header: 'Asesor',
-        accessorKey: 'advisor',
+        header: 'Nombre del cliente',
+        accessorKey: 'client_name',
         cell: (cellProps: any) => (
-          <span className="font-bold">{cellProps.row.original.advisor}</span>
+          <span className="font-bold cursor-pointer">
+            #{cellProps.row.original.id} - {cellProps.row.original.client_name}
+          </span>
         ),
       },
-      { header: 'Fecha', accessorKey: 'date' },
-      { header: 'Nombre del Cliente', accessorKey: 'nameClient' },
-      { header: 'ID del Cliente', accessorKey: 'idClient' },
-      { header: 'Origen', accessorKey: 'origin' },
-      { header: 'Observaciones', accessorKey: 'observations' },
       {
-        header: 'Status',
+        header: 'Número del cliente',
+        accessorKey: 'client_number',
+      },
+      {
+        header: 'Fecha de registro',
+        accessorKey: 'date',
+      },
+      {
+        header: 'Origen del cliente',
+        accessorKey: 'origin',
+      },
+      {
+        header: 'Observaciones',
+        accessorKey: 'notes',
+      },
+      {
+        header: 'Estatus',
         accessorKey: 'status',
         cell: (cellProps: any) => (
-          <Button size="sm" variant="solid" block>
+          <Button
+            variant="solid"
+            color="green-600"
+            className="font-semibold"
+            size="sm"
+          >
             {cellProps.row.original.status}
           </Button>
         ),
@@ -114,20 +165,8 @@ const Orders = () => {
     [],
   )
 
-  const data = [
-    {
-      advisor: 'Yoander Robles',
-      date: new Date().toLocaleDateString(),
-      nameClient: 'Pepe Garcia',
-      idClient: '04124542216',
-      origin: 'WhatsApp',
-      status: 'En espera',
-      observations: 'lorem ipsum lorem ipsum lorem ipsum',
-    },
-  ]
-
   const table = useReactTable({
-    data,
+    data: data?.data,
     columns,
     state: {
       columnFilters,
@@ -145,13 +184,23 @@ const Orders = () => {
     debugTable: false,
   })
 
+  const onPaginationChange = (page: number) => {
+    table.setPageIndex(page - 1)
+    setCurrentPage(page)
+  }
+
+  const onPageSelect = ({ value }: SelectType) => {
+    setPageSize(value)
+    table.setPageSize(Number(value))
+  }
+
   return (
     <>
       <DebouncedInput
-        value={globalFilter ?? ''}
-        className="p-2 font-lg shadow-sm border border-block"
-        placeholder="Buscar..."
-        onChange={(value) => setGlobalFilter(String(value))}
+        value={search}
+        className="p-2 font-lg shadow-sm"
+        placeholder="Buscar cliente..."
+        onChange={setSearch}
       />
       <Table>
         <THead>
@@ -174,27 +223,49 @@ const Orders = () => {
             </Tr>
           ))}
         </THead>
-        <TBody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <Tr key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <Td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </Td>
-                  )
-                })}
-              </Tr>
-            )
-          })}
-        </TBody>
+        {isFetching ? (
+          <TableRowSkeleton columns={5} rows={pageSize} />
+        ) : (
+          <TBody>
+            {table.getRowModel().rows.map((row) => {
+              return (
+                <Tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <Td key={cell.id} className="w-1/5">
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
+                      </Td>
+                    )
+                  })}
+                </Tr>
+              )
+            })}
+          </TBody>
+        )}
       </Table>
+
+      <div className="flex items-center justify-between mt-5">
+        <Pagination
+          currentPage={+data?.meta?.page}
+          total={data?.meta.totalItems}
+          pageSize={pageSize}
+          onChange={onPaginationChange}
+        />
+        <div style={{ minWidth: 130 }}>
+          <Select
+            size="sm"
+            isSearchable={false}
+            defaultValue={pageSizeOption[0]}
+            options={pageSizeOption}
+            onChange={(selected) => onPageSelect(selected as SelectType)}
+          />
+        </div>
+      </div>
     </>
   )
 }
 
-export default Orders
+export default Assingments

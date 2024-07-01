@@ -2,7 +2,10 @@ import { Dispatch, SetStateAction, useEffect } from 'react'
 import { Field, FieldProps, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 
-import { CreateOrderFormModel } from '@/services/orders/types/orders.type'
+import {
+  CreateOrderBody,
+  CreateOrderFormModel,
+} from '@/services/orders/types/orders.type'
 import {
   Button,
   DatePicker,
@@ -11,6 +14,10 @@ import {
   Input,
   Select,
 } from '@/components/ui'
+import { CreateTicketFormModel } from '@/services/tickets/types/tickets.type'
+import { useCreateOrderMutation } from '@/services/RtkQueryService'
+import openNotification from '@/utils/useNotification'
+import { useNavigate } from 'react-router-dom'
 
 type FormModel = Pick<
   CreateOrderFormModel,
@@ -21,7 +28,7 @@ type FormModel = Pick<
   | 'numQuotes'
   | 'financed'
   | 'transactionDate'
-  | 'ticketsIds'
+  | 'ticketIds'
 >
 
 type Option = {
@@ -61,33 +68,87 @@ const validationSchema = Yup.object().shape({
 })
 
 function FinishTab({
+  ticketData,
   ticketId,
   orderData,
   setOrderData,
 }: {
+  ticketData: CreateTicketFormModel
   ticketId: number
   orderData: CreateOrderFormModel
   setOrderData: Dispatch<SetStateAction<CreateOrderFormModel>>
 }) {
+  const navigate = useNavigate()
+
+  const [createOrder, { data, isError, isSuccess, isUninitialized }] =
+    useCreateOrderMutation()
+
+  useEffect(() => {
+    if (
+      !ticketData.price &&
+      !ticketData.insurancePrice &&
+      !ticketData.lodgingPrice
+    ) {
+    }
+    const totalAmount =
+      ticketData.price + ticketData.insurancePrice + ticketData.lodgingPrice
+
+    console.log(totalAmount)
+
+    setOrderData((prevOrderData) => {
+      const updatedTicketsIds = prevOrderData.ticketIds.includes(ticketId)
+        ? prevOrderData.ticketIds
+        : [...prevOrderData.ticketIds, ticketId]
+      // console.log(updatedTicketsIds)
+      console.log(prevOrderData)
+
+      return {
+        ...prevOrderData,
+        ticketIds: updatedTicketsIds,
+        amount: totalAmount,
+      }
+    })
+  }, [ticketId, ticketData, setOrderData])
+
   const onSubmit = (values: FormModel) => {
-    console.log(values)
+    setOrderData({ ...orderData, ...values })
+
+    const { ticketIds, ...orderBody } = orderData
+
+    const body: CreateOrderBody = {
+      ...orderBody,
+      ticketIds: orderData.ticketIds,
+    }
+
+    createOrder(body)
   }
 
   useEffect(() => {
-    setOrderData((prevOrderData) => {
-      if (!prevOrderData.ticketsIds.includes(ticketId)) {
-        return {
-          ...prevOrderData,
-          ticketsIds: [...prevOrderData.ticketsIds, ticketId],
-        }
-      }
-      return prevOrderData
-    })
-  }, [ticketId, setOrderData])
+    if (isSuccess) {
+      openNotification(
+        'success',
+        'La orden ha sido completada exitosamente',
+        'La orden se ha creado sin problemas!',
+        5,
+      )
+
+      setTimeout(() => {
+        navigate('/pedidos')
+      }, 1 * 2000)
+    }
+
+    if (!isUninitialized && isError) {
+      openNotification(
+        'danger',
+        'Ha ocurrido un error al finalizar la orden :(',
+        'Verifique la información e intente nuevamente.',
+        5,
+      )
+    }
+  }, [isSuccess, isError])
 
   return (
     <Formik
-      enableReinitialize
       initialValues={orderData}
       validationSchema={validationSchema}
       onSubmit={onSubmit}
@@ -109,6 +170,7 @@ function FinishTab({
                     name="amount"
                     placeholder="Ingrese el precio total"
                     component={Input}
+                    disabled
                   />
                 </FormItem>
                 <FormItem
@@ -128,7 +190,7 @@ function FinishTab({
                           (option) => option.value === values.paymentMethod,
                         )}
                         onChange={(option) =>
-                          form.setFieldValue(field.name, option?.value)
+                          form.setFieldValue(field.name, option.value)
                         }
                       />
                     )}
@@ -141,7 +203,7 @@ function FinishTab({
                   invalid={errors.paymentReference && touched.paymentReference}
                 >
                   <Field
-                    type="number"
+                    type="text"
                     name="paymentReference"
                     placeholder="Ingrese el n° de referencia"
                     component={Input}
@@ -189,7 +251,7 @@ function FinishTab({
                           (option) => option.value === values.numQuotes,
                         )}
                         onChange={(option) =>
-                          form.setFieldValue(field.name, option?.value)
+                          form.setFieldValue(field.name, option.value)
                         }
                       />
                     )}
@@ -206,12 +268,13 @@ function FinishTab({
                     name="status"
                     placeholder="Ingrese el estatus del pedido"
                     component={Input}
+                    autoComplete="off"
                   />
                 </FormItem>
                 <FormItem label="Tickets" className="w-1/5">
                   <Field
                     type="text"
-                    name="ticketsIds"
+                    name="ticketIds"
                     component={Input}
                     disabled
                   />

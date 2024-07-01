@@ -27,11 +27,11 @@ function InsuranceTab({
   setCurrentTab?: Dispatch<SetStateAction<'tab1' | 'tab2' | 'tab3' | 'tab4'>>
 }) {
   const onSubmit = (values: FormModel) => {
-    console.log(values)
-    setTicketData({
-      ...ticketData,
+    setTicketData((prevData) => ({
+      ...prevData,
       ...values,
-    })
+    }))
+    console.log(values)
     setCurrentTab('tab3')
   }
 
