@@ -5,9 +5,9 @@ import { Dispatch, SetStateAction } from 'react'
 import * as Yup from 'yup'
 
 const validationSchema = Yup.object().shape({
-  insuranceName: Yup.string().required('Ingrese el nombre del seguro.'),
-  insuranceLocation: Yup.string().required('Ingrese la ubicacion del seguro.'),
-  insurancePrice: Yup.number().required('Precio requerido.'),
+  insuranceName: Yup.string(),
+  insuranceLocation: Yup.string(),
+  insurancePrice: Yup.number(),
 })
 
 type FormModel = Pick<
@@ -20,25 +20,31 @@ function InsuranceTab({
   submitButtonText,
   setTicketData,
   setCurrentTab,
+  flightIndex,
 }: {
-  ticketData: Partial<CreateTicketFormModel>
+  ticketData: Partial<CreateTicketFormModel>[]
   submitButtonText?: string
-  setTicketData: Dispatch<SetStateAction<Partial<CreateTicketFormModel>>>
+  setTicketData: Dispatch<SetStateAction<Partial<CreateTicketFormModel>[]>>
   setCurrentTab?: Dispatch<SetStateAction<'tab1' | 'tab2' | 'tab3' | 'tab4'>>
+  flightIndex: number
 }) {
   const onSubmit = (values: FormModel) => {
-    setTicketData((prevData) => ({
-      ...prevData,
-      ...values,
-    }))
+    setTicketData((prevData) => {
+      const updatedData = [...prevData]
+      updatedData[flightIndex] = {
+        ...updatedData[flightIndex],
+        ...values,
+      }
+      return updatedData
+    })
     console.log(values)
-    setCurrentTab('tab3')
+    setCurrentTab && setCurrentTab('tab3')
   }
 
   return (
     <Formik
       validationSchema={validationSchema}
-      initialValues={ticketData}
+      initialValues={ticketData[flightIndex] || {}}
       onSubmit={onSubmit}
     >
       {({ touched, errors }) => {
@@ -46,13 +52,7 @@ function InsuranceTab({
           <Form>
             <FormContainer>
               <div className="flex items-center gap-4">
-                <FormItem
-                  asterisk
-                  label="Nombre del Seguro"
-                  className="w-1/5"
-                  invalid={errors.insuranceName && touched.insuranceName}
-                  errorMessage={errors.insuranceName}
-                >
+                <FormItem label="Nombre del Seguro" className="w-1/5">
                   <Field
                     type="text"
                     name="insuranceName"
@@ -61,15 +61,7 @@ function InsuranceTab({
                     autoComplete="off"
                   />
                 </FormItem>
-                <FormItem
-                  asterisk
-                  label="Localizador del Seguro"
-                  className="w-1/5"
-                  invalid={
-                    errors.insuranceLocation && touched.insuranceLocation
-                  }
-                  errorMessage={errors.insuranceLocation}
-                >
+                <FormItem label="Localizador del Seguro" className="w-1/5">
                   <Field
                     type="text"
                     name="insuranceLocation"
@@ -78,13 +70,7 @@ function InsuranceTab({
                     autoComplete="off"
                   />
                 </FormItem>
-                <FormItem
-                  asterisk
-                  label="Precio del Seguro"
-                  className="w-1/5"
-                  errorMessage={errors.insurancePrice}
-                  invalid={errors.insurancePrice && touched.insurancePrice}
-                >
+                <FormItem label="Precio del Seguro" className="w-1/5">
                   <Field
                     type="number"
                     name="insurancePrice"

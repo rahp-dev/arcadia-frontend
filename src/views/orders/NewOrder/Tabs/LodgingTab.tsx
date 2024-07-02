@@ -6,14 +6,14 @@ import {
 } from '@/services/tickets/types/tickets.type'
 import openNotification from '@/utils/useNotification'
 import { Form, Field, Formik } from 'formik'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 
 const validationSchema = Yup.object().shape({
-  lodgingName: Yup.string().required('Ingrese el nombre del hospedaje.'),
-  lodgingPlace: Yup.string().required('Ingrese la ubicacion del hospedaje.'),
-  lodgingPrice: Yup.number().required('Precio requerido.'),
+  lodgingName: Yup.string(),
+  lodgingPlace: Yup.string(),
+  lodgingPrice: Yup.number(),
 })
 
 type FormModel = Pick<
@@ -25,53 +25,69 @@ function LodgingTab({
   ticketData,
   submitButtonText,
   setTicketData,
-  setCurrentTab,
 }: {
-  ticketData: CreateTicketFormModel
+  ticketData: CreateTicketFormModel[]
   submitButtonText?: string
-  setTicketData: Dispatch<SetStateAction<Partial<CreateTicketFormModel>>>
-  setCurrentTab?: Dispatch<SetStateAction<'tab1' | 'tab2' | 'tab3'>>
+  setTicketData: Dispatch<SetStateAction<CreateTicketFormModel[]>>
 }) {
   const navigate = useNavigate()
   const [createTicket, { data, isError, isSuccess, isUninitialized }] =
     useCreateTicketMutation()
 
   const onSubmit = (values: FormModel) => {
-    setTicketData({ ...ticketData, ...values })
+    setTicketData((prevData) => {
+      const updatedData = [...prevData]
+      updatedData[updatedData.length - 1] = {
+        ...updatedData[updatedData.length - 1],
+        ...values,
+      }
+      return updatedData
+    })
 
-    const {
-      flightClass,
-      handBaggage,
-      baggage,
-      insuranceName,
-      insuranceLocation,
-      insurancePrice,
-      lodgingName: stateLodgingName,
-      lodgingPlace: stateLodgingPlace,
-      lodgingPrice: stateLodgingPrice,
-      ...ticketBody
-    } = ticketData
+    const formattedTicketData = ticketData.map((ticket) => {
+      const {
+        flightClass,
+        handBaggage,
+        baggage,
+        insuranceName,
+        insuranceLocation,
+        insurancePrice,
+        lodgingName,
+        lodgingPlace,
+        lodgingPrice,
+        ...ticketBody
+      } = ticket
 
-    const body: CreateTicketBody = {
-      ...ticketBody,
-      details_ticket: {
+      const details_ticket = {
         type_flight_class: flightClass,
         hand_baggage: handBaggage,
         baggage,
-      },
-      accommodation: {
-        name: values.lodgingName,
-        location: values.lodgingPlace,
-        price: values.lodgingPrice,
-      },
-      insurance: {
-        name: insuranceName,
-        location: insuranceLocation,
-        price: insurancePrice,
-      },
-    }
-    console.log(body)
-    createTicket(body)
+      }
+
+      const accommodation: any = {}
+      if (lodgingName) accommodation.name = lodgingName
+      if (lodgingPlace) accommodation.location = lodgingPlace
+      if (lodgingPrice) accommodation.price = lodgingPrice
+
+      const insurance: any = {}
+      if (insuranceName) insurance.name = insuranceName
+      if (insuranceLocation) insurance.location = insuranceLocation
+      if (insurancePrice) insurance.price = insurancePrice
+
+      const formattedTicket = {
+        ...ticketBody,
+        details_ticket,
+        ...(Object.keys(accommodation).length > 0 && { accommodation }),
+        ...(Object.keys(insurance).length > 0 && { insurance }),
+      }
+
+      return formattedTicket
+    })
+
+    formattedTicketData.map((formattedTicket) => {
+      console.log(formattedTicket)
+      createTicket(formattedTicket)
+    })
   }
 
   useEffect(() => {
@@ -79,12 +95,12 @@ function LodgingTab({
       openNotification(
         'success',
         'El ticket de vuelo ha sido creado exitosamente!',
-        'Ha creado el ticket con exito.',
+        'Ha creado el ticket con éxito.',
         8,
       )
 
       setTimeout(() => {
-        navigate('/pedidos')
+        navigate('/tickets')
       }, 1 * 2000)
     }
 
@@ -92,7 +108,7 @@ function LodgingTab({
       openNotification(
         'warning',
         'Ha ocurrido un error al crear el ticket :(',
-        'Verifique la información e intentelo nuevamente.',
+        'Verifique la información e inténtelo nuevamente.',
         8,
       )
     }
@@ -101,7 +117,7 @@ function LodgingTab({
   return (
     <Formik
       validationSchema={validationSchema}
-      initialValues={ticketData}
+      initialValues={ticketData[ticketData.length - 1] || {}}
       onSubmit={onSubmit}
     >
       {({ touched, errors }) => {
@@ -109,13 +125,7 @@ function LodgingTab({
           <Form>
             <FormContainer>
               <div className="flex items-center gap-4">
-                <FormItem
-                  asterisk
-                  label="Nombre del hospedaje"
-                  className="w-1/5"
-                  invalid={errors.lodgingName && touched.lodgingName}
-                  errorMessage={errors.lodgingName}
-                >
+                <FormItem label="Nombre del hospedaje" className="w-1/5">
                   <Field
                     type="text"
                     name="lodgingName"
@@ -124,13 +134,7 @@ function LodgingTab({
                     autoComplete="off"
                   />
                 </FormItem>
-                <FormItem
-                  asterisk
-                  label="Localizador del hospedaje"
-                  className="w-1/5"
-                  invalid={errors.lodgingPlace && touched.lodgingPlace}
-                  errorMessage={errors.lodgingPlace}
-                >
+                <FormItem label="Localizador del hospedaje" className="w-1/5">
                   <Field
                     type="text"
                     name="lodgingPlace"
@@ -139,13 +143,7 @@ function LodgingTab({
                     autoComplete="off"
                   />
                 </FormItem>
-                <FormItem
-                  asterisk
-                  label="Precio del hospedaje"
-                  className="w-1/5"
-                  errorMessage={errors.lodgingPrice}
-                  invalid={errors.lodgingPrice && touched.lodgingPrice}
-                >
+                <FormItem label="Precio del hospedaje" className="w-1/5">
                   <Field
                     type="number"
                     name="lodgingPrice"
@@ -157,7 +155,7 @@ function LodgingTab({
               <FormItem>
                 <div className="flex">
                   <Button variant="solid" type="submit">
-                    {submitButtonText ? submitButtonText : 'Siguiente'}
+                    {submitButtonText ? submitButtonText : 'Enviar'}
                   </Button>
                 </div>
               </FormItem>

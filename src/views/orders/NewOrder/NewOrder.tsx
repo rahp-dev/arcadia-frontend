@@ -24,23 +24,25 @@ const NewOrder = () => {
   const [currentTab, setCurrentTab] = useState<
     'tab1' | 'tab2' | 'tab3' | 'tab4'
   >('tab1')
-  const [ticketData, setTicketData] = useState<CreateTicketFormModel>({
-    customerId: 0,
-    origin: '',
-    destination: '',
-    flightDate: null,
-    price: 0,
-    child: false,
-    flightClass: '',
-    handBaggage: 0,
-    baggage: 0,
-    lodgingName: '',
-    lodgingPlace: '',
-    lodgingPrice: 0,
-    insuranceName: '',
-    insuranceLocation: '',
-    insurancePrice: 0,
-  })
+  const [ticketData, setTicketData] = useState<CreateTicketFormModel[]>([
+    {
+      customerId: 0,
+      origin: '',
+      destination: '',
+      flightDate: null,
+      price: 0,
+      child: false,
+      flightClass: '',
+      handBaggage: 0,
+      baggage: 0,
+      lodgingName: undefined,
+      lodgingPlace: undefined,
+      lodgingPrice: undefined,
+      insuranceName: undefined,
+      insuranceLocation: undefined,
+      insurancePrice: undefined,
+    },
+  ])
 
   return (
     <>
@@ -97,9 +99,9 @@ const NewOrder = () => {
             <div className="py-4">
               <TabContent value="tab1">
                 <FlightTab
-                  ticketData={ticketData}
                   setTicketData={setTicketData}
                   setCurrentTab={setCurrentTab}
+                  submitButtonText="Siguiente"
                 />
               </TabContent>
               <TabContent value="tab2">
@@ -107,13 +109,13 @@ const NewOrder = () => {
                   ticketData={ticketData}
                   setTicketData={setTicketData}
                   setCurrentTab={setCurrentTab}
+                  flightIndex={0}
                 />
               </TabContent>
               <TabContent value="tab3">
                 <LodgingTab
                   ticketData={ticketData}
                   setTicketData={setTicketData}
-                  setCurrentTab={setCurrentTab}
                 />
               </TabContent>
             </div>
