@@ -1,9 +1,6 @@
 import { Button, FormContainer, FormItem, Input } from '@/components/ui'
 import { useCreateTicketMutation } from '@/services/RtkQueryService'
-import {
-  CreateTicketBody,
-  CreateTicketFormModel,
-} from '@/services/tickets/types/tickets.type'
+import { CreateTicketFormModel } from '@/services/tickets/types/tickets.type'
 import openNotification from '@/utils/useNotification'
 import { Form, Field, Formik } from 'formik'
 import { Dispatch, SetStateAction, useEffect } from 'react'
@@ -49,6 +46,7 @@ function LodgingTab({
         flightClass,
         handBaggage,
         baggage,
+        location,
         insuranceName,
         insuranceLocation,
         insurancePrice,
@@ -62,6 +60,7 @@ function LodgingTab({
         type_flight_class: flightClass,
         hand_baggage: handBaggage,
         baggage,
+        location,
       }
 
       const accommodation: any = {}

@@ -340,12 +340,13 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                   <Field name="frequentTraveler">
                     {({ form, field }: FieldProps<FormModel>) => (
                       <div className="flex items-center justify-center gap-4">
+                        <label className="text-base font-semibold">No</label>
                         <Switcher
                           onChange={(checked) => {
                             form.setFieldValue(field.name, checked)
                           }}
                         />
-                        <label className="text-base font-semibold">Sí/No</label>
+                        <label className="text-base font-semibold">Sí</label>
                       </div>
                     )}
                   </Field>

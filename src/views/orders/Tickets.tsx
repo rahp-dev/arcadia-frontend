@@ -16,10 +16,7 @@ import type { InputHTMLAttributes } from 'react'
 import { Button, Pagination, Select } from '@/components/ui'
 import { Select as SelectType } from '@/@types/select'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import {
-  useGetAllClientsQuery,
-  useGetAllTicketsQuery,
-} from '@/services/RtkQueryService'
+import { useGetAllTicketsQuery } from '@/services/RtkQueryService'
 import { HiOutlineSearch } from 'react-icons/hi'
 import { TableRowSkeleton } from '@/components/shared'
 
@@ -122,7 +119,7 @@ const Tickets = () => {
   const columns = useMemo(
     () => [
       {
-        header: 'Nombre del cliente',
+        header: 'Cliente',
         cell: (cellProps: any) => (
           <span className="font-bold cursor-pointer">
             {cellProps.row.original.customer.name}{' '}
@@ -139,11 +136,27 @@ const Tickets = () => {
         accessorKey: 'destination',
       },
       {
-        header: 'Fecha del vuelo',
+        header: 'Fecha de salida',
         accessorKey: 'flightDate',
       },
       {
-        header: 'Precio del vuelo',
+        header: 'Fecha de retorno',
+        accessorKey: 'flightDateReturn',
+        cell: (cellProps: any) => (
+          <>{cellProps.row.original.flightDateReturn || 'Sin retorno'}</>
+        ),
+      },
+      {
+        header: 'Rastreador',
+        cell: (cellProps: any) => {
+          const details_ticket = cellProps.row.original.details_ticket
+          const trackerTicket = details_ticket.location
+
+          return <span className="font-semibold">{trackerTicket}</span>
+        },
+      },
+      {
+        header: 'Precio',
         accessorKey: 'price',
         cell: (cellProps: any) => <span>{cellProps.row.original.price}$</span>,
       },
@@ -218,7 +231,7 @@ const Tickets = () => {
                 <Tr key={row.id}>
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <Td key={cell.id} className="w-1/5">
+                      <Td key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),
