@@ -24,6 +24,7 @@ const NewOrder = () => {
   const [currentTab, setCurrentTab] = useState<
     'tab1' | 'tab2' | 'tab3' | 'tab4'
   >('tab1')
+  const [flightIndex, setFlightIndex] = useState(0)
   const [ticketData, setTicketData] = useState<CreateTicketFormModel[]>([
     {
       customerId: 0,
@@ -46,6 +47,13 @@ const NewOrder = () => {
       insurancePrice: undefined,
     },
   ])
+
+  const handleNextTab = (nextTab: 'tab2' | 'tab3') => {
+    setCurrentTab(nextTab)
+    if (nextTab === 'tab2') {
+      setFlightIndex(ticketData.length - 1)
+    }
+  }
 
   return (
     <>
@@ -103,7 +111,7 @@ const NewOrder = () => {
               <TabContent value="tab1">
                 <FlightTab
                   setTicketData={setTicketData}
-                  setCurrentTab={setCurrentTab}
+                  setCurrentTab={handleNextTab}
                   submitButtonText="Siguiente"
                 />
               </TabContent>
@@ -112,13 +120,15 @@ const NewOrder = () => {
                   ticketData={ticketData}
                   setTicketData={setTicketData}
                   setCurrentTab={setCurrentTab}
-                  flightIndex={0}
+                  flightIndex={flightIndex}
+                  submitButtonText="Siguiente"
                 />
               </TabContent>
               <TabContent value="tab3">
                 <LodgingTab
                   ticketData={ticketData}
                   setTicketData={setTicketData}
+                  submitButtonText="Enviar"
                 />
               </TabContent>
             </div>

@@ -1,7 +1,12 @@
 import { Button, FormContainer, FormItem, Input } from '@/components/ui'
 import { CreateTicketFormModel } from '@/services/tickets/types/tickets.type'
 import { Form, Field, Formik } from 'formik'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
+import {
+  HiOutlineArrowCircleRight,
+  HiOutlinePlus,
+  HiOutlineTrash,
+} from 'react-icons/hi'
 import * as Yup from 'yup'
 
 const validationSchema = Yup.object().shape({
@@ -17,79 +22,169 @@ type FormModel = Pick<
 
 function InsuranceTab({
   ticketData,
-  submitButtonText,
   setTicketData,
   setCurrentTab,
+  submitButtonText,
   flightIndex,
 }: {
-  ticketData: Partial<CreateTicketFormModel>[]
-  submitButtonText?: string
-  setTicketData: Dispatch<SetStateAction<Partial<CreateTicketFormModel>[]>>
+  ticketData: CreateTicketFormModel[]
+  setTicketData: Dispatch<SetStateAction<CreateTicketFormModel[]>>
   setCurrentTab?: Dispatch<SetStateAction<'tab1' | 'tab2' | 'tab3' | 'tab4'>>
+  submitButtonText?: string
   flightIndex: number
 }) {
-  const onSubmit = (values: FormModel) => {
+  const [insuranceForms, setInsuranceForms] = useState<FormModel[]>(
+    ticketData[flightIndex]?.insuranceName
+      ? [ticketData[flightIndex]]
+      : [
+          {
+            insuranceName: '',
+            insuranceLocation: '',
+            insurancePrice: 0,
+          },
+        ],
+  )
+
+  const addInsuranceForm = () => {
+    setInsuranceForms([
+      ...insuranceForms,
+      {
+        insuranceName: '',
+        insuranceLocation: '',
+        insurancePrice: 0,
+      },
+    ])
+  }
+
+  const handleDeleteInsurance = (index: number) => {
+    if (index > 0) {
+      const updatedInsurances = [...insuranceForms]
+      updatedInsurances.splice(index, 1)
+      setInsuranceForms(updatedInsurances)
+    }
+  }
+
+  const handleSubmit = (values: FormModel[]) => {
     setTicketData((prevData) => {
       const updatedData = [...prevData]
       updatedData[flightIndex] = {
         ...updatedData[flightIndex],
-        ...values,
+        ...values[0],
       }
       return updatedData
     })
-    console.log(values)
+    console.log('Seguros: ', values)
     setCurrentTab && setCurrentTab('tab3')
   }
 
   return (
     <Formik
-      validationSchema={validationSchema}
-      initialValues={ticketData[flightIndex] || {}}
-      onSubmit={onSubmit}
+      initialValues={{ insurances: insuranceForms }}
+      validationSchema={Yup.object().shape({
+        insurances: Yup.array().of(validationSchema),
+      })}
+      onSubmit={(values) => handleSubmit(values.insurances)}
     >
-      {({ touched, errors }) => {
-        return (
-          <Form>
-            <FormContainer>
-              <div className="flex items-center gap-4">
-                <FormItem label="Nombre del Seguro" className="w-1/5">
-                  <Field
-                    type="text"
-                    name="insuranceName"
-                    placeholder="Ingrese el nombre del seguro"
-                    component={Input}
-                    autoComplete="off"
-                  />
-                </FormItem>
-                <FormItem label="Localizador del Seguro" className="w-1/5">
-                  <Field
-                    type="text"
-                    name="insuranceLocation"
-                    placeholder="Ingrese el localizador del seguro"
-                    component={Input}
-                    autoComplete="off"
-                  />
-                </FormItem>
-                <FormItem label="Precio del Seguro" className="w-1/5">
-                  <Field
-                    type="number"
-                    name="insurancePrice"
-                    placeholder="Ingrese el precio del seguro"
-                    component={Input}
-                  />
-                </FormItem>
-              </div>
-              <FormItem>
-                <div className="flex">
-                  <Button variant="solid" type="submit">
-                    {submitButtonText ? submitButtonText : 'Siguiente'}
-                  </Button>
+      {({ values, setFieldValue }) => (
+        <Form>
+          <FormContainer>
+            {values.insurances.map((insurance, index) => (
+              <div
+                key={index}
+                className={`${
+                  index < values.insurances.length - 1
+                    ? 'border-b border-slate-300'
+                    : ''
+                } mb-4`}
+              >
+                <h4 className="mb-4">Seguro {index + 1}</h4>
+                <div className="flex items-center gap-4">
+                  <FormItem label="Nombre del Seguro" className="w-1/4">
+                    <Field
+                      type="text"
+                      name={`insurances[${index}].insuranceName`}
+                      placeholder="Ingrese el nombre del seguro"
+                      component={Input}
+                      autoComplete="off"
+                    />
+                  </FormItem>
+                  <FormItem label="Localizador del Seguro" className="w-1/4">
+                    <Field
+                      type="text"
+                      name={`insurances[${index}].insuranceLocation`}
+                      placeholder="Ingrese el localizador del seguro"
+                      component={Input}
+                      autoComplete="off"
+                    />
+                  </FormItem>
+                  <FormItem label="Precio del Seguro" className="w-1/6">
+                    <Field
+                      type="number"
+                      name={`insurances[${index}].insurancePrice`}
+                      placeholder="Ingrese el precio del seguro"
+                      component={Input}
+                    />
+                  </FormItem>
+                  <div className="flex items-center gap-2">
+                    {index > 0 && (
+                      <>
+                        <Button
+                          variant="solid"
+                          size="sm"
+                          color="red-700"
+                          type="button"
+                          onClick={() => {
+                            handleDeleteInsurance(index)
+                            setFieldValue(
+                              'insurances',
+                              values.insurances.filter((_, i) => i !== index),
+                            )
+                          }}
+                          icon={<HiOutlineTrash />}
+                        />
+                        <span className="font-semibold">Eliminar seguro</span>
+                      </>
+                    )}
+                  </div>
                 </div>
+              </div>
+            ))}
+            <div className="flex justify-between items-center">
+              <FormItem>
+                <Button
+                  variant="solid"
+                  size="sm"
+                  type="button"
+                  onClick={() => {
+                    addInsuranceForm()
+                    setFieldValue('insurances', [
+                      ...values.insurances,
+                      {
+                        insuranceName: '',
+                        insuranceLocation: '',
+                        insurancePrice: 0,
+                      },
+                    ])
+                  }}
+                  icon={<HiOutlinePlus />}
+                >
+                  Añadir otro seguro
+                </Button>
               </FormItem>
-            </FormContainer>
-          </Form>
-        )
-      }}
+              <FormItem>
+                <Button
+                  variant="solid"
+                  size="sm"
+                  type="submit"
+                  icon={<HiOutlineArrowCircleRight />}
+                >
+                  {submitButtonText ? submitButtonText : 'Siguiente'}
+                </Button>
+              </FormItem>
+            </div>
+          </FormContainer>
+        </Form>
+      )}
     </Formik>
   )
 }

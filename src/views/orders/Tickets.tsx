@@ -147,7 +147,7 @@ const Tickets = () => {
         ),
       },
       {
-        header: 'Rastreador',
+        header: 'Localizador',
         cell: (cellProps: any) => {
           const details_ticket = cellProps.row.original.details_ticket
           const trackerTicket = details_ticket.location

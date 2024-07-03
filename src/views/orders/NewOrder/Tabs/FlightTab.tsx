@@ -133,7 +133,7 @@ function FlightTab({
 
   const handleSubmit = (values: FormModel[]) => {
     setTicketData(values)
-    console.log(values)
+    console.log('Tickets: ', values)
     setCurrentTab('tab2')
   }
 

@@ -3,7 +3,8 @@ import { useCreateTicketMutation } from '@/services/RtkQueryService'
 import { CreateTicketFormModel } from '@/services/tickets/types/tickets.type'
 import openNotification from '@/utils/useNotification'
 import { Form, Field, Formik } from 'formik'
-import { Dispatch, SetStateAction, useEffect } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { HiOutlinePlus, HiOutlineSave } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 
@@ -31,13 +32,27 @@ function LodgingTab({
   const [createTicket, { data, isError, isSuccess, isUninitialized }] =
     useCreateTicketMutation()
 
-  const onSubmit = (values: FormModel) => {
+  const [lodgingForms, setLodgingForms] = useState<FormModel[]>([
+    {} as FormModel,
+  ])
+
+  const addLodging = () => {
+    setLodgingForms([...lodgingForms, {} as FormModel])
+  }
+
+  const removeLodging = (index: number) => {
+    setLodgingForms(lodgingForms.filter((_, i) => i !== index))
+  }
+
+  const onSubmit = (values: FormModel[]) => {
     setTicketData((prevData) => {
       const updatedData = [...prevData]
-      updatedData[updatedData.length - 1] = {
-        ...updatedData[updatedData.length - 1],
-        ...values,
-      }
+      values.forEach((value, index) => {
+        updatedData[index] = {
+          ...updatedData[index],
+          ...value,
+        }
+      })
       return updatedData
     })
 
@@ -84,7 +99,7 @@ function LodgingTab({
     })
 
     formattedTicketData.map((formattedTicket) => {
-      console.log(formattedTicket)
+      console.log('Respuesta final: ', formattedTicket)
       createTicket(formattedTicket)
     })
   }
@@ -116,44 +131,85 @@ function LodgingTab({
   return (
     <Formik
       validationSchema={validationSchema}
-      initialValues={ticketData[ticketData.length - 1] || {}}
-      onSubmit={onSubmit}
+      initialValues={{ lodgings: lodgingForms }}
+      onSubmit={(values) => onSubmit(values.lodgings)}
     >
-      {({ touched, errors }) => {
+      {({ values, touched, errors }) => {
         return (
           <Form>
             <FormContainer>
-              <div className="flex items-center gap-4">
-                <FormItem label="Nombre del hospedaje" className="w-1/5">
-                  <Field
-                    type="text"
-                    name="lodgingName"
-                    placeholder="Ingrese el nombre del hospedaje"
-                    component={Input}
-                    autoComplete="off"
-                  />
-                </FormItem>
-                <FormItem label="Localizador del hospedaje" className="w-1/5">
-                  <Field
-                    type="text"
-                    name="lodgingPlace"
-                    placeholder="Ingrese la ubicación del hospedaje"
-                    component={Input}
-                    autoComplete="off"
-                  />
-                </FormItem>
-                <FormItem label="Precio del hospedaje" className="w-1/5">
-                  <Field
-                    type="number"
-                    name="lodgingPrice"
-                    placeholder="Ingrese el precio del hospedaje"
-                    component={Input}
-                  />
-                </FormItem>
-              </div>
+              {values.lodgings.map((lodging, index) => (
+                <div
+                  key={index}
+                  className={`flex items-center gap-4 ${
+                    index !== values.lodgings.length - 1 &&
+                    'border-b border-slate-500 pb-4'
+                  }`}
+                >
+                  <FormItem
+                    label={`Nombre del hospedaje ${index + 1}`}
+                    className="w-1/5"
+                  >
+                    <Field
+                      type="text"
+                      name={`lodgings[${index}].lodgingName`}
+                      placeholder="Ingrese el nombre del hospedaje"
+                      component={Input}
+                      autoComplete="off"
+                    />
+                  </FormItem>
+                  <FormItem
+                    label={`Localizador del hospedaje ${index + 1}`}
+                    className="w-1/5"
+                  >
+                    <Field
+                      type="text"
+                      name={`lodgings[${index}].lodgingPlace`}
+                      placeholder="Ingrese la ubicación del hospedaje"
+                      component={Input}
+                      autoComplete="off"
+                    />
+                  </FormItem>
+                  <FormItem
+                    label={`Precio del hospedaje ${index + 1}`}
+                    className="w-1/5"
+                  >
+                    <Field
+                      type="number"
+                      name={`lodgings[${index}].lodgingPrice`}
+                      placeholder="Ingrese el precio del hospedaje"
+                      component={Input}
+                    />
+                  </FormItem>
+                  {index > 0 && (
+                    <Button
+                      type="button"
+                      variant="solid"
+                      onClick={() => removeLodging(index)}
+                    >
+                      Eliminar
+                    </Button>
+                  )}
+                </div>
+              ))}
+
               <FormItem>
-                <div className="flex">
-                  <Button variant="solid" type="submit">
+                <div className="flex justify-between items-center">
+                  <Button
+                    type="button"
+                    variant="solid"
+                    size="sm"
+                    onClick={addLodging}
+                    icon={<HiOutlinePlus />}
+                  >
+                    Agregar otro hospedaje
+                  </Button>
+                  <Button
+                    variant="solid"
+                    type="submit"
+                    size="sm"
+                    icon={<HiOutlineSave />}
+                  >
                     {submitButtonText ? submitButtonText : 'Enviar'}
                   </Button>
                 </div>
