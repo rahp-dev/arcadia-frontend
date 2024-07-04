@@ -2,12 +2,11 @@ import { Button, FormContainer, FormItem, Input } from '@/components/ui'
 import { useCreateTicketMutation } from '@/services/RtkQueryService'
 import { CreateTicketFormModel } from '@/services/tickets/types/tickets.type'
 import openNotification from '@/utils/useNotification'
-import { Form, Field, Formik, FieldArray } from 'formik'
+import { Form, Field, Formik } from 'formik'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import {
-  HiOutlineArrowCircleRight,
+  HiOutlineEyeOff,
   HiOutlinePlus,
-  HiOutlineSave,
   HiOutlineTrash,
   HiOutlineUpload,
 } from 'react-icons/hi'
@@ -15,9 +14,9 @@ import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 
 const validationSchema = Yup.object().shape({
-  lodgingName: Yup.string(),
-  lodgingPlace: Yup.string(),
-  lodgingPrice: Yup.number(),
+  lodgingName: Yup.string().optional(),
+  lodgingPlace: Yup.string().optional(),
+  lodgingPrice: Yup.number().optional(),
 })
 
 type FormModel = Pick<
@@ -37,6 +36,10 @@ function LodgingTab({
   const navigate = useNavigate()
   const [createTicket, { data, isError, isSuccess, isUninitialized }] =
     useCreateTicketMutation()
+
+  const [isDisabled, setIsDisabled] = useState<boolean[]>(
+    Array(ticketData.length).fill(false),
+  )
 
   const handleSubmit = (values: FormModel[]) => {
     setTicketData((prevData) => {
@@ -164,6 +167,7 @@ function LodgingTab({
                       placeholder="Ingrese el nombre del hospedaje"
                       component={Input}
                       autoComplete="off"
+                      disabled={isDisabled[index]}
                     />
                   </FormItem>
                   <FormItem label="Localizador del hospedaje" className="w-1/4">
@@ -173,6 +177,7 @@ function LodgingTab({
                       placeholder="Ingrese la ubicación del hospedaje"
                       component={Input}
                       autoComplete="off"
+                      disabled={isDisabled[index]}
                     />
                   </FormItem>
                   <FormItem label="Precio del hospedaje" className="w-1/5">
@@ -181,9 +186,23 @@ function LodgingTab({
                       name={`lodgings[${index}].lodgingPrice`}
                       placeholder="Ingrese el precio"
                       component={Input}
+                      disabled={isDisabled[index]}
                     />
                   </FormItem>
-                  <div className="flex items-center gap-2">
+                  <div className="flex justify-between items-center w-1/3">
+                    <Button
+                      variant="solid"
+                      size="sm"
+                      type="button"
+                      onClick={() => {
+                        const newIsDisabled = [...isDisabled]
+                        newIsDisabled[index] = !newIsDisabled[index]
+                        setIsDisabled(newIsDisabled)
+                      }}
+                      icon={<HiOutlineEyeOff />}
+                    >
+                      {isDisabled[index] ? 'Habilitar' : 'Deshabilitar'}
+                    </Button>
                     {index > 0 && (
                       <>
                         <Button
@@ -196,12 +215,14 @@ function LodgingTab({
                               'lodgings',
                               values.lodgings.filter((_, i) => i !== index),
                             )
+                            setIsDisabled(
+                              isDisabled.filter((_, i) => i !== index),
+                            )
                           }}
                           icon={<HiOutlineTrash />}
-                        />
-                        <span className="font-semibold">
+                        >
                           Eliminar hospedaje
-                        </span>
+                        </Button>
                       </>
                     )}
                   </div>

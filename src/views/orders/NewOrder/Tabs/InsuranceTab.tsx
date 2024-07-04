@@ -4,6 +4,7 @@ import { Form, Field, Formik } from 'formik'
 import { Dispatch, SetStateAction, useState } from 'react'
 import {
   HiOutlineArrowCircleRight,
+  HiOutlineEyeOff,
   HiOutlinePlus,
   HiOutlineTrash,
 } from 'react-icons/hi'
@@ -33,6 +34,10 @@ function InsuranceTab({
   submitButtonText?: string
   flightIndex: number
 }) {
+  const [isDisabled, setIsDisabled] = useState<boolean[]>(
+    Array(ticketData.length).fill(false),
+  )
+
   const handleSubmit = (values: FormModel[]) => {
     setTicketData((prevData) => {
       const updatedData = [...prevData]
@@ -84,6 +89,7 @@ function InsuranceTab({
                       placeholder="Ingrese el nombre del seguro"
                       component={Input}
                       autoComplete="off"
+                      disabled={isDisabled[index]}
                     />
                   </FormItem>
                   <FormItem label="Localizador del Seguro" className="w-1/4">
@@ -93,6 +99,7 @@ function InsuranceTab({
                       placeholder="Ingrese el localizador del seguro"
                       component={Input}
                       autoComplete="off"
+                      disabled={isDisabled[index]}
                     />
                   </FormItem>
                   <FormItem label="Precio del Seguro" className="w-1/5">
@@ -101,9 +108,23 @@ function InsuranceTab({
                       name={`insurances[${index}].insurancePrice`}
                       placeholder="Ingrese el precio del seguro"
                       component={Input}
+                      disabled={isDisabled[index]}
                     />
                   </FormItem>
-                  <div className="flex items-center gap-2">
+                  <div className="flex justify-between items-center w-1/3">
+                    <Button
+                      variant="solid"
+                      size="sm"
+                      type="button"
+                      onClick={() => {
+                        const newIsDisabled = [...isDisabled]
+                        newIsDisabled[index] = !newIsDisabled[index]
+                        setIsDisabled(newIsDisabled)
+                      }}
+                      icon={<HiOutlineEyeOff />}
+                    >
+                      {isDisabled[index] ? 'Habilitar' : 'Deshabilitar'}
+                    </Button>
                     {index > 0 && (
                       <>
                         <Button
@@ -118,8 +139,9 @@ function InsuranceTab({
                             )
                           }}
                           icon={<HiOutlineTrash />}
-                        />
-                        <span className="font-semibold">Eliminar seguro</span>
+                        >
+                          Eliminar seguro
+                        </Button>
                       </>
                     )}
                   </div>
