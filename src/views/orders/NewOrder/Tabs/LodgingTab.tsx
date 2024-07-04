@@ -2,9 +2,15 @@ import { Button, FormContainer, FormItem, Input } from '@/components/ui'
 import { useCreateTicketMutation } from '@/services/RtkQueryService'
 import { CreateTicketFormModel } from '@/services/tickets/types/tickets.type'
 import openNotification from '@/utils/useNotification'
-import { Form, Field, Formik } from 'formik'
+import { Form, Field, Formik, FieldArray } from 'formik'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { HiOutlinePlus, HiOutlineSave } from 'react-icons/hi'
+import {
+  HiOutlineArrowCircleRight,
+  HiOutlinePlus,
+  HiOutlineSave,
+  HiOutlineTrash,
+  HiOutlineUpload,
+} from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 
@@ -32,19 +38,7 @@ function LodgingTab({
   const [createTicket, { data, isError, isSuccess, isUninitialized }] =
     useCreateTicketMutation()
 
-  const [lodgingForms, setLodgingForms] = useState<FormModel[]>([
-    {} as FormModel,
-  ])
-
-  const addLodging = () => {
-    setLodgingForms([...lodgingForms, {} as FormModel])
-  }
-
-  const removeLodging = (index: number) => {
-    setLodgingForms(lodgingForms.filter((_, i) => i !== index))
-  }
-
-  const onSubmit = (values: FormModel[]) => {
+  const handleSubmit = (values: FormModel[]) => {
     setTicketData((prevData) => {
       const updatedData = [...prevData]
       values.forEach((value, index) => {
@@ -56,7 +50,14 @@ function LodgingTab({
       return updatedData
     })
 
-    const formattedTicketData = ticketData.map((ticket) => {
+    const updatedTicketData = values.map((value, index) => {
+      return {
+        ...ticketData[index],
+        ...value,
+      }
+    })
+
+    const formattedTicketData = updatedTicketData.map((ticket) => {
       const {
         flightClass,
         handBaggage,
@@ -98,7 +99,7 @@ function LodgingTab({
       return formattedTicket
     })
 
-    formattedTicketData.map((formattedTicket) => {
+    formattedTicketData.forEach((formattedTicket) => {
       console.log('Respuesta final: ', formattedTicket)
       createTicket(formattedTicket)
     })
@@ -130,26 +131,33 @@ function LodgingTab({
 
   return (
     <Formik
-      validationSchema={validationSchema}
-      initialValues={{ lodgings: lodgingForms }}
-      onSubmit={(values) => onSubmit(values.lodgings)}
+      initialValues={{
+        lodgings: ticketData.map((ticket) => ({
+          lodgingName: ticket.lodgingName || '',
+          lodgingPlace: ticket.lodgingPlace || '',
+          lodgingPrice: ticket.lodgingPrice || 0,
+        })),
+      }}
+      validationSchema={Yup.object().shape({
+        lodgings: Yup.array().of(validationSchema),
+      })}
+      onSubmit={(values) => handleSubmit(values.lodgings)}
     >
-      {({ values, touched, errors }) => {
-        return (
-          <Form>
-            <FormContainer>
-              {values.lodgings.map((lodging, index) => (
-                <div
-                  key={index}
-                  className={`flex items-center gap-4 ${
-                    index !== values.lodgings.length - 1 &&
-                    'border-b border-slate-500 pb-4'
-                  }`}
-                >
-                  <FormItem
-                    label={`Nombre del hospedaje ${index + 1}`}
-                    className="w-1/5"
-                  >
+      {({ values, setFieldValue }) => (
+        <Form>
+          <FormContainer>
+            {values.lodgings.map((lodging, index) => (
+              <div
+                key={index}
+                className={`${
+                  index < values.lodgings.length - 1
+                    ? 'border-b border-slate-300'
+                    : ''
+                } mb-4`}
+              >
+                <h4 className="mb-4">Hospedaje {index + 1}</h4>
+                <div className="flex items-center gap-4">
+                  <FormItem label="Nombre del hospedaje" className="w-1/4">
                     <Field
                       type="text"
                       name={`lodgings[${index}].lodgingName`}
@@ -158,10 +166,7 @@ function LodgingTab({
                       autoComplete="off"
                     />
                   </FormItem>
-                  <FormItem
-                    label={`Localizador del hospedaje ${index + 1}`}
-                    className="w-1/5"
-                  >
+                  <FormItem label="Localizador del hospedaje" className="w-1/4">
                     <Field
                       type="text"
                       name={`lodgings[${index}].lodgingPlace`}
@@ -170,54 +175,74 @@ function LodgingTab({
                       autoComplete="off"
                     />
                   </FormItem>
-                  <FormItem
-                    label={`Precio del hospedaje ${index + 1}`}
-                    className="w-1/5"
-                  >
+                  <FormItem label="Precio del hospedaje" className="w-1/5">
                     <Field
                       type="number"
                       name={`lodgings[${index}].lodgingPrice`}
-                      placeholder="Ingrese el precio del hospedaje"
+                      placeholder="Ingrese el precio"
                       component={Input}
                     />
                   </FormItem>
-                  {index > 0 && (
-                    <Button
-                      type="button"
-                      variant="solid"
-                      onClick={() => removeLodging(index)}
-                    >
-                      Eliminar
-                    </Button>
-                  )}
+                  <div className="flex items-center gap-2">
+                    {index > 0 && (
+                      <>
+                        <Button
+                          variant="solid"
+                          size="sm"
+                          color="red-700"
+                          type="button"
+                          onClick={() => {
+                            setFieldValue(
+                              'lodgings',
+                              values.lodgings.filter((_, i) => i !== index),
+                            )
+                          }}
+                          icon={<HiOutlineTrash />}
+                        />
+                        <span className="font-semibold">
+                          Eliminar hospedaje
+                        </span>
+                      </>
+                    )}
+                  </div>
                 </div>
-              ))}
-
+              </div>
+            ))}
+            <div className="flex justify-between items-center">
               <FormItem>
-                <div className="flex justify-between items-center">
-                  <Button
-                    type="button"
-                    variant="solid"
-                    size="sm"
-                    onClick={addLodging}
-                    icon={<HiOutlinePlus />}
-                  >
-                    Agregar otro hospedaje
-                  </Button>
-                  <Button
-                    variant="solid"
-                    type="submit"
-                    size="sm"
-                    icon={<HiOutlineSave />}
-                  >
-                    {submitButtonText ? submitButtonText : 'Enviar'}
-                  </Button>
-                </div>
+                <Button
+                  variant="solid"
+                  size="sm"
+                  type="button"
+                  onClick={() => {
+                    setFieldValue('lodgings', [
+                      ...values.lodgings,
+                      {
+                        lodgingName: '',
+                        lodgingPlace: '',
+                        lodgingPrice: 0,
+                      },
+                    ])
+                  }}
+                  icon={<HiOutlinePlus />}
+                >
+                  Añadir otro hospedaje
+                </Button>
               </FormItem>
-            </FormContainer>
-          </Form>
-        )
-      }}
+              <FormItem>
+                <Button
+                  variant="solid"
+                  size="sm"
+                  type="submit"
+                  icon={<HiOutlineUpload />}
+                >
+                  {submitButtonText ? submitButtonText : 'Enviar'}
+                </Button>
+              </FormItem>
+            </div>
+          </FormContainer>
+        </Form>
+      )}
     </Formik>
   )
 }

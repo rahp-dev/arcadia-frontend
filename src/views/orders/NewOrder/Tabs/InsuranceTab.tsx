@@ -33,53 +33,31 @@ function InsuranceTab({
   submitButtonText?: string
   flightIndex: number
 }) {
-  const [insuranceForms, setInsuranceForms] = useState<FormModel[]>(
-    ticketData[flightIndex]?.insuranceName
-      ? [ticketData[flightIndex]]
-      : [
-          {
-            insuranceName: '',
-            insuranceLocation: '',
-            insurancePrice: 0,
-          },
-        ],
-  )
-
-  const addInsuranceForm = () => {
-    setInsuranceForms([
-      ...insuranceForms,
-      {
-        insuranceName: '',
-        insuranceLocation: '',
-        insurancePrice: 0,
-      },
-    ])
-  }
-
-  const handleDeleteInsurance = (index: number) => {
-    if (index > 0) {
-      const updatedInsurances = [...insuranceForms]
-      updatedInsurances.splice(index, 1)
-      setInsuranceForms(updatedInsurances)
-    }
-  }
-
   const handleSubmit = (values: FormModel[]) => {
     setTicketData((prevData) => {
       const updatedData = [...prevData]
-      updatedData[flightIndex] = {
-        ...updatedData[flightIndex],
-        ...values[0],
-      }
+      values.forEach((value, index) => {
+        updatedData[index] = {
+          ...updatedData[index],
+          ...value,
+        }
+      })
       return updatedData
     })
     console.log('Seguros: ', values)
-    setCurrentTab && setCurrentTab('tab3')
+
+    setCurrentTab('tab3')
   }
 
   return (
     <Formik
-      initialValues={{ insurances: insuranceForms }}
+      initialValues={{
+        insurances: ticketData.map((ticket) => ({
+          insuranceName: ticket.insuranceName || '',
+          insuranceLocation: ticket.insuranceLocation || '',
+          insurancePrice: ticket.insurancePrice || 0,
+        })),
+      }}
       validationSchema={Yup.object().shape({
         insurances: Yup.array().of(validationSchema),
       })}
@@ -117,7 +95,7 @@ function InsuranceTab({
                       autoComplete="off"
                     />
                   </FormItem>
-                  <FormItem label="Precio del Seguro" className="w-1/6">
+                  <FormItem label="Precio del Seguro" className="w-1/5">
                     <Field
                       type="number"
                       name={`insurances[${index}].insurancePrice`}
@@ -134,7 +112,6 @@ function InsuranceTab({
                           color="red-700"
                           type="button"
                           onClick={() => {
-                            handleDeleteInsurance(index)
                             setFieldValue(
                               'insurances',
                               values.insurances.filter((_, i) => i !== index),
@@ -156,7 +133,6 @@ function InsuranceTab({
                   size="sm"
                   type="button"
                   onClick={() => {
-                    addInsuranceForm()
                     setFieldValue('insurances', [
                       ...values.insurances,
                       {
