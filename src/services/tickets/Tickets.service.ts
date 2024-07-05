@@ -4,6 +4,21 @@ import {
   PaginateResult,
 } from '../core-entities/paginated-result.entity'
 import { CreateTicketBody, Ticket } from './types/tickets.type'
+import { Select } from '@/@types/select'
+
+interface TicketWithCustomer {
+  id: number
+  customer: {
+    id: number
+    name: string
+    last_name: string
+  }
+}
+
+interface SelectOption {
+  value: number
+  label: string
+}
 
 export function getTicketsQuery(builder: EndpointBuilderType) {
   return {
@@ -21,6 +36,25 @@ export function getTicketsQuery(builder: EndpointBuilderType) {
     createTicket: builder.mutation<Ticket, CreateTicketBody>({
       query: (body) => ({ url: 'ticket', method: 'post', data: body }),
       invalidatesTags: ['Tickets'] as any,
+    }),
+    getAllTicketsToOrders: builder.query<
+      SelectOption[],
+      { transformToSelectOptions?: boolean }
+    >({
+      query: () => ({ url: 'ticket', method: 'get' }),
+      transformResponse: (
+        response: { data: TicketWithCustomer[] },
+        meta,
+        arg: { transformToSelectOptions?: boolean },
+      ) => {
+        if (arg.transformToSelectOptions) {
+          return response.data.map((ticket) => ({
+            value: ticket.id,
+            label: `${ticket.customer.name} ${ticket.customer.last_name} - Ticket ID: ${ticket.id}`,
+          }))
+        }
+        return []
+      },
     }),
   }
 }

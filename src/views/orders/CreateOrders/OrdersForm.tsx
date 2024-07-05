@@ -1,7 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Field, FieldProps, Form, Formik } from 'formik'
 import * as Yup from 'yup'
-
 import {
   CreateOrderBody,
   CreateOrderFormModel,
@@ -14,22 +13,15 @@ import {
   Input,
   Select,
 } from '@/components/ui'
-import { CreateTicketFormModel } from '@/services/tickets/types/tickets.type'
-import { useCreateOrderMutation } from '@/services/RtkQueryService'
+import {
+  useCreateOrderMutation,
+  useGetAllTicketsToOrdersQuery,
+} from '@/services/RtkQueryService'
 import openNotification from '@/utils/useNotification'
 import { useNavigate } from 'react-router-dom'
+import CreatableSelect from 'react-select/creatable'
 
-type FormModel = Pick<
-  CreateOrderFormModel,
-  | 'amount'
-  | 'paymentMethod'
-  | 'paymentReference'
-  | 'status'
-  | 'numQuotes'
-  | 'financed'
-  | 'transactionDate'
-  | 'ticketIds'
->
+type FormModel = CreateOrderFormModel
 
 type Option = {
   value: string
@@ -65,56 +57,25 @@ const validationSchema = Yup.object().shape({
   numQuotes: Yup.string(),
   financed: Yup.boolean(),
   transactionDate: Yup.date(),
+  ticketIds: Yup.array().min(1, 'Al menos debe de seleccionar uno.'),
 })
 
-function FinishTab({
-  ticketData,
-  ticketId,
+function OrderForm({
   orderData,
   setOrderData,
 }: {
-  ticketData: CreateTicketFormModel
-  ticketId: number
   orderData: CreateOrderFormModel
   setOrderData: Dispatch<SetStateAction<CreateOrderFormModel>>
 }) {
   const navigate = useNavigate()
-  const [effectExecuted, setEffectExecuted] = useState(false)
 
   const [createOrder, { data, isError, isSuccess, isUninitialized }] =
     useCreateOrderMutation()
 
-  useEffect(() => {
-    if (
-      !effectExecuted &&
-      ticketId &&
-      ticketData.price &&
-      ticketData.insurancePrice &&
-      ticketData.lodgingPrice
-    ) {
-      const totalAmount =
-        (ticketData.price || 0) +
-        (ticketData.insurancePrice || 0) +
-        (ticketData.lodgingPrice || 0)
-
-      console.log(totalAmount)
-
-      setOrderData((prevOrderData) => {
-        const updatedTicketsIds = prevOrderData.ticketIds.includes(ticketId)
-          ? prevOrderData.ticketIds
-          : [...prevOrderData.ticketIds, ticketId]
-        console.log(prevOrderData)
-
-        return {
-          ...prevOrderData,
-          ticketIds: updatedTicketsIds,
-          amount: totalAmount,
-        }
-      })
-
-      setEffectExecuted(true)
-    }
-  }, [effectExecuted, ticketId])
+  const { data: TicketsOptions } = useGetAllTicketsToOrdersQuery(
+    { transformToSelectOptions: true },
+    { refetchOnMountOrArgChange: true },
+  )
 
   const onSubmit = (values: FormModel) => {
     setOrderData({ ...orderData, ...values })
@@ -159,10 +120,51 @@ function FinishTab({
       validationSchema={validationSchema}
       onSubmit={onSubmit}
     >
-      {({ values, touched, errors }) => {
+      {({ values, touched, errors, setFieldValue }) => {
         return (
           <Form>
             <FormContainer>
+              <div className="border-b border-slate-300 mb-6">
+                <FormItem
+                  label="Tickets"
+                  errorMessage={errors.ticketIds as string}
+                  invalid={!!errors.ticketIds && touched.ticketIds}
+                >
+                  <Field name="ticketIds">
+                    {({ field, form }: FieldProps<FormModel>) => (
+                      <Select<Option, true>
+                        isMulti
+                        placeholder="Selecciona los tickets a cancelar..."
+                        field={field}
+                        componentAs={CreatableSelect}
+                        form={form}
+                        options={
+                          TicketsOptions?.map((ticket) => ({
+                            value: ticket.value,
+                            label: ticket.label,
+                          })) ?? []
+                        }
+                        value={
+                          values.ticketIds.map((id) => ({
+                            value: id,
+                            label: TicketsOptions?.find(
+                              (ticket) => ticket.value === id,
+                            )?.label,
+                          })) || []
+                        }
+                        onChange={(selectedOptions) =>
+                          setFieldValue(
+                            field.name,
+                            selectedOptions.map((option) =>
+                              Number(option.value),
+                            ),
+                          )
+                        }
+                      />
+                    )}
+                  </Field>
+                </FormItem>
+              </div>
               <div className="flex items-center gap-4">
                 <FormItem
                   asterisk
@@ -176,7 +178,6 @@ function FinishTab({
                     name="amount"
                     placeholder="Ingrese el precio total"
                     component={Input}
-                    disabled
                   />
                 </FormItem>
                 <FormItem
@@ -277,14 +278,6 @@ function FinishTab({
                     autoComplete="off"
                   />
                 </FormItem>
-                <FormItem label="Tickets" className="w-1/5">
-                  <Field
-                    type="text"
-                    name="ticketIds"
-                    component={Input}
-                    disabled
-                  />
-                </FormItem>
               </div>
 
               <FormItem>
@@ -300,4 +293,4 @@ function FinishTab({
   )
 }
 
-export default FinishTab
+export default OrderForm

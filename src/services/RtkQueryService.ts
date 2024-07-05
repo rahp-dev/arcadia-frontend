@@ -62,6 +62,7 @@ export const {
   useGetAllTicketsQuery,
   useGetAllOrdersQuery,
   useGetUserRolesQuery,
+  useGetAllTicketsToOrdersQuery,
   useGetOneUserQuery,
   useGetOneUserForAssingmentQuery,
   useCreateClientMutation,
