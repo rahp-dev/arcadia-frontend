@@ -34,7 +34,6 @@ const NewClient = () => {
             <Button
               size="sm"
               variant="solid"
-              color="red-500"
               icon={<HiArrowLeft />}
               onClick={() => {
                 navigate(-1)

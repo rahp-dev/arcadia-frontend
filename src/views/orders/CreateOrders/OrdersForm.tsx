@@ -26,25 +26,14 @@ type FormModel = CreateOrderFormModel
 type Option = {
   value: string
   label: string
+  totalPrice: number
 }
 
-type OptionQuotes = {
-  value: number
-  label: string
-}
-
-const paymentMethods: Option[] = [
+const paymentMethods: { value: string; label: string }[] = [
   { value: 'USD', label: 'Efectivo ($)' },
   { value: 'Transferencia Bancaria', label: 'Transferencia Bancaria' },
   { value: 'Pago Móvil', label: 'Pago Móvil' },
   { value: 'Zelle', label: 'Zelle' },
-]
-
-const numQuote: OptionQuotes[] = [
-  { value: 0, label: 'Ninguna' },
-  { value: 1, label: '1 cuota' },
-  { value: 2, label: '2 cuotas' },
-  { value: 3, label: '3 cuotas' },
 ]
 
 const validationSchema = Yup.object().shape({
@@ -77,17 +66,17 @@ function OrderForm({
     { refetchOnMountOrArgChange: true },
   )
 
-  const onSubmit = (values: FormModel) => {
-    setOrderData({ ...orderData, ...values })
-
-    const { ticketIds, ...orderBody } = orderData
+  const onSubmit = async (values: FormModel, { setSubmitting }: any) => {
+    setOrderData(values)
+    const { ticketIds, ...orderBody } = values
 
     const body: CreateOrderBody = {
       ...orderBody,
-      ticketIds: orderData.ticketIds,
+      ticketIds,
     }
 
-    createOrder(body)
+    await createOrder(body)
+    setSubmitting(false)
   }
 
   useEffect(() => {
@@ -100,7 +89,7 @@ function OrderForm({
       )
 
       setTimeout(() => {
-        navigate('/pedidos')
+        navigate('/ordenes')
       }, 1 * 2000)
     }
 
@@ -119,8 +108,21 @@ function OrderForm({
       initialValues={orderData}
       validationSchema={validationSchema}
       onSubmit={onSubmit}
+      enableReinitialize
     >
-      {({ values, touched, errors, setFieldValue }) => {
+      {({ values, touched, errors, setFieldValue, isSubmitting }) => {
+        const handleTicketChange = (selectedOptions: Option[]) => {
+          const totalPrice = selectedOptions.reduce(
+            (sum, option) => sum + option.totalPrice,
+            0,
+          )
+          setFieldValue(
+            'ticketIds',
+            selectedOptions.map((option) => option.value),
+          )
+          setFieldValue('amount', totalPrice)
+        }
+
         return (
           <Form>
             <FormContainer>
@@ -142,24 +144,22 @@ function OrderForm({
                           TicketsOptions?.map((ticket) => ({
                             value: ticket.value,
                             label: ticket.label,
+                            totalPrice: ticket.totalPrice,
                           })) ?? []
                         }
                         value={
-                          values.ticketIds.map((id) => ({
-                            value: id,
-                            label: TicketsOptions?.find(
+                          values.ticketIds.map((id) => {
+                            const selectedTicket = TicketsOptions?.find(
                               (ticket) => ticket.value === id,
-                            )?.label,
-                          })) || []
+                            )
+                            return {
+                              value: id,
+                              label: selectedTicket?.label || '',
+                              totalPrice: selectedTicket?.totalPrice || 0,
+                            }
+                          }) || []
                         }
-                        onChange={(selectedOptions) =>
-                          setFieldValue(
-                            field.name,
-                            selectedOptions.map((option) =>
-                              Number(option.value),
-                            ),
-                          )
-                        }
+                        onChange={handleTicketChange}
                       />
                     )}
                   </Field>
@@ -178,6 +178,7 @@ function OrderForm({
                     name="amount"
                     placeholder="Ingrese el precio total"
                     component={Input}
+                    disabled
                   />
                 </FormItem>
                 <FormItem
@@ -252,11 +253,19 @@ function OrderForm({
                       <Select
                         field={field}
                         form={form}
-                        options={numQuote}
+                        options={[
+                          { value: 0, label: 'Ninguna' },
+                          { value: 1, label: '1 cuota' },
+                          { value: 2, label: '2 cuotas' },
+                          { value: 3, label: '3 cuotas' },
+                        ]}
                         placeholder="Seleccione uno"
-                        value={numQuote.filter(
-                          (option) => option.value === values.numQuotes,
-                        )}
+                        value={[
+                          { value: 0, label: 'Ninguna' },
+                          { value: 1, label: '1 cuota' },
+                          { value: 2, label: '2 cuotas' },
+                          { value: 3, label: '3 cuotas' },
+                        ].filter((option) => option.value === values.numQuotes)}
                         onChange={(option) =>
                           form.setFieldValue(field.name, option.value)
                         }
@@ -281,7 +290,7 @@ function OrderForm({
               </div>
 
               <FormItem>
-                <Button type="submit" variant="solid">
+                <Button type="submit" variant="solid" disabled={isSubmitting}>
                   Guardar
                 </Button>
               </FormItem>

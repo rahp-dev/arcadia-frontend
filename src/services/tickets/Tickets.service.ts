@@ -8,6 +8,10 @@ import { Select } from '@/@types/select'
 
 interface TicketWithCustomer {
   id: number
+  totalPrice: number
+  details_ticket: {
+    location: string
+  }
   customer: {
     id: number
     name: string
@@ -18,6 +22,7 @@ interface TicketWithCustomer {
 interface SelectOption {
   value: number
   label: string
+  totalPrice: number
 }
 
 export function getTicketsQuery(builder: EndpointBuilderType) {
@@ -33,10 +38,12 @@ export function getTicketsQuery(builder: EndpointBuilderType) {
       }),
       providesTags: ['Tickets'] as any,
     }),
+
     createTicket: builder.mutation<Ticket, CreateTicketBody>({
       query: (body) => ({ url: 'ticket', method: 'post', data: body }),
       invalidatesTags: ['Tickets'] as any,
     }),
+
     getAllTicketsToOrders: builder.query<
       SelectOption[],
       { transformToSelectOptions?: boolean }
@@ -50,7 +57,8 @@ export function getTicketsQuery(builder: EndpointBuilderType) {
         if (arg.transformToSelectOptions) {
           return response.data.map((ticket) => ({
             value: ticket.id,
-            label: `${ticket.customer.name} ${ticket.customer.last_name} - Ticket ID: ${ticket.id}`,
+            label: `${ticket.customer.name} ${ticket.customer.last_name} - Localizador: ${ticket.details_ticket.location}`,
+            totalPrice: ticket.totalPrice,
           }))
         }
         return []

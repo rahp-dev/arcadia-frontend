@@ -146,7 +146,7 @@ function LodgingTab({
       })}
       onSubmit={(values) => handleSubmit(values.lodgings)}
     >
-      {({ values, setFieldValue }) => (
+      {({ values, setFieldValue, isSubmitting }) => (
         <Form>
           <FormContainer>
             {values.lodgings.map((lodging, index) => (
@@ -256,6 +256,7 @@ function LodgingTab({
                   size="sm"
                   type="submit"
                   icon={<HiOutlineUpload />}
+                  disabled={isSubmitting}
                 >
                   {submitButtonText ? submitButtonText : 'Enviar'}
                 </Button>

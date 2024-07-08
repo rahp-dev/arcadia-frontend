@@ -119,6 +119,10 @@ const Tickets = () => {
   const columns = useMemo(
     () => [
       {
+        header: 'ID',
+        accessorKey: 'id',
+      },
+      {
         header: 'Cliente',
         cell: (cellProps: any) => (
           <span className="font-bold cursor-pointer">
@@ -157,8 +161,10 @@ const Tickets = () => {
       },
       {
         header: 'Precio',
-        accessorKey: 'price',
-        cell: (cellProps: any) => <span>{cellProps.row.original.price}$</span>,
+        accessorKey: 'totalPrice',
+        cell: (cellProps: any) => (
+          <span>{cellProps.row.original.totalPrice}$</span>
+        ),
       },
     ],
     [],

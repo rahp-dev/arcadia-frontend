@@ -211,7 +211,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                         }
                         name="identityCard"
                         placeholder="Cédula"
-                        type="text"
+                        type="number"
                         value={identityCardValue}
                         onChange={(event) => {
                           const newValue = event.target.value
@@ -222,6 +222,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                           )
                         }}
                         component={Input}
+                        autoComplete="off"
                       ></Field>
                     )}
                   </Field>
