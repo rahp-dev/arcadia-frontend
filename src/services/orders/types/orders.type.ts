@@ -7,6 +7,7 @@ export type Order = {
   numQuotes: number
   financed: boolean
   transactionDate: Date
+  tickets: Array<number>
   ticketIds: Array<number>
 }
 
