@@ -119,17 +119,21 @@ const Clients = () => {
   const columns = useMemo(
     () => [
       {
-        header: 'Nombre del cliente',
-        accessorKey: 'name',
+        header: 'id',
+        accessorKey: 'id',
+      },
+      {
+        header: 'Cliente',
         cell: (cellProps: any) => (
-          <span className="font-bold cursor-pointer">
-            {cellProps.row.original.name}
+          <span className="font-bold">
+            {cellProps.row.original.name} {''}
+            {cellProps.row.original.lastName}
           </span>
         ),
       },
       {
-        header: 'Apellido del cliente',
-        accessorKey: 'lastName',
+        header: 'Correo electrónico',
+        accessorKey: 'email',
       },
       {
         header: 'Documento de Identidad',
@@ -212,7 +216,7 @@ const Clients = () => {
           ))}
         </THead>
         {isFetching ? (
-          <TableRowSkeleton columns={5} rows={pageSize} />
+          <TableRowSkeleton columns={6} rows={pageSize} />
         ) : (
           <TBody>
             {table.getRowModel().rows.map((row) => {

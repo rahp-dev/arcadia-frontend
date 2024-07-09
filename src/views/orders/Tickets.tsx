@@ -30,6 +30,11 @@ interface DebouncedInputProps
   debounce?: number
 }
 
+type SelectOption = {
+  value: string
+  label: string
+}
+
 const { Tr, Th, Td, THead, TBody } = Table
 
 function DebouncedInput({
@@ -52,34 +57,15 @@ function DebouncedInput({
     return () => clearTimeout(timeout)
   }, [value])
 
-  const navigate = useNavigate()
-
   return (
-    <div className="flex justify-between">
-      <div>
-        <h3>Tickets</h3>
-      </div>
-
-      <div className="flex items-center gap-4 mb-4">
-        <Input
-          {...props}
-          prefix={<HiOutlineSearch className="text-lg" />}
-          size="sm"
-          value={value}
-          className="shadow-none"
-          onChange={(e) => setValue(e.target.value)}
-        />
-        <Button
-          size="sm"
-          variant="solid"
-          onClick={() => {
-            navigate('crear')
-          }}
-        >
-          Crear ticket
-        </Button>
-      </div>
-    </div>
+    <Input
+      {...props}
+      prefix={<HiOutlineSearch className="text-lg" />}
+      size="sm"
+      value={value}
+      className="shadow-none w-1/2"
+      onChange={(e) => setValue(e.target.value)}
+    />
   )
 }
 
@@ -90,17 +76,25 @@ const pageSizeOption: SelectType[] = [
   { value: 50, label: '50 por página' },
 ]
 
+const orderDirectionOptions: SelectOption[] = [
+  { value: 'asc', label: 'Ascendente' },
+  { value: 'desc', label: 'Descendente' },
+]
+
 const Tickets = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [searchParams, setSearchParams] = useSearchParams()
   const [search, setSearch] = useState(searchParams.get('search') || '')
   const [currentPage, setCurrentPage] = useState(+searchParams.get('page') || 1)
   const [pageSize, setPageSize] = useState(pageSizeOption[0].value)
+  const [orderDirection, setOrderDirection] = useState<'asc' | 'desc'>('asc')
+  const navigate = useNavigate()
 
   const { data, isFetching } = useGetAllTicketsQuery(
     {
       page: currentPage || 1,
       limit: pageSize,
+      orderDirection: orderDirection,
       ...(search && { search: search }),
     },
     { refetchOnMountOrArgChange: true },
@@ -201,12 +195,37 @@ const Tickets = () => {
 
   return (
     <>
-      <DebouncedInput
-        value={search}
-        className="p-2 font-lg shadow-sm"
-        placeholder="Buscar cliente..."
-        onChange={setSearch}
-      />
+      <div className="flex justify-between items-center mb-4">
+        <h3>Tickets</h3>
+
+        <div className="flex items-center gap-4">
+          <DebouncedInput
+            value={search}
+            className="font-lg shadow-sm"
+            placeholder="Buscar ticket..."
+            onChange={setSearch}
+          />
+          <Select
+            size="sm"
+            isSearchable={false}
+            className="w-1/3"
+            placeholder="Ordenar..."
+            options={orderDirectionOptions}
+            onChange={(selected) =>
+              setOrderDirection(selected.value as 'asc' | 'desc')
+            }
+          />
+          <Button
+            size="sm"
+            variant="solid"
+            onClick={() => {
+              navigate('crear')
+            }}
+          >
+            Crear ticket
+          </Button>
+        </div>
+      </div>
       <Table>
         <THead>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -229,7 +248,7 @@ const Tickets = () => {
           ))}
         </THead>
         {isFetching ? (
-          <TableRowSkeleton columns={7} rows={pageSize} />
+          <TableRowSkeleton columns={8} rows={pageSize} />
         ) : (
           <TBody>
             {table.getRowModel().rows.map((row) => {

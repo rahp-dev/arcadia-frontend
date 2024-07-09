@@ -220,7 +220,7 @@ const Orders = () => {
           ))}
         </THead>
         {isFetching ? (
-          <TableRowSkeleton columns={5} rows={pageSize} />
+          <TableRowSkeleton columns={6} rows={pageSize} />
         ) : (
           <TBody>
             {table.getRowModel().rows.map((row) => {

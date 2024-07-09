@@ -15,7 +15,6 @@ const NewAssingment = () => {
       clientName: '',
       clientNumber: '',
       assignedTime: null,
-      date: null,
       notes: '',
       origin: '',
       resolvedTime: null,

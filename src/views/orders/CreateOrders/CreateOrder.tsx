@@ -15,7 +15,7 @@ const CreateOrder = () => {
     paymentMethod: '',
     paymentReference: '',
     status: '',
-    ticketIds: [0],
+    ticketIds: [],
     transactionDate: null,
   })
 

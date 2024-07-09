@@ -8,6 +8,7 @@ import { Select } from '@/@types/select'
 
 interface TicketWithCustomer {
   id: number
+  orderId: number
   totalPrice: number
   details_ticket: {
     location: string
@@ -29,12 +30,12 @@ export function getTicketsQuery(builder: EndpointBuilderType) {
   return {
     getAllTickets: builder.query<
       PaginateResult<Ticket>,
-      PaginateSearch & { search?: string }
+      PaginateSearch & { search?: string; orderDirection?: string }
     >({
-      query: ({ limit, page, search }) => ({
+      query: ({ limit, page, search, orderDirection }) => ({
         url: 'ticket',
         method: 'get',
-        params: { limit, page, search },
+        params: { limit, page, search, orderDirection },
       }),
       providesTags: ['Tickets'] as any,
     }),
@@ -54,8 +55,11 @@ export function getTicketsQuery(builder: EndpointBuilderType) {
         meta,
         arg: { transformToSelectOptions?: boolean },
       ) => {
+        const filteredTickets = response.data.filter(
+          (ticket) => !ticket.orderId,
+        )
         if (arg.transformToSelectOptions) {
-          return response.data.map((ticket) => ({
+          return filteredTickets.map((ticket) => ({
             value: ticket.id,
             label: `${ticket.customer.name} ${ticket.customer.last_name} - Localizador: ${ticket.details_ticket.location}`,
             totalPrice: ticket.totalPrice,

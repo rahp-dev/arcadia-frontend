@@ -21,6 +21,7 @@ import * as Yup from 'yup'
 import './ClientForm.css'
 import openNotification from '@/utils/useNotification'
 import { useNavigate } from 'react-router-dom'
+import { HiOutlineSave } from 'react-icons/hi'
 
 type Option = {
   value: string
@@ -140,7 +141,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
       validationSchema={validationSchema}
       onSubmit={onSubmit}
     >
-      {({ values, touched, errors }) => {
+      {({ values, touched, errors, isSubmitting }) => {
         return (
           <Form>
             <FormContainer>
@@ -386,11 +387,19 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                 </FormItem>
               </div>
 
-              <FormItem>
-                <Button type="submit" variant="solid">
-                  Guardar
-                </Button>
-              </FormItem>
+              <div className="flex items-center justify-end w-full">
+                <FormItem>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    variant="solid"
+                    disabled={isSubmitting}
+                    icon={<HiOutlineSave />}
+                  >
+                    Guardar
+                  </Button>
+                </FormItem>
+              </div>
             </FormContainer>
           </Form>
         )

@@ -12,6 +12,7 @@ import {
   FormItem,
   Input,
   Select,
+  Switcher,
 } from '@/components/ui'
 import {
   useCreateOrderMutation,
@@ -20,6 +21,7 @@ import {
 import openNotification from '@/utils/useNotification'
 import { useNavigate } from 'react-router-dom'
 import CreatableSelect from 'react-select/creatable'
+import { HiOutlineSave } from 'react-icons/hi'
 
 type FormModel = CreateOrderFormModel
 
@@ -128,6 +130,7 @@ function OrderForm({
             <FormContainer>
               <div className="border-b border-slate-300 mb-6">
                 <FormItem
+                  asterisk
                   label="Tickets"
                   errorMessage={errors.ticketIds as string}
                   invalid={!!errors.ticketIds && touched.ticketIds}
@@ -161,6 +164,33 @@ function OrderForm({
                         }
                         onChange={handleTicketChange}
                       />
+                    )}
+                  </Field>
+                </FormItem>
+              </div>
+              <div className="flex items-center">
+                <FormItem
+                  errorMessage={errors.financed}
+                  invalid={errors.financed && touched.financed}
+                >
+                  <Field name="financed">
+                    {({ form, field }: FieldProps<FormModel>) => (
+                      <div className="flex items-center gap-4">
+                        <label className="text-base font-semibold">
+                          Al contado
+                        </label>
+                        <Switcher
+                          onChange={(checked) => {
+                            form.setFieldValue(field.name, checked)
+                            if (!checked) {
+                              form.setFieldValue('numQuotes', 0)
+                            }
+                          }}
+                        />
+                        <label className="text-base font-semibold">
+                          Financiado
+                        </label>
+                      </div>
                     )}
                   </Field>
                 </FormItem>
@@ -218,7 +248,6 @@ function OrderForm({
                   />
                 </FormItem>
                 <FormItem
-                  asterisk
                   label="Fecha del pago"
                   className="w-1/5"
                   invalid={
@@ -269,6 +298,7 @@ function OrderForm({
                         onChange={(option) =>
                           form.setFieldValue(field.name, option.value)
                         }
+                        isDisabled={!values.financed}
                       />
                     )}
                   </Field>
@@ -289,11 +319,19 @@ function OrderForm({
                 </FormItem>
               </div>
 
-              <FormItem>
-                <Button type="submit" variant="solid" disabled={isSubmitting}>
-                  Guardar
-                </Button>
-              </FormItem>
+              <div className="flex items-center justify-end w-full">
+                <FormItem>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    variant="solid"
+                    disabled={isSubmitting}
+                    icon={<HiOutlineSave />}
+                  >
+                    Guardar
+                  </Button>
+                </FormItem>
+              </div>
             </FormContainer>
           </Form>
         )

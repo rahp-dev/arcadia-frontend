@@ -1,7 +1,6 @@
 export type Assingment = {
   id: number
   userId: number
-  date: Date
   clientName: string
   clientNumber: string
   origin: string
@@ -13,7 +12,6 @@ export type Assingment = {
 
 export type CreateAssingmentBody = {
   userId: number
-  date: Date | null
   clientName: string
   clientNumber: string
   origin: string
@@ -25,7 +23,6 @@ export type CreateAssingmentBody = {
 
 export type CreateAssingmentFormModel = {
   userId: number
-  date: Date | null
   clientName: string
   clientNumber: string
   origin: string

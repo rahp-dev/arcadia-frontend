@@ -22,12 +22,12 @@ import {
   Input,
   Select,
 } from '@/components/ui'
+import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker'
 
 type FormModel = CreateAssingmentFormModel
 
 const validationSchema = Yup.object().shape({
   userId: Yup.number().required('Debe de seleccionar un usuario'),
-  date: Yup.date().required('Fecha requerida'),
   clientName: Yup.string().required('Nombre del cliente requerido'),
   clientNumber: Yup.number().required('Numero del cliente requerido'),
   origin: Yup.string().required('Ingrese el origen del cliente'),
@@ -84,7 +84,6 @@ function NewAssingmentForm({
 
     const {
       userId,
-      date,
       clientName,
       clientNumber,
       origin,
@@ -96,7 +95,6 @@ function NewAssingmentForm({
 
     const body: CreateAssingmentBody = {
       userId,
-      date,
       clientName,
       clientNumber,
       origin,
@@ -142,27 +140,6 @@ function NewAssingmentForm({
                           (option: SelectTypes) =>
                             option.value === values.userId,
                         )}
-                      />
-                    )}
-                  </Field>
-                </FormItem>
-                <FormItem
-                  asterisk
-                  label="Fecha"
-                  className="w-1/5"
-                  invalid={errors.date && (touched.date as any)}
-                  errorMessage={errors.date as any}
-                >
-                  <Field name="date">
-                    {({ field, form }: FieldProps<FormModel>) => (
-                      <DatePicker
-                        placeholder="Selecciona la fecha"
-                        field={field}
-                        form={form}
-                        onChange={(day) => {
-                          form.setFieldValue(field.name, day)
-                        }}
-                        inputFormat="DD-MM-YYYY"
                       />
                     )}
                   </Field>
@@ -220,14 +197,13 @@ function NewAssingmentForm({
                 >
                   <Field name="assignedTime">
                     {({ field, form }: FieldProps<FormModel>) => (
-                      <DatePicker
+                      <DateTimepicker
                         placeholder="Selecciona la fecha"
                         field={field}
                         form={form}
                         onChange={(day) => {
                           form.setFieldValue(field.name, day)
                         }}
-                        inputFormat="DD-MM-YYYY"
                       />
                     )}
                   </Field>
