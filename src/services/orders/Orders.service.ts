@@ -22,6 +22,10 @@ export function getOrdersQuery(builder: EndpointBuilderType) {
       }),
       providesTags: ['Orders'] as any,
     }),
+    getOrderById: builder.query<Order, string>({
+      query: (id: string) => ({ url: `order/${id}`, method: 'get' }),
+      providesTags: ['Orders'] as any,
+    }),
     createOrder: builder.mutation<Order, CreateOrderBody>({
       query: (body) => ({ url: 'order', method: 'post', data: body }),
       invalidatesTags: ['Orders'] as any,

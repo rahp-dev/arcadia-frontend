@@ -146,7 +146,7 @@ const Assingments = () => {
       },
       {
         header: 'Fecha de registro',
-        accessorKey: 'date',
+        accessorKey: 'resolved_time',
       },
       {
         header: 'Origen del cliente',
@@ -239,7 +239,7 @@ const Assingments = () => {
                 <Tr key={row.id}>
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <Td key={cell.id}>
+                      <Td key={cell.id} className="w-1/6">
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),

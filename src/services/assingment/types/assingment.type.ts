@@ -4,7 +4,6 @@ export type Assingment = {
   clientName: string
   clientNumber: string
   origin: string
-  assignedTime: Date
   resolvedTime: Date
   status: string
   notes: string
@@ -15,7 +14,6 @@ export type CreateAssingmentBody = {
   clientName: string
   clientNumber: string
   origin: string
-  assignedTime: Date | null
   resolvedTime: Date | null
   status: string
   notes: string
@@ -26,7 +24,6 @@ export type CreateAssingmentFormModel = {
   clientName: string
   clientNumber: string
   origin: string
-  assignedTime: Date | null
   resolvedTime: Date | null
   status: string
   notes: string

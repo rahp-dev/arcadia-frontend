@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import * as Yup from 'yup'
 import { Field, FieldProps, Form, Formik } from 'formik'
@@ -14,15 +14,9 @@ import {
   CreateAssingmentBody,
   CreateAssingmentFormModel,
 } from '@/services/assingment/types/assingment.type'
-import {
-  Button,
-  DatePicker,
-  FormContainer,
-  FormItem,
-  Input,
-  Select,
-} from '@/components/ui'
+import { Button, FormContainer, FormItem, Input, Select } from '@/components/ui'
 import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker'
+import { HiOutlineSave } from 'react-icons/hi'
 
 type FormModel = CreateAssingmentFormModel
 
@@ -31,15 +25,17 @@ const validationSchema = Yup.object().shape({
   clientName: Yup.string().required('Nombre del cliente requerido'),
   clientNumber: Yup.number().required('Numero del cliente requerido'),
   origin: Yup.string().required('Ingrese el origen del cliente'),
-  assignedTime: Yup.date().required('Fecha requerida'),
+  resolvedTime: Yup.date().required('Fecha requerida'),
   status: Yup.string().required('Ingrese el status'),
   notes: Yup.string(),
 })
 
 function NewAssingmentForm({
   assingmentData,
+  setAssingmentData,
 }: {
   assingmentData: CreateAssingmentFormModel
+  setAssingmentData: Dispatch<SetStateAction<CreateAssingmentFormModel>>
 }) {
   const navigate = useNavigate()
 
@@ -79,32 +75,18 @@ function NewAssingmentForm({
     }
   }, [isSuccess, isError])
 
-  const onSubmit = (values: FormModel) => {
+  const onSubmit = async (values: FormModel, { setSubmitting }: any) => {
+    setAssingmentData(values)
     console.log(values)
 
-    const {
-      userId,
-      clientName,
-      clientNumber,
-      origin,
-      assignedTime,
-      status,
-      resolvedTime,
-      notes,
-    } = values
+    const { ...assingmentData } = values
 
     const body: CreateAssingmentBody = {
-      userId,
-      clientName,
-      clientNumber,
-      origin,
-      assignedTime,
-      status,
-      resolvedTime,
-      notes,
+      ...assingmentData,
     }
 
-    createAssingment(body)
+    await createAssingment(body)
+    setSubmitting(false)
   }
 
   return (
@@ -114,7 +96,7 @@ function NewAssingmentForm({
       validationSchema={validationSchema}
       onSubmit={onSubmit}
     >
-      {({ values, touched, errors }) => {
+      {({ values, touched, errors, isSubmitting }) => {
         return (
           <Form>
             <FormContainer>
@@ -156,6 +138,7 @@ function NewAssingmentForm({
                     type="text"
                     component={Input}
                     placeholder="Ingrese el nombre"
+                    autoComplete="off"
                   />
                 </FormItem>
                 <FormItem
@@ -167,9 +150,10 @@ function NewAssingmentForm({
                 >
                   <Field
                     name="clientNumber"
-                    type="text"
+                    type="number"
                     component={Input}
                     placeholder="Ingrese el número"
+                    autoComplete="off"
                   />
                 </FormItem>
                 <FormItem
@@ -184,6 +168,7 @@ function NewAssingmentForm({
                     type="text"
                     component={Input}
                     placeholder="Ingrese el origen del cliente"
+                    autoComplete="off"
                   />
                 </FormItem>
               </div>
@@ -192,10 +177,10 @@ function NewAssingmentForm({
                   asterisk
                   label="Fecha asignada"
                   className="w-1/5"
-                  invalid={errors.assignedTime && (touched.assignedTime as any)}
-                  errorMessage={errors.assignedTime as any}
+                  invalid={errors.resolvedTime && (touched.resolvedTime as any)}
+                  errorMessage={errors.resolvedTime as any}
                 >
-                  <Field name="assignedTime">
+                  <Field name="resolvedTime">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <DateTimepicker
                         placeholder="Selecciona la fecha"
@@ -204,21 +189,6 @@ function NewAssingmentForm({
                         onChange={(day) => {
                           form.setFieldValue(field.name, day)
                         }}
-                      />
-                    )}
-                  </Field>
-                </FormItem>
-                <FormItem label="Tiempo resuelto" className="w-1/5">
-                  <Field name="resolvedTime">
-                    {({ field, form }: FieldProps<FormModel>) => (
-                      <DatePicker
-                        placeholder="Selecciona la fecha"
-                        field={field}
-                        form={form}
-                        onChange={(day) => {
-                          form.setFieldValue(field.name, day)
-                        }}
-                        inputFormat="DD-MM-YYYY"
                       />
                     )}
                   </Field>
@@ -253,11 +223,19 @@ function NewAssingmentForm({
                 </FormItem>
               </div>
 
-              <FormItem>
-                <Button type="submit" variant="solid">
-                  Guardar
-                </Button>
-              </FormItem>
+              <div className="flex items-center justify-end">
+                <FormItem>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    variant="solid"
+                    disabled={isSubmitting}
+                    icon={<HiOutlineSave />}
+                  >
+                    Guardar
+                  </Button>
+                </FormItem>
+              </div>
             </FormContainer>
           </Form>
         )

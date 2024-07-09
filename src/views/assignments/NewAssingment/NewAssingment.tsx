@@ -14,7 +14,6 @@ const NewAssingment = () => {
       userId: 0,
       clientName: '',
       clientNumber: '',
-      assignedTime: null,
       notes: '',
       origin: '',
       resolvedTime: null,
@@ -46,7 +45,10 @@ const NewAssingment = () => {
 
       <div className="container mt-6">
         <Card>
-          <NewAssingmentForm assingmentData={assingmentData} />
+          <NewAssingmentForm
+            assingmentData={assingmentData}
+            setAssingmentData={setAssingmentData}
+          />
         </Card>
       </div>
     </>

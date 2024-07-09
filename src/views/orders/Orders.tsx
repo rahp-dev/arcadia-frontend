@@ -21,7 +21,7 @@ import {
   useGetAllOrdersQuery,
   useGetAllTicketsQuery,
 } from '@/services/RtkQueryService'
-import { HiOutlineSearch } from 'react-icons/hi'
+import { HiOutlineEye, HiOutlineSearch } from 'react-icons/hi'
 import { TableRowSkeleton } from '@/components/shared'
 
 interface DebouncedInputProps
@@ -100,6 +100,7 @@ const Orders = () => {
   const [search, setSearch] = useState(searchParams.get('search') || '')
   const [currentPage, setCurrentPage] = useState(+searchParams.get('page') || 1)
   const [pageSize, setPageSize] = useState(pageSizeOption[0].value)
+  const navigate = useNavigate()
 
   const { data, isFetching } = useGetAllOrdersQuery(
     {
@@ -156,6 +157,21 @@ const Orders = () => {
         header: 'Monto total',
         accessorKey: 'amount',
         cell: (cellProps: any) => <span>{cellProps.row.original.amount}$</span>,
+      },
+      {
+        header: 'Ver Detalles',
+        cell: (cellProps: any) => (
+          <div className="flex justify-center items-center">
+            <Button
+              size="sm"
+              variant="twoTone"
+              icon={<HiOutlineEye />}
+              onClick={() => {
+                navigate(`/ordenes/${cellProps.row.original.id}`)
+              }}
+            />
+          </div>
+        ),
       },
     ],
     [],
@@ -220,7 +236,7 @@ const Orders = () => {
           ))}
         </THead>
         {isFetching ? (
-          <TableRowSkeleton columns={6} rows={pageSize} />
+          <TableRowSkeleton columns={7} rows={pageSize} />
         ) : (
           <TBody>
             {table.getRowModel().rows.map((row) => {

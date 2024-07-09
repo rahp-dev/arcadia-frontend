@@ -319,7 +319,7 @@ function OrderForm({
                 </FormItem>
               </div>
 
-              <div className="flex items-center justify-end w-full">
+              <div className="flex items-center justify-end">
                 <FormItem>
                   <Button
                     type="submit"
