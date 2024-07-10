@@ -48,17 +48,18 @@ const validationSchema = Yup.object().shape({
   numQuotes: Yup.string(),
   financed: Yup.boolean(),
   transactionDate: Yup.date(),
-  ticketIds: Yup.array().min(1, 'Al menos debe de seleccionar uno.'),
 })
 
 function UpdateOrderForm({
   orderData,
   setOrderData,
   editActive,
+  customOnSubmit,
 }: {
   orderData: CreateOrderFormModel
   setOrderData: Dispatch<SetStateAction<CreateOrderFormModel>>
   editActive: boolean
+  customOnSubmit?: (values: CreateOrderFormModel) => void
 }) {
   const navigate = useNavigate()
 
@@ -72,12 +73,8 @@ function UpdateOrderForm({
 
   const onSubmit = async (values: FormModel, { setSubmitting }: any) => {
     setOrderData(values)
-    const { ticketIds, ...orderBody } = values
 
-    const body: CreateOrderBody = {
-      ...orderBody,
-      ticketIds,
-    }
+    const body: CreateOrderBody = {}
 
     await createOrder(body)
     setSubmitting(false)
@@ -202,7 +199,7 @@ function UpdateOrderForm({
                 <FormItem
                   asterisk
                   label="Monto total"
-                  className="w-1/5"
+                  className="w-1/4"
                   errorMessage={errors.amount}
                   invalid={errors.amount && touched.amount}
                 >
@@ -216,7 +213,7 @@ function UpdateOrderForm({
                 </FormItem>
                 <FormItem
                   label="Método de Pago"
-                  className="w-1/5"
+                  className="w-1/4"
                   invalid={errors.paymentMethod && touched.paymentMethod}
                   errorMessage={errors.paymentMethod}
                 >
@@ -240,7 +237,7 @@ function UpdateOrderForm({
                 </FormItem>
                 <FormItem
                   label="Referencia del pago"
-                  className="w-1/5"
+                  className="w-1/4"
                   errorMessage={errors.paymentReference}
                   invalid={errors.paymentReference && touched.paymentReference}
                 >
@@ -254,7 +251,7 @@ function UpdateOrderForm({
                 </FormItem>
                 <FormItem
                   label="Fecha del pago"
-                  className="w-1/5"
+                  className="w-1/4"
                   invalid={
                     errors.transactionDate && (touched.transactionDate as any)
                   }
@@ -279,7 +276,7 @@ function UpdateOrderForm({
               <div className="flex items-center gap-4">
                 <FormItem
                   label="N° de cuotas"
-                  className="w-1/5"
+                  className="w-1/4"
                   errorMessage={errors.numQuotes}
                   invalid={errors.numQuotes && touched.numQuotes}
                 >
@@ -311,7 +308,7 @@ function UpdateOrderForm({
                 </FormItem>
                 <FormItem
                   label="Estatus"
-                  className="w-1/5"
+                  className="w-1/4"
                   errorMessage={errors.status}
                   invalid={errors.status && touched.status}
                 >

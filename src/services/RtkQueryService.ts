@@ -71,4 +71,5 @@ export const {
   useCreateTicketMutation,
   useCreateOrderMutation,
   useCreateAssingmentMutation,
+  useUpdateOrderMutation,
 } = RtkQueryService

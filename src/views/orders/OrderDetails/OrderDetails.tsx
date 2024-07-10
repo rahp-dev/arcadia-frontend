@@ -2,7 +2,10 @@ import { Button, Card, Skeleton, Tabs } from '@/components/ui'
 import TabContent from '@/components/ui/Tabs/TabContent'
 import TabList from '@/components/ui/Tabs/TabList'
 import TabNav from '@/components/ui/Tabs/TabNav'
-import { useGetOrderByIdQuery } from '@/services/RtkQueryService'
+import {
+  useGetOrderByIdQuery,
+  useUpdateOrderMutation,
+} from '@/services/RtkQueryService'
 import { format } from 'date-fns'
 import { FaEdit } from 'react-icons/fa'
 import {
@@ -13,8 +16,12 @@ import {
 import { useNavigate, useParams } from 'react-router-dom'
 import OrderForm from '../CreateOrders/OrdersForm'
 import { useEffect, useState } from 'react'
-import { CreateOrderFormModel } from '@/services/orders/types/orders.type'
+import {
+  CreateOrderBody,
+  CreateOrderFormModel,
+} from '@/services/orders/types/orders.type'
 import UpdateOrderForm from './UpdateOrderForm'
+import openNotification from '@/utils/useNotification'
 
 type FormModel = CreateOrderFormModel
 
@@ -29,13 +36,15 @@ const OrderDetails = () => {
     paymentMethod: '',
     paymentReference: '',
     status: '',
-    ticketIds: [],
     transactionDate: null,
   })
 
   const { data, isFetching } = useGetOrderByIdQuery(orderId, {
     refetchOnMountOrArgChange: true,
   })
+
+  const [updateOrder, { isError, isSuccess, isUninitialized }] =
+    useUpdateOrderMutation()
 
   const formattedDate = (date: Date | null) => {
     if (!date) return
@@ -44,11 +53,19 @@ const OrderDetails = () => {
   }
 
   const handleToggleEditing = () => {
-    const card = document.getElementById('customer-form-edit')
-
-    card.scrollIntoView({ behavior: 'smooth', inline: 'end' })
-
     setEditActive(true)
+  }
+
+  const onSubmit = (values: FormModel) => {
+    setOrderData(values)
+    console.log(values)
+
+    const { ...orderBody } = values
+    const body: CreateOrderBody = {
+      ...orderBody,
+    }
+
+    updateOrder({ id: orderId, ...body })
   }
 
   useEffect(() => {
@@ -60,8 +77,7 @@ const OrderDetails = () => {
         paymentMethod: data?.paymentMethod,
         paymentReference: data?.paymentReference,
         status: data?.status,
-        ticketIds: data?.tickets,
-        transactionDate: data?.transactionDate,
+        transactionDate: new Date(data?.transactionDate),
       })
     } else {
       setOrderData({
@@ -71,11 +87,32 @@ const OrderDetails = () => {
         paymentMethod: '',
         paymentReference: '',
         status: '',
-        ticketIds: [],
         transactionDate: null,
       })
     }
   }, [data, isFetching])
+
+  useEffect(() => {
+    if (isSuccess) {
+      openNotification(
+        'success',
+        'Orden Actualizada',
+        'La orden se ha actualizado correctamente.',
+        3,
+      )
+
+      setEditActive(false)
+    }
+
+    if (!isUninitialized && isError) {
+      openNotification(
+        'warning',
+        'Error',
+        'Ocurrio un error al actualizar la orden, por favor intenta más tarde.',
+        3,
+      )
+    }
+  }, [isSuccess, isError])
 
   const cardFooter = (
     <Button
@@ -274,6 +311,7 @@ const OrderDetails = () => {
                   <UpdateOrderForm
                     orderData={orderData}
                     setOrderData={setOrderData}
+                    customOnSubmit={onSubmit}
                     editActive={!editActive}
                   />
                 </TabContent>
