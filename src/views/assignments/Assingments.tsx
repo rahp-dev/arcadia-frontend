@@ -123,6 +123,10 @@ const Assingments = () => {
   const columns = useMemo(
     () => [
       {
+        header: 'ID',
+        accessorKey: 'id',
+      },
+      {
         header: 'Cliente',
         accessorKey: 'client_name',
         cell: (cellProps: any) => (
@@ -239,7 +243,7 @@ const Assingments = () => {
                 <Tr key={row.id}>
                   {row.getVisibleCells().map((cell) => {
                     return (
-                      <Td key={cell.id} className="w-1/6">
+                      <Td key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext(),

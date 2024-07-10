@@ -9,6 +9,7 @@ export type Order = {
   transactionDate: Date
   tickets: Array<number>
   ticketIds: Array<number>
+  createdAt: Date
 }
 
 export type CreateOrderBody = {
