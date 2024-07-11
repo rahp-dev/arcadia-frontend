@@ -58,6 +58,16 @@ const navigationConfig: NavigationTree[] = [
     subMenu: [],
   },
   {
+    key: 'emission',
+    path: '/emisiones',
+    title: 'Emisión',
+    translateKey: 'Emisión',
+    icon: 'emission',
+    type: NAV_ITEM_TYPE_ITEM,
+    authority: [],
+    subMenu: [],
+  },
+  {
     key: 'usuarios',
     path: '/usuarios',
     title: 'Usuarios',

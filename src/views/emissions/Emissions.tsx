@@ -16,7 +16,7 @@ import type { InputHTMLAttributes } from 'react'
 import { Button, Pagination, Select } from '@/components/ui'
 import { Select as SelectType } from '@/@types/select'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useGetAllOrdersQuery } from '@/services/RtkQueryService'
+import { useGetAllEmissionQuery } from '@/services/RtkQueryService'
 import { HiOutlineEye, HiOutlineSearch } from 'react-icons/hi'
 import { TableRowSkeleton } from '@/components/shared'
 
@@ -57,7 +57,7 @@ function DebouncedInput({
   return (
     <div className="flex justify-between">
       <div>
-        <h3>Ordenes</h3>
+        <h3>Emisiones</h3>
       </div>
 
       <div className="flex items-center gap-4 mb-4">
@@ -69,15 +69,6 @@ function DebouncedInput({
           className="shadow-none"
           onChange={(e) => setValue(e.target.value)}
         />
-        <Button
-          size="sm"
-          variant="solid"
-          onClick={() => {
-            navigate('crear')
-          }}
-        >
-          Crear orden
-        </Button>
       </div>
     </div>
   )
@@ -90,7 +81,7 @@ const pageSizeOption: SelectType[] = [
   { value: 50, label: '50 por página' },
 ]
 
-const Orders = () => {
+const Emissions = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [searchParams, setSearchParams] = useSearchParams()
   const [search, setSearch] = useState(searchParams.get('search') || '')
@@ -98,7 +89,7 @@ const Orders = () => {
   const [pageSize, setPageSize] = useState(pageSizeOption[0].value)
   const navigate = useNavigate()
 
-  const { data, isFetching } = useGetAllOrdersQuery(
+  const { data, isFetching } = useGetAllEmissionQuery(
     {
       page: currentPage || 1,
       limit: pageSize,
@@ -124,38 +115,37 @@ const Orders = () => {
         accessorKey: 'id',
       },
       {
-        header: 'Nombre del cliente',
-        cell: (cellProps: any) => {
-          const tickets = cellProps.row.original.tickets
-          const customerName =
-            tickets && tickets.length > 0
-              ? `${tickets[0].customer.name} ${tickets[0].customer.last_name}`
-              : 'N/A'
-
-          return (
-            <span className="font-bold cursor-pointer">{customerName}</span>
-          )
-        },
+        header: 'Agencia de Vuelo',
+        cell: (cellProps: any) => (
+          <>{cellProps.row.original.agency || 'N/A'} </>
+        ),
       },
       {
-        header: 'Fecha de la transacción',
-        accessorKey: 'transactionDate',
+        header: 'Aerolínea',
+        cell: (cellProps: any) => (
+          <>{cellProps.row.original.airline || 'N/A'} </>
+        ),
       },
       {
-        header: 'Forma de pago',
-        accessorKey: 'paymentMethod',
+        header: 'Precio de Coste',
+        cell: (cellProps: any) => (
+          <>{cellProps.row.original.costPrice || 'N/A'} </>
+        ),
       },
       {
-        header: 'Estatus',
-        accessorKey: 'status',
+        header: 'Comisión del Asesor',
+        cell: (cellProps: any) => (
+          <>{cellProps.row.original.advisorCommission || 'N/A'} </>
+        ),
       },
       {
-        header: 'Monto total',
-        accessorKey: 'amount',
-        cell: (cellProps: any) => <span>{cellProps.row.original.amount}$</span>,
+        header: 'Pago del Cliente',
+        cell: (cellProps: any) => (
+          <>{cellProps.row.original.clientPayment || 'N/A'} </>
+        ),
       },
       {
-        header: 'Ver Detalles',
+        header: 'Más Detalles',
         cell: (cellProps: any) => (
           <div className="flex justify-center items-center">
             <Button
@@ -163,7 +153,7 @@ const Orders = () => {
               variant="twoTone"
               icon={<HiOutlineEye />}
               onClick={() => {
-                navigate(`/ordenes/${cellProps.row.original.id}`)
+                navigate(`/emisiones/${cellProps.row.original.id}`)
               }}
             />
           </div>
@@ -207,7 +197,7 @@ const Orders = () => {
       <DebouncedInput
         value={search}
         className="p-2 font-lg shadow-sm"
-        placeholder="Buscar cliente..."
+        placeholder="Buscar emisión..."
         onChange={setSearch}
       />
       <Table>
@@ -276,4 +266,4 @@ const Orders = () => {
   )
 }
 
-export default Orders
+export default Emissions

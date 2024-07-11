@@ -66,17 +66,21 @@ function UpdateOrderForm({
   const [createOrder, { data, isError, isSuccess, isUninitialized }] =
     useCreateOrderMutation()
 
-  const { data: TicketsOptions } = useGetAllTicketsToOrdersQuery(
-    { transformToSelectOptions: true },
-    { refetchOnMountOrArgChange: true },
-  )
-
-  const onSubmit = async (values: FormModel, { setSubmitting }: any) => {
+  const onSubmit = (values: FormModel, { setSubmitting }: any) => {
     setOrderData(values)
 
-    const body: CreateOrderBody = {}
+    const body: CreateOrderBody = {
+      amount: values.amount,
+      paymentMethod: values.paymentMethod,
+      paymentReference: values.paymentReference,
+      status: values.status,
+      numQuotes: values.numQuotes,
+      financed: values.financed,
+      transactionDate: values.transactionDate,
+      ticketIds: values.ticketIds || [],
+    }
 
-    await createOrder(body)
+    customOnSubmit(body)
     setSubmitting(false)
   }
 
@@ -127,46 +131,6 @@ function UpdateOrderForm({
         return (
           <Form>
             <FormContainer>
-              {/* <div className="border-b border-slate-300 mb-6">
-                <FormItem
-                  asterisk
-                  label="Tickets"
-                  errorMessage={errors.ticketIds as string}
-                  invalid={!!errors.ticketIds && touched.ticketIds}
-                >
-                  <Field name="ticketIds">
-                    {({ field, form }: FieldProps<FormModel>) => (
-                      <Select<Option, true>
-                        isMulti
-                        placeholder="Selecciona los tickets a cancelar..."
-                        field={field}
-                        componentAs={CreatableSelect}
-                        form={form}
-                        options={
-                          TicketsOptions?.map((ticket) => ({
-                            value: ticket.value,
-                            label: ticket.label,
-                            totalPrice: ticket.totalPrice,
-                          })) ?? []
-                        }
-                        value={
-                          values.ticketIds.map((id) => {
-                            const selectedTicket = TicketsOptions?.find(
-                              (ticket) => ticket.value === id,
-                            )
-                            return {
-                              value: id,
-                              label: selectedTicket?.label || '',
-                              totalPrice: selectedTicket?.totalPrice || 0,
-                            }
-                          }) || []
-                        }
-                        onChange={handleTicketChange}
-                      />
-                    )}
-                  </Field>
-                </FormItem>
-              </div> */}
               <div className="flex items-center">
                 <FormItem
                   errorMessage={errors.financed}
@@ -180,6 +144,7 @@ function UpdateOrderForm({
                         </label>
                         <Switcher
                           disabled={editActive}
+                          checked={field.checked}
                           onChange={(checked) => {
                             form.setFieldValue(field.name, checked)
                             if (!checked) {
@@ -247,6 +212,7 @@ function UpdateOrderForm({
                     placeholder="Ingrese el n° de referencia"
                     component={Input}
                     disabled={editActive}
+                    autoComplete="off"
                   />
                 </FormItem>
                 <FormItem

@@ -1,6 +1,7 @@
 import { FaPlaneArrival, FaPlaneDeparture } from 'react-icons/fa'
 import {
   HiOutlineClipboardCheck,
+  HiOutlineClipboardCopy,
   HiOutlineHome,
   HiOutlineUserAdd,
   HiOutlineUserCircle,
@@ -16,6 +17,7 @@ const navigationIcon: NavigationIcons = {
   assingments: <HiOutlineUserAdd />,
   users: <HiOutlineUserGroup />,
   clients: <HiOutlineUserCircle />,
+  emission: <HiOutlineClipboardCopy />,
 }
 
 export default navigationIcon

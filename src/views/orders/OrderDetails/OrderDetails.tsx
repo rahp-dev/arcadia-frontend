@@ -14,7 +14,6 @@ import {
   HiOutlineTicket,
 } from 'react-icons/hi'
 import { useNavigate, useParams } from 'react-router-dom'
-import OrderForm from '../CreateOrders/OrdersForm'
 import { useEffect, useState } from 'react'
 import {
   CreateOrderBody,
@@ -37,6 +36,7 @@ const OrderDetails = () => {
     paymentReference: '',
     status: '',
     transactionDate: null,
+    ticketIds: [],
   })
 
   const { data, isFetching } = useGetOrderByIdQuery(orderId, {
@@ -56,16 +56,26 @@ const OrderDetails = () => {
     setEditActive(true)
   }
 
-  const onSubmit = (values: FormModel) => {
+  const onSubmit = async (values: FormModel) => {
     setOrderData(values)
     console.log(values)
 
     const { ...orderBody } = values
     const body: CreateOrderBody = {
       ...orderBody,
+      ticketIds: orderBody.ticketIds || [],
     }
 
-    updateOrder({ id: orderId, ...body })
+    try {
+      const response = await updateOrder({ id: orderId, ...body }).unwrap()
+      console.log('Respuesta: ', response)
+      setOrderData({
+        ...orderData,
+        ...response,
+      })
+    } catch (error) {
+      console.error('Error al actualizar la orden: ', error)
+    }
   }
 
   useEffect(() => {
@@ -78,6 +88,7 @@ const OrderDetails = () => {
         paymentReference: data?.paymentReference,
         status: data?.status,
         transactionDate: new Date(data?.transactionDate),
+        ticketIds: data?.ticketIds || [], // Asegura que ticketIds se inicialice correctamente
       })
     } else {
       setOrderData({
@@ -88,6 +99,7 @@ const OrderDetails = () => {
         paymentReference: '',
         status: '',
         transactionDate: null,
+        ticketIds: [], // Inicializa como un array vacío
       })
     }
   }, [data, isFetching])
