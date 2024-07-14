@@ -49,7 +49,12 @@ export function getTicketsQuery(builder: EndpointBuilderType) {
       SelectOption[],
       { transformToSelectOptions?: boolean }
     >({
-      query: () => ({ url: 'ticket', method: 'get' }),
+      query: () => ({
+        url: 'ticket',
+        method: 'get',
+        // Robe del futuro, pendiente con subir el limite
+        params: { limit: 1000, page: 1 },
+      }),
       transformResponse: (
         response: { data: TicketWithCustomer[] },
         meta,
