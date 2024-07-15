@@ -321,9 +321,9 @@ const OrderDetails = () => {
               <div className="pt-4">
                 <TabContent value="tab1">
                   <UpdateOrderForm
+                    updateOrder={updateOrder}
                     orderData={orderData}
-                    setOrderData={setOrderData}
-                    customOnSubmit={onSubmit}
+                    orderId={orderId}
                     editActive={!editActive}
                   />
                 </TabContent>

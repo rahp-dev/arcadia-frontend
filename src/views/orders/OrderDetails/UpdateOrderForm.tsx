@@ -1,10 +1,7 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import { Field, FieldProps, Form, Formik } from 'formik'
 import * as Yup from 'yup'
-import {
-  CreateOrderBody,
-  CreateOrderFormModel,
-} from '@/services/orders/types/orders.type'
+import { CreateOrderFormModel } from '@/services/orders/types/orders.type'
 import {
   Button,
   DatePicker,
@@ -14,13 +11,7 @@ import {
   Select,
   Switcher,
 } from '@/components/ui'
-import {
-  useCreateOrderMutation,
-  useGetAllTicketsToOrdersQuery,
-} from '@/services/RtkQueryService'
-import openNotification from '@/utils/useNotification'
-import { useNavigate } from 'react-router-dom'
-import CreatableSelect from 'react-select/creatable'
+
 import { HiOutlineSave } from 'react-icons/hi'
 
 type FormModel = CreateOrderFormModel
@@ -52,61 +43,18 @@ const validationSchema = Yup.object().shape({
 
 function UpdateOrderForm({
   orderData,
-  setOrderData,
   editActive,
-  customOnSubmit,
+  orderId,
+  updateOrder,
 }: {
   orderData: CreateOrderFormModel
-  setOrderData: Dispatch<SetStateAction<CreateOrderFormModel>>
   editActive: boolean
-  customOnSubmit?: (values: CreateOrderFormModel) => void
+  orderId: string
+  updateOrder: any
 }) {
-  const navigate = useNavigate()
-
-  const [createOrder, { data, isError, isSuccess, isUninitialized }] =
-    useCreateOrderMutation()
-
-  const onSubmit = (values: FormModel, { setSubmitting }: any) => {
-    setOrderData(values)
-
-    const body: CreateOrderBody = {
-      amount: values.amount,
-      paymentMethod: values.paymentMethod,
-      paymentReference: values.paymentReference,
-      status: values.status,
-      numQuotes: values.numQuotes,
-      financed: values.financed,
-      transactionDate: values.transactionDate,
-      ticketIds: values.ticketIds || [],
-    }
-
-    customOnSubmit(body)
-    setSubmitting(false)
+  const onSubmit = (values: FormModel) => {
+    updateOrder({ id: orderId, ...values })
   }
-
-  useEffect(() => {
-    if (isSuccess) {
-      openNotification(
-        'success',
-        'La orden ha sido completada exitosamente',
-        'La orden se ha creado sin problemas!',
-        5,
-      )
-
-      setTimeout(() => {
-        navigate('/ordenes')
-      }, 1 * 2000)
-    }
-
-    if (!isUninitialized && isError) {
-      openNotification(
-        'danger',
-        'Ha ocurrido un error al finalizar la orden :(',
-        'Verifique la información e intente nuevamente.',
-        5,
-      )
-    }
-  }, [isSuccess, isError])
 
   return (
     <Formik
