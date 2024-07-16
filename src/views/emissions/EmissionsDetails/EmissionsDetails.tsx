@@ -1,21 +1,51 @@
 import { Button, Card, Skeleton, Tabs } from '@/components/ui'
 import TabList from '@/components/ui/Tabs/TabList'
 import TabNav from '@/components/ui/Tabs/TabNav'
-import { useGetEmissionByIdQuery } from '@/services/RtkQueryService'
+import {
+  useGetEmissionByIdQuery,
+  useUpdateEmissionMutation,
+} from '@/services/RtkQueryService'
 import { format } from 'date-fns'
 import { FaEdit } from 'react-icons/fa'
 import { HiOutlineArrowRight } from 'react-icons/hi'
 import { VscEdit } from 'react-icons/vsc'
 import { useNavigate, useParams } from 'react-router-dom'
 import EmissionsForm from './EmissionsForm'
+import { useEffect, useState } from 'react'
+import { CreateEmissionFormModel } from '@/services/emissions/types/emissions.type'
+import openNotification from '@/utils/useNotification'
+
+type FormModel = CreateEmissionFormModel
 
 const EmissionsDetails = () => {
   const navigate = useNavigate()
   const { emissionId } = useParams()
+  const [editActive, setEditActive] = useState(false)
+  const [emissionData, setEmissionData] = useState<FormModel>({
+    orderId: 0,
+    date: null,
+    agency: '',
+    airline: '',
+    passengerCount: 0,
+    providerSystem: '',
+    costPrice: 0,
+    providerFee: 0,
+    totalToPay: 0,
+    clientPayment: 0,
+    generatedFee: 0,
+    advisorCommission: 0,
+    amountPaid: '',
+    paymentMethod: '',
+    status: '',
+    observation: '',
+  })
 
   const { data, isFetching } = useGetEmissionByIdQuery(emissionId, {
     refetchOnMountOrArgChange: true,
   })
+
+  const [updateEmission, { isError, isSuccess, isUninitialized }] =
+    useUpdateEmissionMutation()
 
   const cardFooter = (
     <Button block variant="solid" size="sm" icon={<FaEdit />}>
@@ -28,6 +58,70 @@ const EmissionsDetails = () => {
 
     return format(new Date(date), 'dd-MM-yyyy - h:mm:ss a')
   }
+
+  useEffect(() => {
+    if (data && !isFetching) {
+      setEmissionData({
+        orderId: data?.orderId,
+        date: new Date(data?.date),
+        agency: data?.agency,
+        airline: data?.airline,
+        passengerCount: data?.passengerCount,
+        providerSystem: data?.providerSystem,
+        costPrice: data?.costPrice,
+        providerFee: data?.providerFee,
+        totalToPay: data?.totalToPay,
+        clientPayment: data?.clientPayment,
+        generatedFee: data?.generatedFee,
+        advisorCommission: data?.advisorCommission,
+        amountPaid: data?.amountPaid,
+        paymentMethod: data?.paymentMethod,
+        status: data?.status,
+        observation: data?.observation,
+      })
+    } else {
+      setEmissionData({
+        orderId: 0,
+        date: null,
+        agency: '',
+        airline: '',
+        passengerCount: 0,
+        providerSystem: '',
+        costPrice: 0,
+        providerFee: 0,
+        totalToPay: 0,
+        clientPayment: 0,
+        generatedFee: 0,
+        advisorCommission: 0,
+        amountPaid: '',
+        paymentMethod: '',
+        status: '',
+        observation: '',
+      })
+    }
+  }, [data, isFetching])
+
+  useEffect(() => {
+    if (isSuccess) {
+      openNotification(
+        'success',
+        'Emisión Actualizada',
+        'La emisión se ha actualizado correctamente.',
+        3,
+      )
+
+      // setEditActive(false)
+    }
+
+    if (!isUninitialized && isError) {
+      openNotification(
+        'warning',
+        'Error',
+        'Ocurrio un error al actualizar la emisión, por favor intenta más tarde.',
+        3,
+      )
+    }
+  }, [isSuccess, isError])
 
   return (
     <>
@@ -108,7 +202,7 @@ const EmissionsDetails = () => {
                   </>
                 ) : (
                   <>
-                    <span className="font-semibold">Precio de Coste:</span>
+                    <span className="font-semibold">Precio costo:</span>
                     <span>{data?.costPrice || 'N/A'}</span>
                   </>
                 )}
@@ -292,7 +386,12 @@ const EmissionsDetails = () => {
                 </TabNav>
               </TabList>
               <div className="pt-4">
-                <EmissionsForm />
+                <EmissionsForm
+                  emissionData={emissionData}
+                  emissionId={emissionId}
+                  editActive={!editActive}
+                  updateEmission={updateEmission}
+                />
               </div>
             </Tabs>
           </Card>

@@ -3,7 +3,7 @@ import {
   EndpointBuilderType,
   PaginateResult,
 } from '../core-entities/paginated-result.entity'
-import { Emission } from './types/emissions.type'
+import { CreateEmissionBody, Emission } from './types/emissions.type'
 
 export function getEmissionQuery(builder: EndpointBuilderType) {
   return {
@@ -26,6 +26,18 @@ export function getEmissionQuery(builder: EndpointBuilderType) {
     getEmissionById: builder.query<Emission, string>({
       query: (id: string) => ({ url: `emision/${id}`, method: 'get' }),
       providesTags: ['Emission'] as any,
+    }),
+
+    updateEmission: builder.mutation<
+      Emission,
+      Partial<CreateEmissionBody> & { id: string }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `emision/${id}`,
+        method: 'patch',
+        data: body,
+      }),
+      invalidatesTags: ['Emission'] as any,
     }),
   }
 }

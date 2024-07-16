@@ -56,28 +56,6 @@ const OrderDetails = () => {
     setEditActive(true)
   }
 
-  const onSubmit = async (values: FormModel) => {
-    setOrderData(values)
-    console.log(values)
-
-    const { ...orderBody } = values
-    const body: CreateOrderBody = {
-      ...orderBody,
-      ticketIds: orderBody.ticketIds || [],
-    }
-
-    try {
-      const response = await updateOrder({ id: orderId, ...body }).unwrap()
-      console.log('Respuesta: ', response)
-      setOrderData({
-        ...orderData,
-        ...response,
-      })
-    } catch (error) {
-      console.error('Error al actualizar la orden: ', error)
-    }
-  }
-
   useEffect(() => {
     if (data && !isFetching) {
       setOrderData({
@@ -88,7 +66,7 @@ const OrderDetails = () => {
         paymentReference: data?.paymentReference,
         status: data?.status,
         transactionDate: new Date(data?.transactionDate),
-        ticketIds: data?.ticketIds || [], // Asegura que ticketIds se inicialice correctamente
+        ticketIds: data?.ticketIds || [],
       })
     } else {
       setOrderData({
@@ -99,7 +77,7 @@ const OrderDetails = () => {
         paymentReference: '',
         status: '',
         transactionDate: null,
-        ticketIds: [], // Inicializa como un array vacío
+        ticketIds: [],
       })
     }
   }, [data, isFetching])
@@ -152,9 +130,9 @@ const OrderDetails = () => {
         </Button>
       </div>
 
-      <div className="container mx-auto">
-        <div className="flex flex-row gap-4">
-          <Card className="w-[380px]" footer={cardFooter}>
+      <div className="container">
+        <div className="flex justify-between flex-row gap-4">
+          <Card className="w-[400px]" footer={cardFooter}>
             <div className="grid gap-y-4 gap-x-4">
               {isFetching ? (
                 <>
@@ -267,8 +245,12 @@ const OrderDetails = () => {
                   </>
                 ) : (
                   <>
-                    <span className="font-semibold">Fecha de creación:</span>
-                    <span>{formattedDate(data?.createdAt)}</span>
+                    <span className="font-semibold">Cantidad de Tickets:</span>
+                    <div className="flex gap-2">
+                      {data?.tickets.map((ticket: any, index: number) => (
+                        <HiOutlineTicket key={ticket.id} className="text-2xl" />
+                      ))}
+                    </div>
                   </>
                 )}
               </div>
@@ -281,12 +263,8 @@ const OrderDetails = () => {
                   </>
                 ) : (
                   <>
-                    <span className="font-semibold">Cantidad de Tickets:</span>
-                    <div className="flex gap-2">
-                      {data?.tickets.map((ticket: any, index: number) => (
-                        <HiOutlineTicket key={ticket.id} className="text-2xl" />
-                      ))}
-                    </div>
+                    <span className="font-semibold">Fecha de creación:</span>
+                    <span>{formattedDate(data?.createdAt)}</span>
                   </>
                 )}
               </div>

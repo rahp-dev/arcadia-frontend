@@ -30,13 +30,14 @@ export function getOrdersQuery(builder: EndpointBuilderType) {
       query: (body) => ({ url: 'order', method: 'post', data: body }),
       invalidatesTags: ['Orders'] as any,
     }),
-    updateOrder: builder.mutation<Order, CreateOrderBody & { id: string }>({
+    updateOrder: builder.mutation<
+      Order,
+      Partial<CreateOrderBody> & { id: string }
+    >({
       query: ({ id, ...body }) => ({
         url: `order/${id}`,
         method: 'patch',
-        data: {
-          status: body.status,
-        },
+        data: body,
       }),
       invalidatesTags: ['Orders'] as any,
     }),

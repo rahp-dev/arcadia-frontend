@@ -1,4 +1,3 @@
-import { Dispatch, SetStateAction } from 'react'
 import { Field, FieldProps, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import { CreateOrderFormModel } from '@/services/orders/types/orders.type'
@@ -15,12 +14,6 @@ import {
 import { HiOutlineSave } from 'react-icons/hi'
 
 type FormModel = CreateOrderFormModel
-
-type Option = {
-  value: string
-  label: string
-  totalPrice: number
-}
 
 const paymentMethods: { value: string; label: string }[] = [
   { value: 'USD', label: 'Efectivo ($)' },
@@ -63,19 +56,7 @@ function UpdateOrderForm({
       onSubmit={onSubmit}
       enableReinitialize
     >
-      {({ values, touched, errors, setFieldValue, isSubmitting }) => {
-        const handleTicketChange = (selectedOptions: Option[]) => {
-          const totalPrice = selectedOptions.reduce(
-            (sum, option) => sum + option.totalPrice,
-            0,
-          )
-          setFieldValue(
-            'ticketIds',
-            selectedOptions.map((option) => option.value),
-          )
-          setFieldValue('amount', totalPrice)
-        }
-
+      {({ values, touched, errors, isSubmitting }) => {
         return (
           <Form>
             <FormContainer>
@@ -92,7 +73,6 @@ function UpdateOrderForm({
                         </label>
                         <Switcher
                           disabled={editActive}
-                          checked={field.checked}
                           onChange={(checked) => {
                             form.setFieldValue(field.name, checked)
                             if (!checked) {
@@ -177,6 +157,7 @@ function UpdateOrderForm({
                         placeholder="Selecciona la fecha"
                         field={field}
                         form={form}
+                        value={values.transactionDate}
                         disabled={editActive}
                         onChange={(day) => {
                           form.setFieldValue(field.name, day)

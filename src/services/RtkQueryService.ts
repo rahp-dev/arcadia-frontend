@@ -65,7 +65,6 @@ export default RtkQueryService
 export const {
   useGetMyInfoQuery,
   useGetAllClientsQuery,
-  useGetClientByIdQuery,
   useGetAllUsersQuery,
   useGetAllAssingmentsQuery,
   useGetAllTicketsQuery,
@@ -74,6 +73,7 @@ export const {
   useGetAllEmissionQuery,
   useGetUserRolesQuery,
   useGetOrderByIdQuery,
+  useGetClientByIdQuery,
   useGetEmissionByIdQuery,
   useGetOneUserQuery,
   useGetOneUserForAssingmentQuery,
@@ -83,4 +83,5 @@ export const {
   useCreateOrderMutation,
   useCreateAssingmentMutation,
   useUpdateOrderMutation,
+  useUpdateEmissionMutation,
 } = RtkQueryService
