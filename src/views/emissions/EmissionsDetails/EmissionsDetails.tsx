@@ -47,8 +47,18 @@ const EmissionsDetails = () => {
   const [updateEmission, { isError, isSuccess, isUninitialized }] =
     useUpdateEmissionMutation()
 
+  const handleToggleEditing = () => {
+    setEditActive(true)
+  }
+
   const cardFooter = (
-    <Button block variant="solid" size="sm" icon={<FaEdit />}>
+    <Button
+      block
+      variant="solid"
+      size="sm"
+      onClick={() => handleToggleEditing()}
+      icon={<FaEdit />}
+    >
       Editar emisión
     </Button>
   )
@@ -110,7 +120,7 @@ const EmissionsDetails = () => {
         3,
       )
 
-      // setEditActive(false)
+      setEditActive(false)
     }
 
     if (!isUninitialized && isError) {

@@ -20,6 +20,7 @@ const paymentMethods: { value: string; label: string }[] = [
   { value: 'Transferencia Bancaria', label: 'Transferencia Bancaria' },
   { value: 'Pago Móvil', label: 'Pago Móvil' },
   { value: 'Zelle', label: 'Zelle' },
+  { value: 'USDT', label: 'USDT' },
 ]
 
 const validationSchema = Yup.object().shape({

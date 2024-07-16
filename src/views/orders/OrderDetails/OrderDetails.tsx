@@ -15,10 +15,7 @@ import {
 } from 'react-icons/hi'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import {
-  CreateOrderBody,
-  CreateOrderFormModel,
-} from '@/services/orders/types/orders.type'
+import { CreateOrderFormModel } from '@/services/orders/types/orders.type'
 import UpdateOrderForm from './UpdateOrderForm'
 import openNotification from '@/utils/useNotification'
 

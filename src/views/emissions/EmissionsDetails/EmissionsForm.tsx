@@ -27,6 +27,14 @@ const statusOptions: Option[] = [
   { value: 'Pending', label: 'Pendiente 📝' },
 ]
 
+const paymentMethods: Option[] = [
+  { value: 'USD', label: 'Efectivo ($)' },
+  { value: 'Transferencia Bancaria', label: 'Transferencia Bancaria' },
+  { value: 'Pago Móvil', label: 'Pago Móvil' },
+  { value: 'Zelle', label: 'Zelle' },
+  { value: 'USDT', label: 'USDT' },
+]
+
 const validationSchema = Yup.object().shape({
   orderId: Yup.number(),
   date: Yup.date(),
@@ -82,6 +90,7 @@ function EmissionsForm({
                         field={field}
                         form={form}
                         value={values.date}
+                        disabled={editActive}
                         onChange={(day) => {
                           form.setFieldValue(field.name, day)
                         }}
@@ -103,6 +112,7 @@ function EmissionsForm({
                         onChange={(option: Option) => {
                           form.setFieldValue(field.name, option?.value)
                         }}
+                        isDisabled={editActive}
                         placeholder="Selecciona una agencia..."
                       />
                     )}
@@ -121,6 +131,7 @@ function EmissionsForm({
                         onChange={(option: Option) => {
                           form.setFieldValue(field.name, option?.value)
                         }}
+                        isDisabled={editActive}
                         placeholder="Selecciona una aerolinea..."
                       />
                     )}
@@ -130,6 +141,7 @@ function EmissionsForm({
                   <Field
                     type="number"
                     name="passengerCount"
+                    disabled={editActive}
                     component={Input}
                   />
                 </FormItem>
@@ -141,36 +153,63 @@ function EmissionsForm({
                     type="text"
                     name="providerSystem"
                     component={Input}
+                    disabled={editActive}
                     autoComplete="off"
                   />
                 </FormItem>
 
                 <FormItem label="Precio costo" className="w-1/4">
-                  <Field type="number" name="costPrice" component={Input} />
+                  <Field
+                    type="number"
+                    name="costPrice"
+                    component={Input}
+                    disabled={editActive}
+                  />
                 </FormItem>
 
                 <FormItem label="Tarifa del Proveedor" className="w-1/4">
-                  <Field type="number" name="providerFee" component={Input} />
+                  <Field
+                    type="number"
+                    name="providerFee"
+                    component={Input}
+                    disabled={editActive}
+                  />
                 </FormItem>
 
                 <FormItem label="Total a Pagar" className="w-1/4">
-                  <Field type="number" name="totalToPay" component={Input} />
+                  <Field
+                    type="number"
+                    name="totalToPay"
+                    component={Input}
+                    disabled={editActive}
+                  />
                 </FormItem>
               </div>
 
               <div className="flex items-center gap-4">
                 <FormItem label="Pago del Cliente" className="w-1/4">
-                  <Field type="number" name="clientPayment" component={Input} />
+                  <Field
+                    type="number"
+                    name="clientPayment"
+                    component={Input}
+                    disabled={editActive}
+                  />
                 </FormItem>
 
                 <FormItem label="Tarifa generada" className="w-1/4">
-                  <Field type="number" name="generatedFee" component={Input} />
+                  <Field
+                    type="number"
+                    name="generatedFee"
+                    component={Input}
+                    disabled={editActive}
+                  />
                 </FormItem>
 
                 <FormItem label="Comisión del Asesor" className="w-1/4">
                   <Field
                     type="number"
                     name="advisorCommission"
+                    disabled={editActive}
                     component={Input}
                   />
                 </FormItem>
@@ -179,6 +218,7 @@ function EmissionsForm({
                   <Field
                     type="text"
                     name="amountPaid"
+                    disabled={editActive}
                     component={Input}
                     autoComplete="off"
                   />
@@ -187,12 +227,23 @@ function EmissionsForm({
 
               <div className="flex justify-center items-center gap-4 border-t pt-4">
                 <FormItem label="Método de pago" className="w-1/4">
-                  <Field
-                    type="text"
-                    name="paymentMethod"
-                    component={Input}
-                    autoComplete="off"
-                  />
+                  <Field name="paymentMethod">
+                    {({ field, form }: FieldProps<FormModel>) => (
+                      <Select
+                        field={field}
+                        form={form}
+                        options={paymentMethods}
+                        placeholder="Seleccione uno"
+                        isDisabled={editActive}
+                        value={paymentMethods.filter(
+                          (option) => option.value === values.paymentMethod,
+                        )}
+                        onChange={(option) =>
+                          form.setFieldValue(field.name, option.value)
+                        }
+                      />
+                    )}
+                  </Field>
                 </FormItem>
 
                 <FormItem label="Estatus" className="w-1/4">
@@ -208,6 +259,7 @@ function EmissionsForm({
                         onChange={(option) =>
                           form.setFieldValue(field.name, option.value)
                         }
+                        isDisabled={editActive}
                         placeholder="Selecciona uno"
                       />
                     )}
@@ -220,6 +272,7 @@ function EmissionsForm({
                     name="observation"
                     component={Input}
                     autoComplete="off"
+                    disabled={editActive}
                   />
                 </FormItem>
               </div>
@@ -229,7 +282,7 @@ function EmissionsForm({
                   type="submit"
                   size="sm"
                   variant="solid"
-                  disabled={isSubmitting}
+                  disabled={editActive}
                   icon={<HiOutlineSave />}
                 >
                   Guardar cambios
