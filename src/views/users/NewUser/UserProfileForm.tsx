@@ -4,7 +4,10 @@ import { Dispatch, SetStateAction, useState } from 'react'
 import * as Yup from 'yup'
 
 import './UserForm.css'
-import { useGetUserRolesQuery } from '@/services/RtkQueryService'
+import {
+  useGetAllSedesQuery,
+  useGetUserRolesQuery,
+} from '@/services/RtkQueryService'
 import { Select as SelectType } from '@/@types/select'
 import useAuth from '@/utils/hooks/useAuth'
 import { RolesEnum } from '@/enums/roles.enum'
@@ -23,8 +26,6 @@ type Option = {
   value: string
   label: string
 }
-
-const sedeOptions = [{ value: 1, label: 'Valencia' }]
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Nombre requerido.'),
@@ -62,6 +63,10 @@ const UserProfileForm = ({
   const [identityCardValue, setIdentityCardValue] = useState('')
 
   const { data: rolOptions } = useGetUserRolesQuery(
+    { transformToSelectOptions: true },
+    { refetchOnMountOrArgChange: true },
+  )
+  const { data: sedeOptions } = useGetAllSedesQuery(
     { transformToSelectOptions: true },
     { refetchOnMountOrArgChange: true },
   )

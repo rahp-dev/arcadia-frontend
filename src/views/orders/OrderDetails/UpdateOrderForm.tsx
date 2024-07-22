@@ -1,6 +1,6 @@
 import { Field, FieldProps, Form, Formik } from 'formik'
 import * as Yup from 'yup'
-import { CreateOrderFormModel } from '@/services/orders/types/orders.type'
+import { UpdateOrderFormModel } from '@/services/orders/types/orders.type'
 import {
   Button,
   DatePicker,
@@ -14,13 +14,33 @@ import {
 import { HiOutlineSave } from 'react-icons/hi'
 import { paymentMethods } from '@/constants/paymentsMethods.constant'
 
-type FormModel = CreateOrderFormModel
+type FormModel = Pick<
+  UpdateOrderFormModel,
+  | 'amount'
+  | 'financed'
+  | 'numQuotes'
+  | 'paymentMethodId'
+  | 'paymentReference'
+  | 'status'
+  | 'transactionDate'
+>
+
+type OptionStatus = {
+  value: string
+  label: string
+}
+
+const statusOptions: OptionStatus[] = [
+  { value: 'Completed', label: 'Completado ✅' },
+  { value: 'Canceled', label: 'Cancelado ❌' },
+  { value: 'Pending', label: 'Pendiente 📝' },
+]
 
 const validationSchema = Yup.object().shape({
   amount: Yup.number()
     .min(0, 'El monto final debe de ser mayor a 0')
     .required('Ingrese el monto final.'),
-  paymentMethod: Yup.string(),
+  paymentMethodId: Yup.number(),
   paymentReference: Yup.string(),
   status: Yup.string(),
   numQuotes: Yup.string(),
@@ -34,12 +54,13 @@ function UpdateOrderForm({
   orderId,
   updateOrder,
 }: {
-  orderData: CreateOrderFormModel
+  orderData: UpdateOrderFormModel
   editActive: boolean
   orderId: string
   updateOrder: any
 }) {
-  const onSubmit = (values: FormModel) => {
+  const onSubmit = (values: UpdateOrderFormModel) => {
+    console.log(values)
     updateOrder({ id: orderId, ...values })
   }
 
@@ -50,7 +71,7 @@ function UpdateOrderForm({
       onSubmit={onSubmit}
       enableReinitialize
     >
-      {({ values, touched, errors, isSubmitting }) => {
+      {({ values, touched, errors }) => {
         return (
           <Form>
             <FormContainer>
@@ -101,10 +122,10 @@ function UpdateOrderForm({
                 <FormItem
                   label="Método de Pago"
                   className="w-1/4"
-                  invalid={errors.paymentMethod && touched.paymentMethod}
-                  errorMessage={errors.paymentMethod}
+                  invalid={errors.paymentMethodId && touched.paymentMethodId}
+                  errorMessage={errors.paymentMethodId}
                 >
-                  <Field name="paymentMethod">
+                  <Field name="paymentMethodId">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
                         field={field}
@@ -113,7 +134,7 @@ function UpdateOrderForm({
                         placeholder="Seleccione uno"
                         isDisabled={editActive}
                         value={paymentMethods.filter(
-                          (option) => option.value === values.paymentMethod,
+                          (option) => option.value === values.paymentMethodId,
                         )}
                         onChange={(option) =>
                           form.setFieldValue(field.name, option.value)
@@ -195,20 +216,24 @@ function UpdateOrderForm({
                     )}
                   </Field>
                 </FormItem>
-                <FormItem
-                  label="Estatus"
-                  className="w-1/4"
-                  errorMessage={errors.status}
-                  invalid={errors.status && touched.status}
-                >
-                  <Field
-                    type="text"
-                    name="status"
-                    placeholder="Ingrese el estatus del pedido"
-                    component={Input}
-                    autoComplete="off"
-                    disabled={editActive}
-                  />
+                <FormItem label="Estatus" className="w-1/4">
+                  <Field name="status">
+                    {({ field, form }: FieldProps<FormModel>) => (
+                      <Select
+                        field={field}
+                        form={form}
+                        options={statusOptions}
+                        isDisabled={editActive}
+                        value={statusOptions.filter(
+                          (option) => option.value === values.status,
+                        )}
+                        onChange={(option) =>
+                          form.setFieldValue(field.name, option.value)
+                        }
+                        placeholder="Selecciona uno"
+                      />
+                    )}
+                  </Field>
                 </FormItem>
               </div>
 
@@ -218,7 +243,7 @@ function UpdateOrderForm({
                     type="submit"
                     size="sm"
                     variant="solid"
-                    disabled={isSubmitting}
+                    disabled={editActive}
                     icon={<HiOutlineSave />}
                   >
                     Guardar

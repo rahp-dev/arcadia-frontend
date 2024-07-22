@@ -216,12 +216,7 @@ function OrderForm({
                     disabled
                   />
                 </FormItem>
-                <FormItem
-                  label="Método de Pago"
-                  className="w-1/5"
-                  invalid={errors.paymentMethodId && touched.paymentMethodId}
-                  errorMessage={errors.paymentMethodId}
-                >
+                <FormItem label="Método de Pago" className="w-1/5">
                   <Field name="paymentMethodId">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select

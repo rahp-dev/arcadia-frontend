@@ -15,11 +15,11 @@ import {
 } from 'react-icons/hi'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { CreateOrderFormModel } from '@/services/orders/types/orders.type'
+import { UpdateOrderFormModel } from '@/services/orders/types/orders.type'
 import UpdateOrderForm from './UpdateOrderForm'
 import openNotification from '@/utils/useNotification'
 
-type FormModel = CreateOrderFormModel
+type FormModel = UpdateOrderFormModel
 
 const OrderDetails = () => {
   const navigate = useNavigate()
@@ -29,7 +29,7 @@ const OrderDetails = () => {
     amount: 0,
     financed: false,
     numQuotes: 0,
-    paymentMethod: '',
+    paymentMethodId: 0,
     paymentReference: '',
     status: '',
     transactionDate: null,
@@ -59,7 +59,7 @@ const OrderDetails = () => {
         amount: data?.amount,
         financed: data?.financed,
         numQuotes: data?.numQuotes,
-        paymentMethod: data?.paymentMethod,
+        paymentMethodId: data?.paymentMethodId,
         paymentReference: data?.paymentReference,
         status: data?.status,
         transactionDate: new Date(data?.transactionDate),
@@ -69,8 +69,8 @@ const OrderDetails = () => {
       setOrderData({
         amount: 0,
         financed: false,
+        paymentMethodId: 0,
         numQuotes: 0,
-        paymentMethod: '',
         paymentReference: '',
         status: '',
         transactionDate: null,
@@ -195,7 +195,7 @@ const OrderDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Método de Pago:</span>
-                    <span>{data?.paymentMethod}</span>
+                    <span>{data?.paymentMethod?.name || 'N/A'}</span>
                   </>
                 )}
               </div>

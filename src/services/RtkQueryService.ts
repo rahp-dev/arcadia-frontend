@@ -12,6 +12,7 @@ import { getTicketsQuery } from './tickets/Tickets.service'
 import { getOrdersQuery } from './orders/Orders.service'
 import { getAssingmentsQuery } from './assingment/Assingments.service'
 import { getEmissionQuery } from './emissions/Emissions.service'
+import { getSedesQuery } from './sedes/Sedes.service'
 
 const axiosBaseQuery =
   (): BaseQueryFn<
@@ -49,6 +50,7 @@ const RtkQueryService = createApi({
     'Orders',
     'Assingments',
     'Emission',
+    'Sedes',
   ],
   endpoints: (builder: EndpointBuilderType) => ({
     ...getMeQuery(builder),
@@ -58,6 +60,7 @@ const RtkQueryService = createApi({
     ...getOrdersQuery(builder),
     ...getAssingmentsQuery(builder),
     ...getEmissionQuery(builder),
+    ...getSedesQuery(builder),
   }),
 })
 
@@ -71,6 +74,7 @@ export const {
   useGetAllOrdersQuery,
   useGetAllTicketsToOrdersQuery,
   useGetAllEmissionQuery,
+  useGetAllSedesQuery,
   useGetUserRolesQuery,
   useGetOrderByIdQuery,
   useGetClientByIdQuery,
