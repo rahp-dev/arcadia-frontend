@@ -19,6 +19,7 @@ export type User = {
     type: { id: number; name: string }
     rol: Rol
     status: { id: number; name: string }
+    sede: { id: number; name: string }
   }
 }
 
@@ -31,6 +32,7 @@ export type CreateUserFormModel = {
   primaryPhone: string
   imgUrl?: string
   rolId: number
+  sedeId: number
 }
 
 export type CreateUserBody = {
@@ -41,4 +43,5 @@ export type CreateUserBody = {
   identityCard: string
   primaryPhone: string
   rolId: number
+  sedeId: number
 }

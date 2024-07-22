@@ -22,27 +22,32 @@ import openNotification from '@/utils/useNotification'
 import { useNavigate } from 'react-router-dom'
 import CreatableSelect from 'react-select/creatable'
 import { HiOutlineSave } from 'react-icons/hi'
+import { paymentMethods } from '@/constants/paymentsMethods.constant'
 
 type FormModel = CreateOrderFormModel
 
 type Option = {
-  value: string
+  value: number
   label: string
   totalPrice: number
 }
 
-const paymentMethods: { value: string; label: string }[] = [
-  { value: 'USD', label: 'Efectivo ($)' },
-  { value: 'Transferencia Bancaria', label: 'Transferencia Bancaria' },
-  { value: 'Pago Móvil', label: 'Pago Móvil' },
-  { value: 'Zelle', label: 'Zelle' },
+type OptionStatus = {
+  value: string
+  label: string
+}
+
+const statusOptions: OptionStatus[] = [
+  { value: 'Completed', label: 'Completado ✅' },
+  { value: 'Canceled', label: 'Cancelado ❌' },
+  { value: 'Pending', label: 'Pendiente 📝' },
 ]
 
 const validationSchema = Yup.object().shape({
   amount: Yup.number()
     .min(0, 'El monto final debe de ser mayor a 0')
     .required('Ingrese el monto final.'),
-  paymentMethod: Yup.string(),
+  paymentMethodId: Yup.string(),
   paymentReference: Yup.string(),
   status: Yup.string(),
   numQuotes: Yup.string(),
@@ -214,10 +219,10 @@ function OrderForm({
                 <FormItem
                   label="Método de Pago"
                   className="w-1/5"
-                  invalid={errors.paymentMethod && touched.paymentMethod}
-                  errorMessage={errors.paymentMethod}
+                  invalid={errors.paymentMethodId && touched.paymentMethodId}
+                  errorMessage={errors.paymentMethodId}
                 >
-                  <Field name="paymentMethod">
+                  <Field name="paymentMethodId">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
                         field={field}
@@ -225,7 +230,7 @@ function OrderForm({
                         options={paymentMethods}
                         placeholder="Seleccione uno"
                         value={paymentMethods.filter(
-                          (option) => option.value === values.paymentMethod,
+                          (option) => option.value === values.paymentMethodId,
                         )}
                         onChange={(option) =>
                           form.setFieldValue(field.name, option.value)
@@ -245,6 +250,7 @@ function OrderForm({
                     name="paymentReference"
                     placeholder="Ingrese el n° de referencia"
                     component={Input}
+                    autoComplete="off"
                   />
                 </FormItem>
                 <FormItem
@@ -303,19 +309,23 @@ function OrderForm({
                     )}
                   </Field>
                 </FormItem>
-                <FormItem
-                  label="Estatus"
-                  className="w-1/5"
-                  errorMessage={errors.status}
-                  invalid={errors.status && touched.status}
-                >
-                  <Field
-                    type="text"
-                    name="status"
-                    placeholder="Ingrese el estatus del pedido"
-                    component={Input}
-                    autoComplete="off"
-                  />
+                <FormItem label="Estatus" className="w-1/5">
+                  <Field name="status">
+                    {({ field, form }: FieldProps<FormModel>) => (
+                      <Select
+                        field={field}
+                        form={form}
+                        options={statusOptions}
+                        value={statusOptions.filter(
+                          (option) => option.value === values.status,
+                        )}
+                        onChange={(option) =>
+                          form.setFieldValue(field.name, option.value)
+                        }
+                        placeholder="Selecciona uno"
+                      />
+                    )}
+                  </Field>
                 </FormItem>
               </div>
 

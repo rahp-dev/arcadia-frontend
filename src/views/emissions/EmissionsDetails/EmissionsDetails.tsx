@@ -22,22 +22,22 @@ const EmissionsDetails = () => {
   const { emissionId } = useParams()
   const [editActive, setEditActive] = useState(false)
   const [emissionData, setEmissionData] = useState<FormModel>({
-    orderId: 0,
-    date: null,
+    advisorCommission: 0,
     agency: '',
     airline: '',
-    passengerCount: 0,
-    providerSystem: '',
-    costPrice: 0,
-    providerFee: 0,
-    totalToPay: 0,
-    clientPayment: 0,
-    generatedFee: 0,
-    advisorCommission: 0,
     amountPaid: '',
-    paymentMethod: '',
-    status: '',
+    clientPayment: 0,
+    costPrice: 0,
+    date: null,
+    generatedFee: 0,
     observation: '',
+    orderId: 0,
+    passengerCount: 0,
+    paymentMethod: { id: 0, name: '' },
+    providerFee: 0,
+    providerSystem: '',
+    status: '',
+    totalToPay: 0,
   })
 
   const { data, isFetching } = useGetEmissionByIdQuery(emissionId, {
@@ -85,7 +85,7 @@ const EmissionsDetails = () => {
         generatedFee: data?.generatedFee,
         advisorCommission: data?.advisorCommission,
         amountPaid: data?.amountPaid,
-        paymentMethod: data?.paymentMethod,
+        paymentMethod: data?.paymentMethod || { id: 0, name: '' },
         status: data?.status,
         observation: data?.observation,
       })
@@ -104,7 +104,7 @@ const EmissionsDetails = () => {
         generatedFee: 0,
         advisorCommission: 0,
         amountPaid: '',
-        paymentMethod: '',
+        paymentMethod: { id: 0, name: '' },
         status: '',
         observation: '',
       })
@@ -339,7 +339,7 @@ const EmissionsDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Método de Pago:</span>
-                    <span>{data?.paymentMethod || 'N/A'}</span>
+                    <span>{data?.paymentMethod?.name || 'N/A'}</span>
                   </>
                 )}
               </div>

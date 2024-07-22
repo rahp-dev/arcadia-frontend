@@ -12,16 +12,9 @@ import {
 } from '@/components/ui'
 
 import { HiOutlineSave } from 'react-icons/hi'
+import { paymentMethods } from '@/constants/paymentsMethods.constant'
 
 type FormModel = CreateOrderFormModel
-
-const paymentMethods: { value: string; label: string }[] = [
-  { value: 'USD', label: 'Efectivo ($)' },
-  { value: 'Transferencia Bancaria', label: 'Transferencia Bancaria' },
-  { value: 'Pago Móvil', label: 'Pago Móvil' },
-  { value: 'Zelle', label: 'Zelle' },
-  { value: 'USDT', label: 'USDT' },
-]
 
 const validationSchema = Yup.object().shape({
   amount: Yup.number()

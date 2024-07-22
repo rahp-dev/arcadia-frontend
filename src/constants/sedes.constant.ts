@@ -1,4 +1,4 @@
-export const agencies = [
+export const sedes = [
   {
     value: 'MEDELLIN',
     label: 'Medellin',

@@ -143,7 +143,7 @@ const Orders = () => {
       },
       {
         header: 'Forma de pago',
-        accessorKey: 'paymentMethod',
+        accessorKey: 'paymentMethod.name',
       },
       {
         header: 'Estatus',

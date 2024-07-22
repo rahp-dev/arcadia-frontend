@@ -13,7 +13,7 @@ export type Emission = {
   generatedFee: number
   advisorCommission: number
   amountPaid: string
-  paymentMethod: string
+  paymentMethod: { id: number; name: string }
   status: string
   observation: string
 }
@@ -32,7 +32,7 @@ export type CreateEmissionFormModel = {
   generatedFee: number
   advisorCommission: number
   amountPaid: string
-  paymentMethod: string
+  paymentMethod: { id: number; name: string }
   status: string
   observation: string
 }
@@ -51,7 +51,7 @@ export type CreateEmissionBody = {
   generatedFee: number
   advisorCommission: number
   amountPaid: string
-  paymentMethod: string
+  paymentMethod: number
   status: string
   observation: string
 }

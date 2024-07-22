@@ -12,7 +12,7 @@ const CreateOrder = () => {
     amount: 0,
     financed: false,
     numQuotes: 0,
-    paymentMethod: '',
+    paymentMethodId: 0,
     paymentReference: '',
     status: '',
     ticketIds: [],

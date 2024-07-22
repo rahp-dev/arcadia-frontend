@@ -1,17 +1,11 @@
 import { Button, FormContainer, FormItem, Input, Select } from '@/components/ui'
-import { CreateUserBody } from '@/services/users/types/user.type'
 import { Field, FieldProps, Form, Formik } from 'formik'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Dispatch, SetStateAction, useState } from 'react'
 import * as Yup from 'yup'
 
 import './UserForm.css'
-import {
-  useCreateUserMutation,
-  useGetUserRolesQuery,
-} from '@/services/RtkQueryService'
+import { useGetUserRolesQuery } from '@/services/RtkQueryService'
 import { Select as SelectType } from '@/@types/select'
-import openNotification from '@/utils/useNotification'
 import useAuth from '@/utils/hooks/useAuth'
 import { RolesEnum } from '@/enums/roles.enum'
 
@@ -22,12 +16,15 @@ type FormModel = {
   identityCard: string
   primaryPhone: string
   rolId: number
+  sedeId: number
 }
 
 type Option = {
   value: string
   label: string
 }
+
+const sedeOptions = [{ value: 1, label: 'Valencia' }]
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().required('Nombre requerido.'),
@@ -38,6 +35,7 @@ const validationSchema = Yup.object().shape({
   identityCard: Yup.string().required('Ingrese el documento de identidad.'),
   primaryPhone: Yup.string().required('Ingrese el número.'),
   rolId: Yup.number().required('Rol requerido'),
+  sedeId: Yup.number().required('Rol requerido'),
 })
 
 const UserProfileForm = ({
@@ -56,6 +54,7 @@ const UserProfileForm = ({
     confirmPassword: string
     identityCard: string
     rolId: number | null
+    sedeId: number | null
   }
 }) => {
   const { isSuperAdmin } = useAuth()
@@ -186,8 +185,6 @@ const UserProfileForm = ({
                     )}
                   </Field>
                 </FormItem>
-              </div>
-              <div className="flex items-center mb-4 gap-3">
                 <FormItem
                   asterisk
                   label="Teléfono"
@@ -203,6 +200,8 @@ const UserProfileForm = ({
                     component={Input}
                   />
                 </FormItem>
+              </div>
+              <div className="flex items-center mb-4 gap-3">
                 <FormItem
                   asterisk
                   label="Rol"
@@ -218,11 +217,35 @@ const UserProfileForm = ({
                         options={setRolOptions()}
                         placeholder="Selecciona el rol..."
                         onChange={(option: SelectType) => {
-                          console.log(option)
                           form.setFieldValue(field.name, option.value)
                         }}
                         value={rolOptions?.filter(
                           (option: SelectType) => option.value === values.rolId,
+                        )}
+                      />
+                    )}
+                  </Field>
+                </FormItem>
+                <FormItem
+                  asterisk
+                  label="Sede"
+                  className="w-1/5"
+                  invalid={errors.sedeId && touched.sedeId}
+                  errorMessage={errors.sedeId}
+                >
+                  <Field name="sedeId">
+                    {({ field, form }: FieldProps<FormModel>) => (
+                      <Select
+                        field={field}
+                        form={form}
+                        options={sedeOptions}
+                        placeholder="Selecciona la sede..."
+                        onChange={(option: SelectType) => {
+                          form.setFieldValue(field.name, option.value)
+                        }}
+                        value={sedeOptions?.filter(
+                          (option: SelectType) =>
+                            option.value === values.sedeId,
                         )}
                       />
                     )}

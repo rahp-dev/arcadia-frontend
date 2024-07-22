@@ -16,6 +16,7 @@ import {
 } from '@tanstack/react-table'
 import { useGetAllUsersQuery } from '@/services/RtkQueryService'
 import { TableRowSkeleton } from '@/components/shared'
+import { capitalizeFirstLetter } from '@/utils/capitalizeFirstLetter'
 
 interface DebouncedInputProps
   extends Omit<
@@ -112,6 +113,12 @@ const Users = () => {
         header: 'Documento de Identidad',
         cell: (cellProps: any) => (
           <>{cellProps.row.original.identityCard || 'N/A'}</>
+        ),
+      },
+      {
+        header: 'Sede',
+        cell: (cellProps: any) => (
+          <>{capitalizeFirstLetter(cellProps.row.original.sede.name)}</>
         ),
       },
       {

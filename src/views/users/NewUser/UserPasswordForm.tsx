@@ -6,7 +6,7 @@ import {
   Spinner,
 } from '@/components/ui'
 import { Field, Form, Formik } from 'formik'
-import React, { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import * as Yup from 'yup'
 
 const validationSchema = Yup.object().shape({

@@ -8,6 +8,7 @@ import {
 } from '@/components/ui'
 import { agencies } from '@/constants/agencies.constant'
 import { airlines } from '@/constants/airlines.constant'
+import { paymentMethods } from '@/constants/paymentsMethods.constant'
 import { CreateEmissionFormModel } from '@/services/emissions/types/emissions.type'
 import { Field, Formik, Form, FieldProps } from 'formik'
 import { HiOutlineSave } from 'react-icons/hi'
@@ -25,14 +26,6 @@ const statusOptions: Option[] = [
   { value: 'CANCELLED', label: 'Cancelado ❌' },
   { value: 'REJECTED', label: 'Rechazado ❌' },
   { value: 'Pending', label: 'Pendiente 📝' },
-]
-
-const paymentMethods: Option[] = [
-  { value: 'USD', label: 'Efectivo ($)' },
-  { value: 'Transferencia Bancaria', label: 'Transferencia Bancaria' },
-  { value: 'Pago Móvil', label: 'Pago Móvil' },
-  { value: 'Zelle', label: 'Zelle' },
-  { value: 'USDT', label: 'USDT' },
 ]
 
 const validationSchema = Yup.object().shape({
@@ -99,7 +92,7 @@ function EmissionsForm({
                     )}
                   </Field>
                 </FormItem>
-                <FormItem label="Agencia de Vuelo" className="w-1/4">
+                <FormItem label="Agencia" className="w-1/4">
                   <Field name="agency">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -227,7 +220,7 @@ function EmissionsForm({
 
               <div className="flex justify-center items-center gap-4 border-t pt-4">
                 <FormItem label="Método de pago" className="w-1/4">
-                  <Field name="paymentMethod">
+                  <Field name="paymentMethod.id">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
                         field={field}
@@ -236,7 +229,7 @@ function EmissionsForm({
                         placeholder="Seleccione uno"
                         isDisabled={editActive}
                         value={paymentMethods.filter(
-                          (option) => option.value === values.paymentMethod,
+                          (option) => option.value === values.paymentMethod.id,
                         )}
                         onChange={(option) =>
                           form.setFieldValue(field.name, option.value)

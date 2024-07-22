@@ -1,11 +1,9 @@
 import {
   Button,
-  Checkbox,
   DatePicker,
   FormContainer,
   FormItem,
   Input,
-  Radio,
   Select,
   Switcher,
 } from '@/components/ui'
@@ -15,24 +13,19 @@ import {
   CreateClientFormModel,
 } from '@/services/clients/types/client.type'
 import { Field, FieldProps, Form, Formik } from 'formik'
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as Yup from 'yup'
 
 import './ClientForm.css'
 import openNotification from '@/utils/useNotification'
 import { useNavigate } from 'react-router-dom'
 import { HiOutlineSave } from 'react-icons/hi'
+import { countryList } from '@/constants/countries.constant'
 
 type Option = {
   value: string
   label: string
 }
-
-const countrys: Option[] = [
-  { value: 'USA', label: 'United States' },
-  { value: 'CAN', label: 'Canada' },
-  { value: 'MEX', label: 'Mexico' },
-]
 
 type FormModel = Pick<
   CreateClientFormModel,
@@ -289,7 +282,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                   errorMessage={errors.phone}
                 >
                   <Field
-                    type="text"
+                    type="number"
                     name="phone"
                     placeholder="Número del cliente"
                     autoComplete="off"
@@ -321,8 +314,8 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
                         placeholder="Selecciona el país"
-                        options={countrys}
-                        value={countrys?.filter(
+                        options={countryList}
+                        value={countryList?.filter(
                           (option: Option) => option.value === values.country,
                         )}
                         onChange={(option: Option) => {

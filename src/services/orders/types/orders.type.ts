@@ -1,7 +1,7 @@
 export type Order = {
   id: number
   amount: number
-  paymentMethod: string
+  paymentMethodId: number
   paymentReference: string
   status: string
   numQuotes: number
@@ -14,7 +14,7 @@ export type Order = {
 
 export type CreateOrderBody = {
   amount?: number
-  paymentMethod?: string
+  paymentMethodId?: number
   paymentReference?: string
   status?: string
   numQuotes?: number | null
@@ -25,7 +25,7 @@ export type CreateOrderBody = {
 
 export type CreateOrderFormModel = {
   amount?: number
-  paymentMethod?: string
+  paymentMethodId?: number
   paymentReference?: string
   status?: string
   numQuotes?: number | null
