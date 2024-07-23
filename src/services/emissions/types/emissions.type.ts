@@ -17,7 +17,7 @@ export type Emission = {
   observation: string
   paymentMethod: { id: number; name: string }
   providerSystemId: number
-  agencyId: string
+  agencyId: number
 }
 
 export type Agencies = {
@@ -51,22 +51,23 @@ export type SystemProvider = {
 
 export type CreateEmissionFormModel = {
   orderId: number
-  date: Date | null
+  date: Date
   airline: string
-  agencyId: number
   passengerCount: number
-  providerSystem: string
   costPrice: number
   providerFee: number
   totalToPay: number
   clientPayment: number
   generatedFee: number
   advisorCommission: number
+  officeCommission: number
+  advisorLeadCommission: {}
   amountPaid: string
-  paymentMethod: { id: number; name: string }
-  providerSystemId: number
   status: string
   observation: string
+  paymentMethod: { id: number; name: string }
+  providerSystemId: number
+  agencyId: number
 }
 
 export type CreateEmissionBody = {
@@ -75,7 +76,7 @@ export type CreateEmissionBody = {
   agency: string
   airline: string
   passengerCount: number
-  providerSystem: string
+  providerSystemId: number
   costPrice: number
   providerFee: number
   totalToPay: number

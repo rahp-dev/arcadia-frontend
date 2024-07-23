@@ -23,6 +23,7 @@ import { airlines } from '@/constants/airlines.constant'
 import { paymentMethods } from '@/constants/paymentsMethods.constant'
 
 import { HiOutlineCalculator, HiOutlineSave } from 'react-icons/hi'
+import { useEffect, useState } from 'react'
 
 type FormModel = CreateEmissionFormModel
 
@@ -80,10 +81,11 @@ function EmissionsForm({
   emissionId: string
   updateEmission: any
 }) {
+  const [formValues, setFormValues] = useState<FormModel>(emissionData)
+
   const onSubmit = (values: FormModel) => {
     updateEmission({ id: emissionId, ...values })
   }
-
   const onSubmitPreview = async (
     values: CreateEmissionFormModel,
     setFieldValue: (
@@ -91,11 +93,9 @@ function EmissionsForm({
       value: any,
       shouldValidate?: boolean,
     ) => void,
-    createPreview: any,
-    emissionId: string,
   ) => {
     const body: CreatePreviewEmissionBody = {
-      orderId: values.orderId,
+      orderId: Number(values.orderId),
       date: values.date,
       airline: values.airline,
       costPrice: values.costPrice,
@@ -106,23 +106,21 @@ function EmissionsForm({
       agencyId: values.agencyId,
     }
 
+    console.log('Preview: ', body)
+
     try {
-      const response = await createPreview(body, emissionId).unwrap()
-      Object.keys(response).forEach((key) => {
-        setFieldValue(key, response[key])
-      })
+      const response = await createPreview({ body, emissionId }).unwrap()
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        ...response,
+      }))
     } catch (error) {
       console.error('Error al generar la vista previa:', error)
     }
   }
 
-  const handlePreview = async (values, actions) => {
-    await onSubmitPreview(
-      values,
-      actions.setFieldValue,
-      createPreview,
-      emissionId,
-    )
+  const handlePreview = async (values: FormModel, actions: any) => {
+    await onSubmitPreview(values, actions.setFieldValue)
   }
 
   const [createPreview] = useCreatePreviewMutation()
@@ -137,9 +135,14 @@ function EmissionsForm({
     { refetchOnMountOrArgChange: true },
   )
 
+  useEffect(() => {
+    // Actualiza el estado cuando cambian los datos de emisión
+    setFormValues(emissionData)
+  }, [emissionData])
+
   return (
     <Formik
-      initialValues={emissionData}
+      initialValues={formValues}
       validationSchema={validationSchema}
       onSubmit={onSubmit}
       enableReinitialize
@@ -209,7 +212,7 @@ function EmissionsForm({
                   <Field
                     type="number"
                     name="passengerCount"
-                    disabled={editActive}
+                    disabled
                     component={Input}
                   />
                 </FormItem>
@@ -285,7 +288,7 @@ function EmissionsForm({
                   />
                 </FormItem>
 
-                <FormItem label="Cantidad Pagada" className="w-1/4">
+                <FormItem label="Monto Pagado" className="w-1/4">
                   <Field
                     type="text"
                     name="amountPaid"

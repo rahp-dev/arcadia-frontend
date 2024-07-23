@@ -19,11 +19,13 @@ type FormModel = CreateEmissionFormModel
 
 const EmissionsDetails = () => {
   const navigate = useNavigate()
-  const { emissionId } = useParams()
+  const { emissionId } = useParams<{ emissionId: string }>()
   const [editActive, setEditActive] = useState(false)
   const [emissionData, setEmissionData] = useState<FormModel>({
     advisorCommission: 0,
-    agency: '',
+    officeCommission: 0,
+    advisorLeadCommission: {},
+    agencyId: 0,
     airline: '',
     amountPaid: '',
     clientPayment: 0,
@@ -35,7 +37,7 @@ const EmissionsDetails = () => {
     passengerCount: 0,
     paymentMethod: { id: 0, name: '' },
     providerFee: 0,
-    providerSystem: '',
+    providerSystemId: 0,
     status: '',
     totalToPay: 0,
   })
@@ -74,16 +76,18 @@ const EmissionsDetails = () => {
       setEmissionData({
         orderId: data?.orderId,
         date: new Date(data?.date),
-        agency: data?.agency,
+        agencyId: data?.agencyId,
         airline: data?.airline,
         passengerCount: data?.passengerCount,
-        providerSystem: data?.providerSystem,
+        providerSystemId: data?.providerSystemId,
         costPrice: data?.costPrice,
         providerFee: data?.providerFee,
         totalToPay: data?.totalToPay,
         clientPayment: data?.clientPayment,
         generatedFee: data?.generatedFee,
         advisorCommission: data?.advisorCommission,
+        advisorLeadCommission: data?.advisorLeadCommission,
+        officeCommission: data?.officeCommission,
         amountPaid: data?.amountPaid,
         paymentMethod: data?.paymentMethod || { id: 0, name: '' },
         status: data?.status,
@@ -93,16 +97,18 @@ const EmissionsDetails = () => {
       setEmissionData({
         orderId: 0,
         date: null,
-        agency: '',
+        agencyId: 0,
         airline: '',
         passengerCount: 0,
-        providerSystem: '',
+        providerSystemId: 0,
         costPrice: 0,
         providerFee: 0,
         totalToPay: 0,
         clientPayment: 0,
         generatedFee: 0,
         advisorCommission: 0,
+        officeCommission: 0,
+        advisorLeadCommission: {},
         amountPaid: '',
         paymentMethod: { id: 0, name: '' },
         status: '',
@@ -171,7 +177,7 @@ const EmissionsDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Agencia de Viaje:</span>
-                    <span>{data?.agency || 'N/A'}</span>
+                    <span>{data?.agencyId || 'N/A'}</span>
                   </>
                 )}
               </div>
@@ -227,7 +233,7 @@ const EmissionsDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Sistema Proveedor:</span>
-                    <span>{data?.providerSystem || 'N/A'}</span>
+                    <span>{data?.providerSystemId || 'N/A'}</span>
                   </>
                 )}
               </div>
@@ -310,8 +316,10 @@ const EmissionsDetails = () => {
                   </>
                 ) : (
                   <>
-                    <span className="font-semibold">Comisión del Asesor:</span>
-                    <span>{data?.advisorCommission || 'N/A'}</span>
+                    <span className="font-semibold">
+                      Comisión de la oficina:
+                    </span>
+                    <span>{data?.officeCommission || 'N/A'}</span>
                   </>
                 )}
               </div>

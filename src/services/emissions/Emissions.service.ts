@@ -90,9 +90,10 @@ export function getEmissionQuery(builder: EndpointBuilderType) {
       { body: CreatePreviewEmissionBody; emissionId: string }
     >({
       query: ({ body, emissionId }) => ({
-        url: `emision/preview?emissionId=${emissionId}`,
+        url: `emision/preview`,
         method: 'post',
         data: body,
+        params: { id: emissionId },
       }),
       invalidatesTags: ['Emission'] as any,
     }),
