@@ -1,3 +1,4 @@
+import * as Yup from 'yup'
 import {
   Button,
   DatePicker,
@@ -6,18 +7,39 @@ import {
   Input,
   Select,
 } from '@/components/ui'
-import { agencies } from '@/constants/agencies.constant'
+import { Field, Formik, Form, FieldProps } from 'formik'
+
+import {
+  CreateEmissionFormModel,
+  CreatePreviewEmissionBody,
+} from '@/services/emissions/types/emissions.type'
+import {
+  useCreatePreviewMutation,
+  useGetAgenciesQuery,
+  useGetEmissionProviderQuery,
+} from '@/services/RtkQueryService'
+
 import { airlines } from '@/constants/airlines.constant'
 import { paymentMethods } from '@/constants/paymentsMethods.constant'
-import { CreateEmissionFormModel } from '@/services/emissions/types/emissions.type'
-import { Field, Formik, Form, FieldProps } from 'formik'
-import { HiOutlineSave } from 'react-icons/hi'
-import * as Yup from 'yup'
+
+import { HiOutlineCalculator, HiOutlineSave } from 'react-icons/hi'
 
 type FormModel = CreateEmissionFormModel
+
 type Option = {
   value: string
   label: string
+}
+
+type OptionAgencies = {
+  value: number
+  label: string
+}
+
+type SelectProvider = {
+  value: number
+  label: string
+  price: number
 }
 
 const statusOptions: Option[] = [
@@ -59,9 +81,61 @@ function EmissionsForm({
   updateEmission: any
 }) {
   const onSubmit = (values: FormModel) => {
-    console.log(values)
     updateEmission({ id: emissionId, ...values })
   }
+
+  const onSubmitPreview = async (
+    values: CreateEmissionFormModel,
+    setFieldValue: (
+      field: string,
+      value: any,
+      shouldValidate?: boolean,
+    ) => void,
+    createPreview: any,
+    emissionId: string,
+  ) => {
+    const body: CreatePreviewEmissionBody = {
+      orderId: values.orderId,
+      date: values.date,
+      airline: values.airline,
+      costPrice: values.costPrice,
+      amountPaid: values.amountPaid,
+      status: values.status,
+      observation: values.observation,
+      providerSystemId: values.providerSystemId,
+      agencyId: values.agencyId,
+    }
+
+    try {
+      const response = await createPreview(body, emissionId).unwrap()
+      Object.keys(response).forEach((key) => {
+        setFieldValue(key, response[key])
+      })
+    } catch (error) {
+      console.error('Error al generar la vista previa:', error)
+    }
+  }
+
+  const handlePreview = async (values, actions) => {
+    await onSubmitPreview(
+      values,
+      actions.setFieldValue,
+      createPreview,
+      emissionId,
+    )
+  }
+
+  const [createPreview] = useCreatePreviewMutation()
+
+  const { data: providerOptions } = useGetEmissionProviderQuery(
+    { transformToSelectOptions: true },
+    { refetchOnMountOrArgChange: true },
+  )
+
+  const { data: agenciesOptions } = useGetAgenciesQuery(
+    { transformToSelectOptions: true },
+    { refetchOnMountOrArgChange: true },
+  )
 
   return (
     <Formik
@@ -70,7 +144,7 @@ function EmissionsForm({
       onSubmit={onSubmit}
       enableReinitialize
     >
-      {({ values, isSubmitting }) => {
+      {({ values, setFieldValue }) => {
         return (
           <Form>
             <FormContainer>
@@ -93,16 +167,17 @@ function EmissionsForm({
                   </Field>
                 </FormItem>
                 <FormItem label="Agencia" className="w-1/4">
-                  <Field name="agency">
+                  <Field name="agencyId">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
                         field={field}
                         form={form}
-                        options={agencies}
-                        value={agencies?.filter(
-                          (option: Option) => option.value === values.agency,
+                        options={agenciesOptions}
+                        value={agenciesOptions?.filter(
+                          (option: OptionAgencies) =>
+                            option.value === values.agencyId,
                         )}
-                        onChange={(option: Option) => {
+                        onChange={(option: OptionAgencies) => {
                           form.setFieldValue(field.name, option?.value)
                         }}
                         isDisabled={editActive}
@@ -142,12 +217,33 @@ function EmissionsForm({
 
               <div className="flex items-center gap-4">
                 <FormItem label="Sistema Proveedor" className="w-1/4">
+                  <Field name="providerSystemId">
+                    {({ field, form }: FieldProps<FormModel>) => (
+                      <Select
+                        field={field}
+                        form={form}
+                        options={providerOptions}
+                        placeholder="Selecciona el proveedor..."
+                        onChange={(option: SelectProvider) => {
+                          form.setFieldValue(field.name, option.value)
+                          form.setFieldValue('providerFee', option.price)
+                        }}
+                        value={providerOptions?.filter(
+                          (option: SelectProvider) =>
+                            option.value === values.providerSystemId,
+                        )}
+                        isDisabled={editActive}
+                      />
+                    )}
+                  </Field>
+                </FormItem>
+
+                <FormItem label="Tarifa del Proveedor" className="w-1/4">
                   <Field
-                    type="text"
-                    name="providerSystem"
+                    type="number"
+                    name="providerFee"
                     component={Input}
-                    disabled={editActive}
-                    autoComplete="off"
+                    disabled
                   />
                 </FormItem>
 
@@ -160,21 +256,12 @@ function EmissionsForm({
                   />
                 </FormItem>
 
-                <FormItem label="Tarifa del Proveedor" className="w-1/4">
-                  <Field
-                    type="number"
-                    name="providerFee"
-                    component={Input}
-                    disabled={editActive}
-                  />
-                </FormItem>
-
                 <FormItem label="Total a Pagar" className="w-1/4">
                   <Field
                     type="number"
                     name="totalToPay"
                     component={Input}
-                    disabled={editActive}
+                    disabled
                   />
                 </FormItem>
               </div>
@@ -198,15 +285,6 @@ function EmissionsForm({
                   />
                 </FormItem>
 
-                <FormItem label="Comisión del Asesor" className="w-1/4">
-                  <Field
-                    type="number"
-                    name="advisorCommission"
-                    disabled={editActive}
-                    component={Input}
-                  />
-                </FormItem>
-
                 <FormItem label="Cantidad Pagada" className="w-1/4">
                   <Field
                     type="text"
@@ -216,6 +294,50 @@ function EmissionsForm({
                     autoComplete="off"
                   />
                 </FormItem>
+
+                <FormItem label="ID de la Orden" className="w-1/4">
+                  <Field
+                    type="number"
+                    name="orderId"
+                    disabled
+                    component={Input}
+                  />
+                </FormItem>
+              </div>
+
+              <div className="border-t pt-4">
+                <h4 className="text-center text-slate-700 mb-2">
+                  Comisiones Generadas
+                </h4>
+                <div className="flex justify-center items-center gap-4">
+                  <FormItem label="Comisión del Asesor" className="w-1/4">
+                    <Field
+                      type="number"
+                      name="advisorCommission"
+                      disabled
+                      component={Input}
+                    />
+                  </FormItem>
+                  <FormItem label="Comisión de la oficina" className="w-1/4">
+                    <Field
+                      type="number"
+                      name="officeCommission"
+                      disabled
+                      component={Input}
+                    />
+                  </FormItem>
+                  <FormItem
+                    label="Comisión del Líder de Ventas"
+                    className="w-1/4"
+                  >
+                    <Field
+                      type="number"
+                      name="advisorLeadCommission"
+                      disabled
+                      component={Input}
+                    />
+                  </FormItem>
+                </div>
               </div>
 
               <div className="flex justify-center items-center gap-4 border-t pt-4">
@@ -270,7 +392,18 @@ function EmissionsForm({
                 </FormItem>
               </div>
 
-              <div className="flex items-center justify-end border-t pt-4">
+              <div className="flex items-center justify-end gap-4 border-t pt-4">
+                <Button
+                  type="button"
+                  size="sm"
+                  color="green-700"
+                  variant="solid"
+                  disabled={editActive}
+                  icon={<HiOutlineCalculator />}
+                  onClick={() => handlePreview(values, { setFieldValue })}
+                >
+                  Generar cálculos
+                </Button>
                 <Button
                   type="submit"
                   size="sm"
