@@ -11,36 +11,18 @@ export type Emission = {
   generatedFee: number
   advisorCommission: number
   officeCommission: number
-  advisorLeadCommission: {}
+  advisorLeadCommission: number
   amountPaid: string
   status: string
   observation: string
+  agency: { id: number; name: string }
   paymentMethod: { id: number; name: string }
-  providerSystemId: number
-  agencyId: number
+  providerSystem: { id: number; name: string }
 }
 
 export type Agencies = {
   id: number
   name: string
-}
-
-export type EmissionPreview = {
-  id: number
-  orderId: number
-  date: Date
-  agencyId: number
-  airline: string
-  passengerCount: number
-  providerSystemId: number
-  costPrice: number
-  providerFee: number
-  totalToPay: number
-  generatedFee: number
-  userId: number
-  amountPaid: string
-  status: string
-  observation: string
 }
 
 export type SystemProvider = {
@@ -61,13 +43,13 @@ export type CreateEmissionFormModel = {
   generatedFee: number
   advisorCommission: number
   officeCommission: number
-  advisorLeadCommission: {}
+  advisorLeadCommission: number
   amountPaid: string
   status: string
   observation: string
-  paymentMethod: { id: number; name: string }
-  providerSystemId: number
+  paymentMethodId: number
   agencyId: number
+  providerSystemId: number
 }
 
 export type CreateEmissionBody = {
@@ -87,19 +69,6 @@ export type CreateEmissionBody = {
   paymentMethod: number
   status: string
   observation: string
-}
-
-export type CreatePreviewEmissionBody = {
-  orderId: number
-  date: Date | null
-  airline: string
-  costPrice: number
-  amountPaid: string
-  status: string
-  observation: string
-  providerSystemId: number
-  agencyId: number
-  emissionId?: string
 }
 
 export type CalculateEmissionFormModel = {

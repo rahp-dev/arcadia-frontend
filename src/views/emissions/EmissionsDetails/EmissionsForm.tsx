@@ -38,6 +38,12 @@ type SelectProvider = {
   price: number
 }
 
+const amountPaid: Option[] = [
+  { value: 'SI', label: 'Sí' },
+  { value: 'NO', label: 'No' },
+  { value: 'PARCIAL', label: 'Parcial' },
+]
+
 const statusOptions: Option[] = [
   { value: 'OPEN', label: 'Abierto 📂' },
   { value: 'PAID', label: 'Pagado ✅' },
@@ -45,24 +51,6 @@ const statusOptions: Option[] = [
   { value: 'REJECTED', label: 'Rechazado ❌' },
   { value: 'Pending', label: 'Pendiente 📝' },
 ]
-
-const validationSchema = Yup.object().shape({
-  orderId: Yup.number(),
-  date: Yup.date(),
-  airline: Yup.string(),
-  passengerCount: Yup.number(),
-  providerSystem: Yup.string(),
-  costPrice: Yup.number(),
-  providerFee: Yup.number(),
-  totalToPay: Yup.number(),
-  clientPayment: Yup.number(),
-  generatedFee: Yup.number(),
-  advisorCommission: Yup.number(),
-  amountPaid: Yup.string(),
-  paymentMethod: Yup.string(),
-  status: Yup.string(),
-  observation: Yup.string(),
-})
 
 function EmissionsForm({
   emissionData,
@@ -76,6 +64,7 @@ function EmissionsForm({
   updateEmission: any
 }) {
   const onSubmit = (values: FormModel) => {
+    console.log(values)
     updateEmission({ id: emissionId, ...values })
   }
 
@@ -90,12 +79,7 @@ function EmissionsForm({
   )
 
   return (
-    <Formik
-      initialValues={emissionData}
-      validationSchema={validationSchema}
-      onSubmit={onSubmit}
-      enableReinitialize
-    >
+    <Formik initialValues={emissionData} onSubmit={onSubmit} enableReinitialize>
       {({ values }) => {
         return (
           <Form>
@@ -161,7 +145,7 @@ function EmissionsForm({
                   <Field
                     type="number"
                     name="passengerCount"
-                    disabled
+                    disabled={editActive}
                     component={Input}
                   />
                 </FormItem>
@@ -195,7 +179,7 @@ function EmissionsForm({
                     type="number"
                     name="providerFee"
                     component={Input}
-                    disabled
+                    disabled={editActive}
                   />
                 </FormItem>
 
@@ -213,7 +197,7 @@ function EmissionsForm({
                     type="number"
                     name="totalToPay"
                     component={Input}
-                    disabled
+                    disabled={editActive}
                   />
                 </FormItem>
               </div>
@@ -237,14 +221,24 @@ function EmissionsForm({
                   />
                 </FormItem>
 
-                <FormItem label="Monto Pagado" className="w-1/4">
-                  <Field
-                    type="text"
-                    name="amountPaid"
-                    disabled={editActive}
-                    component={Input}
-                    autoComplete="off"
-                  />
+                <FormItem label="Monto pagado" className="w-1/4">
+                  <Field name="amountPaid">
+                    {({ field, form }: FieldProps<FormModel>) => (
+                      <Select
+                        field={field}
+                        form={form}
+                        options={amountPaid}
+                        value={amountPaid.filter(
+                          (option) => option.value === values.amountPaid,
+                        )}
+                        onChange={(option) =>
+                          form.setFieldValue(field.name, option.value)
+                        }
+                        isDisabled={editActive}
+                        placeholder="Selecciona uno"
+                      />
+                    )}
+                  </Field>
                 </FormItem>
               </div>
 
@@ -257,7 +251,7 @@ function EmissionsForm({
                     <Field
                       type="number"
                       name="advisorCommission"
-                      disabled
+                      disabled={editActive}
                       component={Input}
                     />
                   </FormItem>
@@ -265,7 +259,7 @@ function EmissionsForm({
                     <Field
                       type="number"
                       name="officeCommission"
-                      disabled
+                      disabled={editActive}
                       component={Input}
                     />
                   </FormItem>
@@ -276,7 +270,7 @@ function EmissionsForm({
                     <Field
                       type="number"
                       name="advisorLeadCommission"
-                      disabled
+                      disabled={editActive}
                       component={Input}
                     />
                   </FormItem>
@@ -285,7 +279,7 @@ function EmissionsForm({
 
               <div className="flex justify-center items-center gap-4 border-t pt-4">
                 <FormItem label="Método de pago" className="w-1/4">
-                  <Field name="paymentMethod.id">
+                  <Field name="paymentMethodId">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
                         field={field}
@@ -294,7 +288,7 @@ function EmissionsForm({
                         placeholder="Seleccione uno"
                         isDisabled={editActive}
                         value={paymentMethods.filter(
-                          (option) => option.value === values.paymentMethod.id,
+                          (option) => option.value === values.paymentMethodId,
                         )}
                         onChange={(option) =>
                           form.setFieldValue(field.name, option.value)

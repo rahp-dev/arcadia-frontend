@@ -46,6 +46,12 @@ const statusOptions: Option[] = [
   { value: 'Pending', label: 'Pendiente 📝' },
 ]
 
+const amountPaid: Option[] = [
+  { value: 'SI', label: 'Sí' },
+  { value: 'NO', label: 'No' },
+  { value: 'PARCIAL', label: 'Parcial' },
+]
+
 function EmisionsCalculate({
   emissionData,
   editActive,
@@ -146,13 +152,23 @@ function EmisionsCalculate({
 
               <div className="flex items-center gap-4">
                 <FormItem label="Monto pagado" className="w-1/4">
-                  <Field
-                    type="text"
-                    name="amountPaid"
-                    disabled={editActive}
-                    component={Input}
-                    autoComplete="off"
-                  />
+                  <Field name="amountPaid">
+                    {({ field, form }: FieldProps<FormModel>) => (
+                      <Select
+                        field={field}
+                        form={form}
+                        options={amountPaid}
+                        value={amountPaid.filter(
+                          (option) => option.value === values.amountPaid,
+                        )}
+                        onChange={(option) =>
+                          form.setFieldValue(field.name, option.value)
+                        }
+                        isDisabled={editActive}
+                        placeholder="Selecciona uno"
+                      />
+                    )}
+                  </Field>
                 </FormItem>
                 <FormItem label="Estatus" className="w-1/4">
                   <Field name="status">

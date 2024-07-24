@@ -6,9 +6,8 @@ import {
 import {
   Agencies,
   CreateEmissionBody,
-  CreatePreviewEmissionBody,
+  CreateEmissionFormModel,
   Emission,
-  EmissionPreview,
   SystemProvider,
 } from './types/emissions.type'
 import { Select } from '@/@types/select'
@@ -76,7 +75,7 @@ export function getEmissionQuery(builder: EndpointBuilderType) {
 
     updateEmission: builder.mutation<
       Emission,
-      Partial<CreateEmissionBody> & { id: string }
+      CreateEmissionFormModel & { id: string }
     >({
       query: ({ id, ...body }) => ({
         url: `emision/${id}`,
@@ -94,19 +93,6 @@ export function getEmissionQuery(builder: EndpointBuilderType) {
         url: `emision/calcs/${id}`,
         method: 'patch',
         data: body,
-      }),
-      invalidatesTags: ['Emission'] as any,
-    }),
-
-    createPreview: builder.mutation<
-      EmissionPreview,
-      { body: CreatePreviewEmissionBody; emissionId: string }
-    >({
-      query: ({ body, emissionId }) => ({
-        url: `emision/preview`,
-        method: 'post',
-        data: body,
-        params: { id: emissionId },
       }),
       invalidatesTags: ['Emission'] as any,
     }),

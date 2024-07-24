@@ -17,6 +17,7 @@ import { CreateEmissionFormModel } from '@/services/emissions/types/emissions.ty
 import openNotification from '@/utils/useNotification'
 import TabContent from '@/components/ui/Tabs/TabContent'
 import EmisionsCalculate from './EmissionsCalculate'
+import { capitalizeFirstLetter } from '@/utils/capitalizeFirstLetter'
 
 type FormModel = CreateEmissionFormModel
 
@@ -28,7 +29,7 @@ const EmissionsDetails = () => {
   const [emissionData, setEmissionData] = useState<FormModel>({
     advisorCommission: 0,
     officeCommission: 0,
-    advisorLeadCommission: {},
+    advisorLeadCommission: 0,
     agencyId: 0,
     airline: '',
     amountPaid: '',
@@ -39,7 +40,7 @@ const EmissionsDetails = () => {
     observation: '',
     orderId: 0,
     passengerCount: 0,
-    paymentMethod: { id: 0, name: '' },
+    paymentMethodId: 0,
     providerFee: 0,
     providerSystemId: 0,
     status: '',
@@ -67,7 +68,11 @@ const EmissionsDetails = () => {
 
   const [
     calculateEmission,
-    { isError: error, isSuccess: success, isUninitialized: unitialized },
+    {
+      isError: calculateError,
+      isSuccess: calculateIsSuccess,
+      isUninitialized: calculateIsUninitialized,
+    },
   ] = useCalculateEmissionMutation()
 
   const handleToggleEditing = () => {
@@ -97,10 +102,10 @@ const EmissionsDetails = () => {
       setEmissionData({
         orderId: data?.orderId,
         date: new Date(data?.date),
-        agencyId: data?.agencyId,
+        agencyId: data?.agency.id,
         airline: data?.airline,
         passengerCount: data?.passengerCount,
-        providerSystemId: data?.providerSystemId,
+        providerSystemId: data?.providerSystem.id,
         costPrice: data?.costPrice,
         providerFee: data?.providerFee,
         totalToPay: data?.totalToPay,
@@ -110,12 +115,12 @@ const EmissionsDetails = () => {
         advisorLeadCommission: data?.advisorLeadCommission,
         officeCommission: data?.officeCommission,
         amountPaid: data?.amountPaid,
-        paymentMethod: data?.paymentMethod || { id: 0, name: '' },
+        paymentMethodId: data?.paymentMethod.id,
         status: data?.status,
         observation: data?.observation,
       })
       setEmissionPreview({
-        agencyId: data?.agencyId,
+        agencyId: data?.agency.id,
         airline: data?.airline,
         amountPaid: data?.amountPaid,
         costPrice: data?.costPrice,
@@ -123,7 +128,7 @@ const EmissionsDetails = () => {
         status: data?.status,
         observation: data?.observation,
         orderId: data?.orderId,
-        providerSystemId: data?.providerSystemId,
+        providerSystemId: data?.providerSystem.id,
       })
     } else {
       setEmissionData({
@@ -140,9 +145,9 @@ const EmissionsDetails = () => {
         generatedFee: 0,
         advisorCommission: 0,
         officeCommission: 0,
-        advisorLeadCommission: {},
+        advisorLeadCommission: 0,
         amountPaid: '',
-        paymentMethod: { id: 0, name: '' },
+        paymentMethodId: 0,
         status: '',
         observation: '',
       })
@@ -161,7 +166,7 @@ const EmissionsDetails = () => {
   }, [data, isFetching])
 
   useEffect(() => {
-    if (isSuccess && success) {
+    if (isSuccess) {
       openNotification(
         'success',
         'Emisión Actualizada',
@@ -172,7 +177,7 @@ const EmissionsDetails = () => {
       setEditActive(false)
     }
 
-    if (!isUninitialized && unitialized && isError && error) {
+    if (!isUninitialized && isError) {
       openNotification(
         'warning',
         'Error',
@@ -181,6 +186,28 @@ const EmissionsDetails = () => {
       )
     }
   }, [isSuccess, isError])
+
+  useEffect(() => {
+    if (calculateIsSuccess) {
+      openNotification(
+        'success',
+        '¡Cálculos generados!',
+        'Los cálculos de la emisión fueron generados correctamente.',
+        4,
+      )
+      setCurrentTab('tab1')
+      setEditActive(false)
+    }
+
+    if (!calculateIsUninitialized && calculateError) {
+      openNotification(
+        'warning',
+        'Error :(',
+        'Ocurrio un error al generar los cálculos de la emisión, por favor intenta más tarde.',
+        4,
+      )
+    }
+  }, [calculateIsSuccess, calculateError])
 
   return (
     <>
@@ -220,7 +247,7 @@ const EmissionsDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Agencia de Viaje:</span>
-                    <span>{data?.agencyId || 'N/A'}</span>
+                    <span>{data?.agency.name || 'N/A'}</span>
                   </>
                 )}
               </div>
@@ -276,7 +303,7 @@ const EmissionsDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Sistema Proveedor:</span>
-                    <span>{data?.providerSystemId || 'N/A'}</span>
+                    <span>{data?.providerSystem.name || 'N/A'}</span>
                   </>
                 )}
               </div>
@@ -376,7 +403,9 @@ const EmissionsDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Cantidad Pagada:</span>
-                    <span>{data?.amountPaid || 'N/A'}</span>
+                    <span>
+                      {capitalizeFirstLetter(data?.amountPaid) || 'N/A'}
+                    </span>
                   </>
                 )}
               </div>
@@ -449,7 +478,7 @@ const EmissionsDetails = () => {
                   Generar cálculos
                 </TabNav>
               </TabList>
-              <TabContent value="tab1" className="py-4">
+              <TabContent value="tab1" className="pt-4">
                 <EmissionsForm
                   emissionData={emissionData}
                   emissionId={emissionId}
