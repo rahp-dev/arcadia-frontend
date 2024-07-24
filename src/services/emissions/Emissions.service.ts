@@ -12,6 +12,7 @@ import {
   SystemProvider,
 } from './types/emissions.type'
 import { Select } from '@/@types/select'
+import { CalculateEmissionFormModel } from '@/services/emissions/types/emissions.type'
 
 type SelectProvider = {
   value: number
@@ -79,6 +80,18 @@ export function getEmissionQuery(builder: EndpointBuilderType) {
     >({
       query: ({ id, ...body }) => ({
         url: `emision/${id}`,
+        method: 'patch',
+        data: body,
+      }),
+      invalidatesTags: ['Emission'] as any,
+    }),
+
+    calculateEmission: builder.mutation<
+      Emission,
+      Partial<CalculateEmissionFormModel> & { id: string }
+    >({
+      query: ({ id, ...body }) => ({
+        url: `emision/calcs/${id}`,
         method: 'patch',
         data: body,
       }),

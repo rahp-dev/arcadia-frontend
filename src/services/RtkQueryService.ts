@@ -91,4 +91,5 @@ export const {
   useCreatePreviewMutation,
   useUpdateOrderMutation,
   useUpdateEmissionMutation,
+  useCalculateEmissionMutation,
 } = RtkQueryService

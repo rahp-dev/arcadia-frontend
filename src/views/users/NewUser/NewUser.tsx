@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Card, Notification, Tabs, toast } from '@/components/ui'
 import TabNav from '@/components/ui/Tabs/TabNav'
@@ -6,10 +6,8 @@ import TabContent from '@/components/ui/Tabs/TabContent'
 import TabList from '@/components/ui/Tabs/TabList'
 import { HiArrowLeft, HiOutlineLockClosed, HiOutlineUser } from 'react-icons/hi'
 import UserProfileForm from './UserProfileForm'
-import { CreateUserFormModel } from '@/services/users/types/user.type'
 import UserPasswordForm from './UserPasswordForm'
 import { useCreateUserMutation } from '@/services/RtkQueryService'
-import openNotification from './../../../utils/useNotification'
 
 const NewUser = () => {
   const navigate = useNavigate()
@@ -23,6 +21,7 @@ const NewUser = () => {
     identityCard: '',
     primaryPhone: '',
     rolId: null,
+    sedeId: 0,
   })
 
   const [createUser, { isError, isLoading, isSuccess, data, isUninitialized }] =

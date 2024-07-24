@@ -9,12 +9,8 @@ import {
 } from '@/components/ui'
 import { Field, Formik, Form, FieldProps } from 'formik'
 
+import { CreateEmissionFormModel } from '@/services/emissions/types/emissions.type'
 import {
-  CreateEmissionFormModel,
-  CreatePreviewEmissionBody,
-} from '@/services/emissions/types/emissions.type'
-import {
-  useCreatePreviewMutation,
   useGetAgenciesQuery,
   useGetEmissionProviderQuery,
 } from '@/services/RtkQueryService'
@@ -22,8 +18,7 @@ import {
 import { airlines } from '@/constants/airlines.constant'
 import { paymentMethods } from '@/constants/paymentsMethods.constant'
 
-import { HiOutlineCalculator, HiOutlineSave } from 'react-icons/hi'
-import { useEffect, useState } from 'react'
+import { HiOutlineSave } from 'react-icons/hi'
 
 type FormModel = CreateEmissionFormModel
 
@@ -54,7 +49,6 @@ const statusOptions: Option[] = [
 const validationSchema = Yup.object().shape({
   orderId: Yup.number(),
   date: Yup.date(),
-  agency: Yup.string(),
   airline: Yup.string(),
   passengerCount: Yup.number(),
   providerSystem: Yup.string(),
@@ -81,49 +75,9 @@ function EmissionsForm({
   emissionId: string
   updateEmission: any
 }) {
-  const [formValues, setFormValues] = useState<FormModel>(emissionData)
-
   const onSubmit = (values: FormModel) => {
     updateEmission({ id: emissionId, ...values })
   }
-  const onSubmitPreview = async (
-    values: CreateEmissionFormModel,
-    setFieldValue: (
-      field: string,
-      value: any,
-      shouldValidate?: boolean,
-    ) => void,
-  ) => {
-    const body: CreatePreviewEmissionBody = {
-      orderId: Number(values.orderId),
-      date: values.date,
-      airline: values.airline,
-      costPrice: values.costPrice,
-      amountPaid: values.amountPaid,
-      status: values.status,
-      observation: values.observation,
-      providerSystemId: values.providerSystemId,
-      agencyId: values.agencyId,
-    }
-
-    console.log('Preview: ', body)
-
-    try {
-      const response = await createPreview({ body, emissionId }).unwrap()
-      setFormValues((prevValues) => ({
-        ...prevValues,
-        ...response,
-      }))
-    } catch (error) {
-      console.error('Error al generar la vista previa:', error)
-    }
-  }
-
-  const handlePreview = async (values: FormModel, actions: any) => {
-    await onSubmitPreview(values, actions.setFieldValue)
-  }
-
-  const [createPreview] = useCreatePreviewMutation()
 
   const { data: providerOptions } = useGetEmissionProviderQuery(
     { transformToSelectOptions: true },
@@ -135,19 +89,14 @@ function EmissionsForm({
     { refetchOnMountOrArgChange: true },
   )
 
-  useEffect(() => {
-    // Actualiza el estado cuando cambian los datos de emisión
-    setFormValues(emissionData)
-  }, [emissionData])
-
   return (
     <Formik
-      initialValues={formValues}
+      initialValues={emissionData}
       validationSchema={validationSchema}
       onSubmit={onSubmit}
       enableReinitialize
     >
-      {({ values, setFieldValue }) => {
+      {({ values }) => {
         return (
           <Form>
             <FormContainer>
@@ -297,15 +246,6 @@ function EmissionsForm({
                     autoComplete="off"
                   />
                 </FormItem>
-
-                <FormItem label="ID de la Orden" className="w-1/4">
-                  <Field
-                    type="number"
-                    name="orderId"
-                    disabled
-                    component={Input}
-                  />
-                </FormItem>
               </div>
 
               <div className="border-t pt-4">
@@ -396,17 +336,6 @@ function EmissionsForm({
               </div>
 
               <div className="flex items-center justify-end gap-4 border-t pt-4">
-                <Button
-                  type="button"
-                  size="sm"
-                  color="green-700"
-                  variant="solid"
-                  disabled={editActive}
-                  icon={<HiOutlineCalculator />}
-                  onClick={() => handlePreview(values, { setFieldValue })}
-                >
-                  Generar cálculos
-                </Button>
                 <Button
                   type="submit"
                   size="sm"

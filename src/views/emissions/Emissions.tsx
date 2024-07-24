@@ -114,12 +114,12 @@ const Emissions = () => {
         header: 'ID',
         accessorKey: 'id',
       },
-      {
-        header: 'Agencia de Vuelo',
-        cell: (cellProps: any) => (
-          <>{cellProps.row.original.agency || 'N/A'} </>
-        ),
-      },
+      // {
+      //   header: 'Agencia de Vuelo',
+      //   cell: (cellProps: any) => (
+      //     <>{cellProps.row.original?.agency || 'N/A'} </>
+      //   ),
+      // },
       {
         header: 'Aerolínea',
         cell: (cellProps: any) => (

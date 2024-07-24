@@ -2,25 +2,29 @@ import { Button, Card, Skeleton, Tabs } from '@/components/ui'
 import TabList from '@/components/ui/Tabs/TabList'
 import TabNav from '@/components/ui/Tabs/TabNav'
 import {
+  useCalculateEmissionMutation,
   useGetEmissionByIdQuery,
   useUpdateEmissionMutation,
 } from '@/services/RtkQueryService'
 import { format } from 'date-fns'
 import { FaEdit } from 'react-icons/fa'
-import { HiOutlineArrowRight } from 'react-icons/hi'
+import { HiOutlineArrowRight, HiOutlineCalculator } from 'react-icons/hi'
 import { VscEdit } from 'react-icons/vsc'
 import { useNavigate, useParams } from 'react-router-dom'
 import EmissionsForm from './EmissionsForm'
 import { useEffect, useState } from 'react'
 import { CreateEmissionFormModel } from '@/services/emissions/types/emissions.type'
 import openNotification from '@/utils/useNotification'
+import TabContent from '@/components/ui/Tabs/TabContent'
+import EmisionsCalculate from './EmissionsCalculate'
 
 type FormModel = CreateEmissionFormModel
 
 const EmissionsDetails = () => {
   const navigate = useNavigate()
-  const { emissionId } = useParams<{ emissionId: string }>()
+  const { emissionId } = useParams()
   const [editActive, setEditActive] = useState(false)
+  const [currentTab, setCurrentTab] = useState('tab1')
   const [emissionData, setEmissionData] = useState<FormModel>({
     advisorCommission: 0,
     officeCommission: 0,
@@ -42,12 +46,29 @@ const EmissionsDetails = () => {
     totalToPay: 0,
   })
 
+  const [emissionPreview, setEmissionPreview] = useState({
+    orderId: 0,
+    date: null,
+    airline: '',
+    costPrice: 0,
+    amountPaid: '',
+    status: '',
+    observation: '',
+    providerSystemId: 0,
+    agencyId: 0,
+  })
+
   const { data, isFetching } = useGetEmissionByIdQuery(emissionId, {
     refetchOnMountOrArgChange: true,
   })
 
   const [updateEmission, { isError, isSuccess, isUninitialized }] =
     useUpdateEmissionMutation()
+
+  const [
+    calculateEmission,
+    { isError: error, isSuccess: success, isUninitialized: unitialized },
+  ] = useCalculateEmissionMutation()
 
   const handleToggleEditing = () => {
     setEditActive(true)
@@ -93,6 +114,17 @@ const EmissionsDetails = () => {
         status: data?.status,
         observation: data?.observation,
       })
+      setEmissionPreview({
+        agencyId: data?.agencyId,
+        airline: data?.airline,
+        amountPaid: data?.amountPaid,
+        costPrice: data?.costPrice,
+        date: new Date(data?.date),
+        status: data?.status,
+        observation: data?.observation,
+        orderId: data?.orderId,
+        providerSystemId: data?.providerSystemId,
+      })
     } else {
       setEmissionData({
         orderId: 0,
@@ -114,11 +146,22 @@ const EmissionsDetails = () => {
         status: '',
         observation: '',
       })
+      setEmissionPreview({
+        agencyId: 0,
+        airline: '',
+        amountPaid: '',
+        costPrice: 0,
+        date: null,
+        status: '',
+        observation: '',
+        orderId: 0,
+        providerSystemId: 0,
+      })
     }
   }, [data, isFetching])
 
   useEffect(() => {
-    if (isSuccess) {
+    if (isSuccess && success) {
       openNotification(
         'success',
         'Emisión Actualizada',
@@ -129,7 +172,7 @@ const EmissionsDetails = () => {
       setEditActive(false)
     }
 
-    if (!isUninitialized && isError) {
+    if (!isUninitialized && unitialized && isError && error) {
       openNotification(
         'warning',
         'Error',
@@ -397,20 +440,31 @@ const EmissionsDetails = () => {
           </Card>
 
           <Card className="w-full h-1/2">
-            <Tabs value="tab1">
+            <Tabs value={currentTab} onChange={(value) => setCurrentTab(value)}>
               <TabList>
                 <TabNav value="tab1" icon={<VscEdit />}>
                   Editar emisión
                 </TabNav>
+                <TabNav value="tab2" icon={<HiOutlineCalculator />}>
+                  Generar cálculos
+                </TabNav>
               </TabList>
-              <div className="pt-4">
+              <TabContent value="tab1" className="py-4">
                 <EmissionsForm
                   emissionData={emissionData}
                   emissionId={emissionId}
                   editActive={!editActive}
                   updateEmission={updateEmission}
                 />
-              </div>
+              </TabContent>
+              <TabContent value="tab2">
+                <EmisionsCalculate
+                  emissionData={emissionPreview}
+                  emissionId={emissionId}
+                  editActive={!editActive}
+                  calculateEmission={calculateEmission}
+                />
+              </TabContent>
             </Tabs>
           </Card>
         </div>

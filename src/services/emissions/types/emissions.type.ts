@@ -102,14 +102,14 @@ export type CreatePreviewEmissionBody = {
   emissionId?: string
 }
 
-// export type PreviewEmissionFormModel = {
-//   orderId: number
-//   date: Date | null
-//   airline: string
-//   costPrice: number
-//   amountPaid: string
-//   status: string
-//   observation: string
-//   providerSystemId: number
-//   agencyId: number
-// }
+export type CalculateEmissionFormModel = {
+  orderId: number
+  date: Date | null
+  airline: string
+  costPrice: number
+  amountPaid: string
+  status: string
+  observation: string
+  providerSystemId: number
+  agencyId: number
+}
