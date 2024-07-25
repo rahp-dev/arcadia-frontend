@@ -118,13 +118,7 @@ const Emissions = () => {
       {
         header: 'Agencia de Vuelo',
         cell: (cellProps: any) => (
-          <>
-            {(
-              <span className="font-semibold">
-                {cellProps.row.original?.agency.name}
-              </span>
-            ) || 'N/A'}
-          </>
+          <>{cellProps.row.original.agency?.name || 'N/A'}</>
         ),
       },
       {
@@ -136,7 +130,7 @@ const Emissions = () => {
       {
         header: 'Sistema Proveedor',
         cell: (cellProps: any) => (
-          <>{cellProps.row.original.providerSystem.name || 'N/A'}</>
+          <>{cellProps.row.original.providerSystem?.name || 'N/A'}</>
         ),
       },
       {
@@ -144,46 +138,31 @@ const Emissions = () => {
         cell: (cellProps: any) => (
           <>
             {capitalizeFirstLetter(
-              cellProps.row.original?.paymentMethod.name,
-            ) || 'N/A'}{' '}
+              cellProps.row.original.paymentMethod?.name,
+            ) || 'N/A'}
           </>
         ),
       },
       {
         header: 'Precio de Coste',
-        cell: (cellProps: any) => (
-          <>
-            {(
-              <span className="font-semibold">
-                {cellProps.row.original.costPrice}$
-              </span>
-            ) || 'N/A'}{' '}
-          </>
-        ),
+        cell: (cellProps: any) => {
+          const costPrice = cellProps.row.original.costPrice
+          return <>{costPrice !== null ? `${costPrice}$` : 'N/A'}</>
+        },
       },
       {
         header: 'Pago del Cliente',
-        cell: (cellProps: any) => (
-          <>
-            {(
-              <span className="font-semibold">
-                {cellProps.row.original.clientPayment}$
-              </span>
-            ) || 'N/A'}{' '}
-          </>
-        ),
+        cell: (cellProps: any) => {
+          const clientPayment = cellProps.row.original.clientPayment
+          return <>{clientPayment !== null ? `${clientPayment}$` : 'N/A'}</>
+        },
       },
       {
         header: 'Total a Pagar',
-        cell: (cellProps: any) => (
-          <>
-            {(
-              <span className="font-semibold">
-                {cellProps.row.original.totalToPay}$
-              </span>
-            ) || 'N/A'}{' '}
-          </>
-        ),
+        cell: (cellProps: any) => {
+          const totalToPay = cellProps.row.original.totalToPay
+          return <>{totalToPay !== null ? `${totalToPay}$` : 'N/A'}</>
+        },
       },
       {
         header: 'Más Detalles',
@@ -263,7 +242,7 @@ const Emissions = () => {
           ))}
         </THead>
         {isFetching ? (
-          <TableRowSkeleton columns={7} rows={pageSize} />
+          <TableRowSkeleton columns={9} rows={pageSize} />
         ) : (
           <TBody>
             {table.getRowModel().rows.map((row) => {
