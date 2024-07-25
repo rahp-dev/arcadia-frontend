@@ -30,6 +30,17 @@ const validationSchema = Yup.object().shape({
   notes: Yup.string(),
 })
 
+type Option = {
+  value: string
+  label: string
+}
+
+const statusOptions: Option[] = [
+  { value: 'REASIGNADO', label: 'Reasignado ✅' },
+  { value: 'ATENDIDO', label: 'Atendido ✅' },
+  { value: 'EN ESPERA', label: 'En espera 📝' },
+]
+
 function NewAssingmentForm({
   assingmentData,
   setAssingmentData,
@@ -193,19 +204,23 @@ function NewAssingmentForm({
                     )}
                   </Field>
                 </FormItem>
-                <FormItem
-                  label="Estatus"
-                  className="w-1/5"
-                  errorMessage={errors.status}
-                  invalid={errors.status && touched.status}
-                >
-                  <Field
-                    type="text"
-                    name="status"
-                    placeholder="Ingrese el estatus"
-                    component={Input}
-                    autoComplete="off"
-                  />
+                <FormItem label="Estatus" className="w-1/5">
+                  <Field name="status">
+                    {({ field, form }: FieldProps<FormModel>) => (
+                      <Select
+                        field={field}
+                        form={form}
+                        options={statusOptions}
+                        value={statusOptions.filter(
+                          (option) => option.value === values.status,
+                        )}
+                        onChange={(option) =>
+                          form.setFieldValue(field.name, option.value)
+                        }
+                        placeholder="Selecciona uno"
+                      />
+                    )}
+                  </Field>
                 </FormItem>
                 <FormItem
                   label="Observaciones"
@@ -223,18 +238,16 @@ function NewAssingmentForm({
                 </FormItem>
               </div>
 
-              <div className="flex items-center justify-end">
-                <FormItem>
-                  <Button
-                    type="submit"
-                    size="sm"
-                    variant="solid"
-                    disabled={isSubmitting}
-                    icon={<HiOutlineSave />}
-                  >
-                    Guardar
-                  </Button>
-                </FormItem>
+              <div className="flex items-center justify-end border-t pt-4">
+                <Button
+                  type="submit"
+                  size="sm"
+                  variant="solid"
+                  disabled={isSubmitting}
+                  icon={<HiOutlineSave />}
+                >
+                  Guardar
+                </Button>
               </div>
             </FormContainer>
           </Form>

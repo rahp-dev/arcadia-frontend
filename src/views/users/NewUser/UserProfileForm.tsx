@@ -11,6 +11,10 @@ import {
 import { Select as SelectType } from '@/@types/select'
 import useAuth from '@/utils/hooks/useAuth'
 import { RolesEnum } from '@/enums/roles.enum'
+import {
+  HiOutlineArrowCircleLeft,
+  HiOutlineArrowCircleRight,
+} from 'react-icons/hi'
 
 type FormModel = {
   name: string
@@ -258,15 +262,17 @@ const UserProfileForm = ({
                 </FormItem>
               </div>
 
-              <FormItem>
+              <div className="flex items-center justify-end border-t pt-4">
                 <Button
                   variant="solid"
+                  size="sm"
                   type="submit"
                   className="font-semibold transition-colors shadow duration-300"
+                  icon={<HiOutlineArrowCircleRight />}
                 >
                   Siguiente
                 </Button>
-              </FormItem>
+              </div>
             </FormContainer>
           </Form>
         )

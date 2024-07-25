@@ -107,7 +107,7 @@ const NewOrder = () => {
                 Agregar hospedaje
               </TabNav>
             </TabList>
-            <div className="py-4">
+            <div className="pt-4">
               <TabContent value="tab1">
                 <FlightTab
                   setTicketData={setTicketData}

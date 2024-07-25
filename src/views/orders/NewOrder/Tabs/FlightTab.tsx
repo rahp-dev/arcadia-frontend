@@ -355,47 +355,44 @@ function FlightTab({
                 </div>
               </div>
             ))}
-            <div className="flex justify-between items-center">
-              <FormItem>
-                <Button
-                  variant="solid"
-                  size="sm"
-                  type="button"
-                  onClick={() => {
-                    addFlightForm()
-                    setFieldValue('flights', [
-                      ...values.flights,
-                      {
-                        customerId: 0,
-                        origin: '',
-                        destination: '',
-                        flightDate: null,
-                        flightDateReturn: null,
-                        price: 0,
-                        child: false,
-                        international: false,
-                        flightClass: '',
-                        location: '',
-                        handBaggage: 0,
-                        baggage: 0,
-                      },
-                    ])
-                  }}
-                  icon={<HiOutlinePlus />}
-                >
-                  Añadir otro vuelo
-                </Button>
-              </FormItem>
-              <FormItem>
-                <Button
-                  variant="solid"
-                  size="sm"
-                  type="submit"
-                  icon={<HiOutlineArrowCircleRight />}
-                >
-                  {submitButtonText ? submitButtonText : 'Siguiente'}
-                </Button>
-              </FormItem>
+            <div className="flex justify-between items-center border-t pt-4">
+              <Button
+                variant="solid"
+                size="sm"
+                type="button"
+                onClick={() => {
+                  addFlightForm()
+                  setFieldValue('flights', [
+                    ...values.flights,
+                    {
+                      customerId: 0,
+                      origin: '',
+                      destination: '',
+                      flightDate: null,
+                      flightDateReturn: null,
+                      price: 0,
+                      child: false,
+                      international: false,
+                      flightClass: '',
+                      location: '',
+                      handBaggage: 0,
+                      baggage: 0,
+                    },
+                  ])
+                }}
+                icon={<HiOutlinePlus />}
+              >
+                Añadir otro vuelo
+              </Button>
+
+              <Button
+                variant="solid"
+                size="sm"
+                type="submit"
+                icon={<HiOutlineArrowCircleRight />}
+              >
+                {submitButtonText ? submitButtonText : 'Siguiente'}
+              </Button>
             </div>
           </FormContainer>
         </Form>

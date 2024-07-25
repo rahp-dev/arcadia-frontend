@@ -229,38 +229,35 @@ function LodgingTab({
                 </div>
               </div>
             ))}
-            <div className="flex justify-between items-center">
-              <FormItem>
-                <Button
-                  variant="solid"
-                  size="sm"
-                  type="button"
-                  onClick={() => {
-                    setFieldValue('lodgings', [
-                      ...values.lodgings,
-                      {
-                        lodgingName: '',
-                        lodgingPlace: '',
-                        lodgingPrice: 0,
-                      },
-                    ])
-                  }}
-                  icon={<HiOutlinePlus />}
-                >
-                  Añadir otro hospedaje
-                </Button>
-              </FormItem>
-              <FormItem>
-                <Button
-                  variant="solid"
-                  size="sm"
-                  type="submit"
-                  icon={<HiOutlineUpload />}
-                  disabled={isSubmitting}
-                >
-                  {submitButtonText ? submitButtonText : 'Enviar'}
-                </Button>
-              </FormItem>
+            <div className="flex justify-between items-center border-t pt-4">
+              <Button
+                variant="solid"
+                size="sm"
+                type="button"
+                onClick={() => {
+                  setFieldValue('lodgings', [
+                    ...values.lodgings,
+                    {
+                      lodgingName: '',
+                      lodgingPlace: '',
+                      lodgingPrice: 0,
+                    },
+                  ])
+                }}
+                icon={<HiOutlinePlus />}
+              >
+                Añadir otro hospedaje
+              </Button>
+
+              <Button
+                variant="solid"
+                size="sm"
+                type="submit"
+                icon={<HiOutlineUpload />}
+                disabled={isSubmitting}
+              >
+                {submitButtonText ? submitButtonText : 'Enviar'}
+              </Button>
             </div>
           </FormContainer>
         </Form>

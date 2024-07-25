@@ -98,6 +98,10 @@ const Users = () => {
   const columns = useMemo(
     () => [
       {
+        header: 'ID',
+        accessorKey: 'id',
+      },
+      {
         header: 'Usuario',
         cell: (cellProps: any) => (
           <span className="font-bold cursor-pointer">

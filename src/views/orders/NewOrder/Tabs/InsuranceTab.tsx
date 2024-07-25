@@ -148,37 +148,34 @@ function InsuranceTab({
                 </div>
               </div>
             ))}
-            <div className="flex justify-between items-center">
-              <FormItem>
-                <Button
-                  variant="solid"
-                  size="sm"
-                  type="button"
-                  onClick={() => {
-                    setFieldValue('insurances', [
-                      ...values.insurances,
-                      {
-                        insuranceName: '',
-                        insuranceLocation: '',
-                        insurancePrice: 0,
-                      },
-                    ])
-                  }}
-                  icon={<HiOutlinePlus />}
-                >
-                  Añadir otro seguro
-                </Button>
-              </FormItem>
-              <FormItem>
-                <Button
-                  variant="solid"
-                  size="sm"
-                  type="submit"
-                  icon={<HiOutlineArrowCircleRight />}
-                >
-                  {submitButtonText ? submitButtonText : 'Siguiente'}
-                </Button>
-              </FormItem>
+            <div className="flex justify-between items-center border-t pt-4">
+              <Button
+                variant="solid"
+                size="sm"
+                type="button"
+                onClick={() => {
+                  setFieldValue('insurances', [
+                    ...values.insurances,
+                    {
+                      insuranceName: '',
+                      insuranceLocation: '',
+                      insurancePrice: 0,
+                    },
+                  ])
+                }}
+                icon={<HiOutlinePlus />}
+              >
+                Añadir otro seguro
+              </Button>
+
+              <Button
+                variant="solid"
+                size="sm"
+                type="submit"
+                icon={<HiOutlineArrowCircleRight />}
+              >
+                {submitButtonText ? submitButtonText : 'Siguiente'}
+              </Button>
             </div>
           </FormContainer>
         </Form>

@@ -7,6 +7,9 @@ import {
 } from '@/components/ui'
 import { Field, Form, Formik } from 'formik'
 import { Dispatch, SetStateAction } from 'react'
+import { BsSave } from 'react-icons/bs'
+import { FaSave } from 'react-icons/fa'
+import { HiOutlineSave } from 'react-icons/hi'
 import * as Yup from 'yup'
 
 const validationSchema = Yup.object().shape({
@@ -111,10 +114,12 @@ const UserPasswordForm = ({
                   />
                 </FormItem>
               </div>
-              <FormItem>
+              <div className="flex items-center justify-end border-t pt-4">
                 <Button
                   variant="solid"
                   type="submit"
+                  size="sm"
+                  icon={<HiOutlineSave />}
                   disabled={!isLoading && isSuccess}
                 >
                   {isLoading ? (
@@ -123,7 +128,7 @@ const UserPasswordForm = ({
                     <span>Guardar</span>
                   )}
                 </Button>
-              </FormItem>
+              </div>
             </FormContainer>
           </Form>
         )

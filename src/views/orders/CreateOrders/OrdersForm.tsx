@@ -324,18 +324,16 @@ function OrderForm({
                 </FormItem>
               </div>
 
-              <div className="flex items-center justify-end">
-                <FormItem>
-                  <Button
-                    type="submit"
-                    size="sm"
-                    variant="solid"
-                    disabled={isSubmitting}
-                    icon={<HiOutlineSave />}
-                  >
-                    Guardar
-                  </Button>
-                </FormItem>
+              <div className="flex items-center justify-end border-t pt-4">
+                <Button
+                  type="submit"
+                  size="sm"
+                  variant="solid"
+                  disabled={isSubmitting}
+                  icon={<HiOutlineSave />}
+                >
+                  Guardar
+                </Button>
               </div>
             </FormContainer>
           </Form>

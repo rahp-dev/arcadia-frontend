@@ -89,22 +89,24 @@ const NewUser = () => {
                 Contraseña del Usuario
               </TabNav>
             </TabList>
-            <TabContent value="tab1" className="py-4">
-              <UserProfileForm
-                newUserData={userData}
-                setNewUserData={setUserData}
-                navigationTabs={setCurrentTab}
-              />
-            </TabContent>
-            <TabContent value="tab2" className="py-4">
-              <UserPasswordForm
-                newUserData={userData}
-                setNewUserData={setUserData}
-                createUser={createUser}
-                isLoading={isLoading}
-                isSuccess={isSuccess}
-              />
-            </TabContent>
+            <div className="pt-4">
+              <TabContent value="tab1">
+                <UserProfileForm
+                  newUserData={userData}
+                  setNewUserData={setUserData}
+                  navigationTabs={setCurrentTab}
+                />
+              </TabContent>
+              <TabContent value="tab2">
+                <UserPasswordForm
+                  newUserData={userData}
+                  setNewUserData={setUserData}
+                  createUser={createUser}
+                  isLoading={isLoading}
+                  isSuccess={isSuccess}
+                />
+              </TabContent>
+            </div>
           </Tabs>
         </Card>
       </div>
