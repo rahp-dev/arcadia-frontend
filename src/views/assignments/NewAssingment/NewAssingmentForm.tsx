@@ -41,6 +41,19 @@ const statusOptions: Option[] = [
   { value: 'EN ESPERA', label: 'En espera 📝' },
 ]
 
+const originOptions: Option[] = [
+  { value: 'WhatsApp', label: 'WhatsApp' },
+  { value: 'Instagram', label: 'Instagram' },
+  { value: 'Facebook', label: 'Facebook' },
+  { value: 'Página Web', label: 'Página Web' },
+  { value: 'Correo Electrónico', label: 'Correo Electrónico' },
+  { value: 'Teléfono', label: 'Teléfono' },
+  { value: 'Mensaje de Texto', label: 'Mensaje de Texto' },
+  { value: 'Referido', label: 'Referido' },
+  { value: 'Twitter', label: 'Twitter' },
+  { value: 'Oficina', label: 'Oficina' },
+]
+
 function NewAssingmentForm({
   assingmentData,
   setAssingmentData,
@@ -168,19 +181,27 @@ function NewAssingmentForm({
                   />
                 </FormItem>
                 <FormItem
-                  asterisk
+                  label="Origen del Cliente"
                   className="w-1/5"
                   errorMessage={errors.origin}
                   invalid={errors.origin && touched.origin}
-                  label="Origen del Cliente"
                 >
-                  <Field
-                    name="origin"
-                    type="text"
-                    component={Input}
-                    placeholder="Ingrese el origen del cliente"
-                    autoComplete="off"
-                  />
+                  <Field name="origin">
+                    {({ field, form }: FieldProps<FormModel>) => (
+                      <Select
+                        field={field}
+                        form={form}
+                        options={originOptions}
+                        value={originOptions.filter(
+                          (option) => option.value === values.origin,
+                        )}
+                        onChange={(option) =>
+                          form.setFieldValue(field.name, option.value)
+                        }
+                        placeholder="Selecciona uno"
+                      />
+                    )}
+                  </Field>
                 </FormItem>
               </div>
               <div className="flex items-center gap-4">

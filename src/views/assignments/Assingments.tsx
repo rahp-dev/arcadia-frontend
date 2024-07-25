@@ -235,7 +235,7 @@ const Assingments = () => {
           ))}
         </THead>
         {isFetching ? (
-          <TableRowSkeleton columns={7} rows={pageSize} />
+          <TableRowSkeleton columns={8} rows={pageSize} />
         ) : (
           <TBody>
             {table.getRowModel().rows.map((row) => {

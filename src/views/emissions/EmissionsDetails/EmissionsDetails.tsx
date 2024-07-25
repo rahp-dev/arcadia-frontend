@@ -105,7 +105,7 @@ const EmissionsDetails = () => {
         agencyId: data?.agency?.id,
         airline: data?.airline,
         passengerCount: data?.passengerCount,
-        providerSystemId: data?.providerSystem.id,
+        providerSystemId: data?.providerSystem?.id,
         costPrice: data?.costPrice,
         providerFee: data?.providerFee,
         totalToPay: data?.totalToPay,
@@ -128,7 +128,7 @@ const EmissionsDetails = () => {
         status: data?.status,
         observation: data?.observation,
         orderId: data?.orderId,
-        providerSystemId: data?.providerSystem.id,
+        providerSystemId: data?.providerSystem?.id,
       })
     } else {
       setEmissionData({
@@ -303,7 +303,7 @@ const EmissionsDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Sistema Proveedor:</span>
-                    <span>{data?.providerSystem.name || 'N/A'}</span>
+                    <span>{data?.providerSystem?.name || 'N/A'}</span>
                   </>
                 )}
               </div>
