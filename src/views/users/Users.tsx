@@ -215,7 +215,7 @@ const Users = () => {
           ))}
         </THead>
         {isFetching ? (
-          <TableRowSkeleton columns={5} rows={pageSize} />
+          <TableRowSkeleton columns={7} rows={pageSize} />
         ) : (
           <TBody>
             {table.getRowModel().rows.map((row) => {
