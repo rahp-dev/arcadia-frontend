@@ -102,7 +102,7 @@ const EmissionsDetails = () => {
       setEmissionData({
         orderId: data?.orderId,
         date: new Date(data?.date),
-        agencyId: data?.agency.id,
+        agencyId: data?.agency?.id,
         airline: data?.airline,
         passengerCount: data?.passengerCount,
         providerSystemId: data?.providerSystem.id,
@@ -120,7 +120,7 @@ const EmissionsDetails = () => {
         observation: data?.observation,
       })
       setEmissionPreview({
-        agencyId: data?.agency.id,
+        agencyId: data?.agency?.id,
         airline: data?.airline,
         amountPaid: data?.amountPaid,
         costPrice: data?.costPrice,
@@ -247,7 +247,7 @@ const EmissionsDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Agencia de Viaje:</span>
-                    <span>{data?.agency.name || 'N/A'}</span>
+                    <span>{data?.agency?.name || 'N/A'}</span>
                   </>
                 )}
               </div>
@@ -289,7 +289,7 @@ const EmissionsDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Precio costo:</span>
-                    <span>{data?.costPrice || 'N/A'}</span>
+                    <span>{`${data?.costPrice}$` || 'N/A'}</span>
                   </>
                 )}
               </div>
@@ -317,7 +317,7 @@ const EmissionsDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Tarifa del Proveedor:</span>
-                    <span>{data?.providerFee || 'N/A'}</span>
+                    <span>{`${data?.providerFee}$` || 'N/A'}</span>
                   </>
                 )}
               </div>
@@ -331,7 +331,7 @@ const EmissionsDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Total a Pagar:</span>
-                    <span>{data?.totalToPay || 'N/A'}</span>
+                    <span>{`${data?.totalToPay}$` || 'N/A'}</span>
                   </>
                 )}
               </div>
@@ -402,6 +402,22 @@ const EmissionsDetails = () => {
                   </>
                 ) : (
                   <>
+                    <span className="font-semibold">
+                      Comisión del Lider de Ventas:
+                    </span>
+                    <span>{data?.advisorLeadCommission || 'N/A'}</span>
+                  </>
+                )}
+              </div>
+
+              <div className="flex flex-col">
+                {isFetching ? (
+                  <>
+                    <Skeleton className="mt-4 w-[60%]" />
+                    <Skeleton className="mt-1 w-[40%]" />
+                  </>
+                ) : (
+                  <>
                     <span className="font-semibold">Cantidad Pagada:</span>
                     <span>
                       {capitalizeFirstLetter(data?.amountPaid) || 'N/A'}
@@ -419,7 +435,10 @@ const EmissionsDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Método de Pago:</span>
-                    <span>{data?.paymentMethod?.name || 'N/A'}</span>
+                    <span>
+                      {capitalizeFirstLetter(data?.paymentMethod?.name) ||
+                        'N/A'}
+                    </span>
                   </>
                 )}
               </div>

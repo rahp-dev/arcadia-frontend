@@ -19,6 +19,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useGetAllEmissionQuery } from '@/services/RtkQueryService'
 import { HiOutlineEye, HiOutlineSearch } from 'react-icons/hi'
 import { TableRowSkeleton } from '@/components/shared'
+import { capitalizeFirstLetter } from '@/utils/capitalizeFirstLetter'
 
 interface DebouncedInputProps
   extends Omit<
@@ -114,34 +115,74 @@ const Emissions = () => {
         header: 'ID',
         accessorKey: 'id',
       },
-      // {
-      //   header: 'Agencia de Vuelo',
-      //   cell: (cellProps: any) => (
-      //     <>{cellProps.row.original?.agency || 'N/A'} </>
-      //   ),
-      // },
+      {
+        header: 'Agencia de Vuelo',
+        cell: (cellProps: any) => (
+          <>
+            {(
+              <span className="font-semibold">
+                {cellProps.row.original?.agency.name}
+              </span>
+            ) || 'N/A'}
+          </>
+        ),
+      },
       {
         header: 'Aerolínea',
         cell: (cellProps: any) => (
-          <>{cellProps.row.original.airline || 'N/A'} </>
+          <>{cellProps.row.original.airline || 'N/A'}</>
+        ),
+      },
+      {
+        header: 'Sistema Proveedor',
+        cell: (cellProps: any) => (
+          <>{cellProps.row.original.providerSystem.name || 'N/A'}</>
+        ),
+      },
+      {
+        header: 'Método de Pago',
+        cell: (cellProps: any) => (
+          <>
+            {capitalizeFirstLetter(
+              cellProps.row.original?.paymentMethod.name,
+            ) || 'N/A'}{' '}
+          </>
         ),
       },
       {
         header: 'Precio de Coste',
         cell: (cellProps: any) => (
-          <>{cellProps.row.original.costPrice || 'N/A'} </>
-        ),
-      },
-      {
-        header: 'Comisión del Asesor',
-        cell: (cellProps: any) => (
-          <>{cellProps.row.original.advisorCommission || 'N/A'} </>
+          <>
+            {(
+              <span className="font-semibold">
+                {cellProps.row.original.costPrice}$
+              </span>
+            ) || 'N/A'}{' '}
+          </>
         ),
       },
       {
         header: 'Pago del Cliente',
         cell: (cellProps: any) => (
-          <>{cellProps.row.original.clientPayment || 'N/A'} </>
+          <>
+            {(
+              <span className="font-semibold">
+                {cellProps.row.original.clientPayment}$
+              </span>
+            ) || 'N/A'}{' '}
+          </>
+        ),
+      },
+      {
+        header: 'Total a Pagar',
+        cell: (cellProps: any) => (
+          <>
+            {(
+              <span className="font-semibold">
+                {cellProps.row.original.totalToPay}$
+              </span>
+            ) || 'N/A'}{' '}
+          </>
         ),
       },
       {
