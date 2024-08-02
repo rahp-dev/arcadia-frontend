@@ -173,12 +173,12 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                 <FormItem
                   asterisk
                   className="z-[10] customer-personal-info-suffix w-1/5"
-                  label="Cédula"
+                  label="Cédula / DNI"
                   invalid={errors.identityCard && touched.identityCard}
                   errorMessage={errors.identityCard}
                 >
                   <Field name="identityCard">
-                    {({ field, form }: FieldProps<FormModel>) => (
+                    {({ form }: FieldProps<FormModel>) => (
                       <Field
                         prefix={
                           <Select
@@ -305,7 +305,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                 </FormItem>
                 <FormItem
                   asterisk
-                  label="País"
+                  label="País de origen"
                   className="w-1/5"
                   invalid={errors.country && touched.country}
                   errorMessage={errors.country}
