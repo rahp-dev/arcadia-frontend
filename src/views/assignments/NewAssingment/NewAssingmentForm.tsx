@@ -124,11 +124,11 @@ function NewAssingmentForm({
         return (
           <Form>
             <FormContainer>
-              <div className="flex items-center gap-4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
                 <FormItem
                   asterisk
                   label="Usuario"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.userId && touched.userId}
                   errorMessage={errors.userId}
                 >
@@ -138,7 +138,7 @@ function NewAssingmentForm({
                         field={field}
                         form={form}
                         options={setUserOptions()}
-                        placeholder="Selecciona el usuario..."
+                        placeholder="Selecciona uno..."
                         onChange={(option: SelectTypes) => {
                           form.setFieldValue(field.name, option.value)
                         }}
@@ -152,7 +152,7 @@ function NewAssingmentForm({
                 </FormItem>
                 <FormItem
                   asterisk
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   errorMessage={errors.clientName}
                   invalid={errors.clientName && touched.clientName}
                   label="Nombre del Cliente"
@@ -167,7 +167,7 @@ function NewAssingmentForm({
                 </FormItem>
                 <FormItem
                   asterisk
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   errorMessage={errors.clientNumber}
                   invalid={errors.clientNumber && touched.clientNumber}
                   label="Número del Cliente"
@@ -182,7 +182,7 @@ function NewAssingmentForm({
                 </FormItem>
                 <FormItem
                   label="Origen del Cliente"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   errorMessage={errors.origin}
                   invalid={errors.origin && touched.origin}
                 >
@@ -204,11 +204,11 @@ function NewAssingmentForm({
                   </Field>
                 </FormItem>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
                 <FormItem
                   asterisk
                   label="Fecha asignada"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.resolvedTime && (touched.resolvedTime as any)}
                   errorMessage={errors.resolvedTime as any}
                 >
@@ -225,7 +225,10 @@ function NewAssingmentForm({
                     )}
                   </Field>
                 </FormItem>
-                <FormItem label="Estatus" className="w-1/5">
+                <FormItem
+                  label="Estatus"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="status">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -245,7 +248,7 @@ function NewAssingmentForm({
                 </FormItem>
                 <FormItem
                   label="Observaciones"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   errorMessage={errors.notes}
                   invalid={errors.notes && touched.notes}
                 >
