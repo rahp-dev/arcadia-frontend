@@ -138,11 +138,11 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
         return (
           <Form>
             <FormContainer>
-              <div className="flex justify-between items-center gap-3">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
                 <FormItem
                   asterisk
                   label="Nombre"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.name && touched.name}
                   errorMessage={errors.name}
                 >
@@ -157,7 +157,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                 <FormItem
                   asterisk
                   label="Apellido"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.lastName && touched.lastName}
                   errorMessage={errors.lastName}
                 >
@@ -172,7 +172,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
 
                 <FormItem
                   asterisk
-                  className="z-[10] customer-personal-info-suffix w-1/5"
+                  className="z-[10] customer-personal-info-suffix xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   label="Cédula / DNI"
                   invalid={errors.identityCard && touched.identityCard}
                   errorMessage={errors.identityCard}
@@ -225,7 +225,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                 <FormItem
                   asterisk
                   label="Fecha de nacimiento"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.birthDate && (touched.birthDate as any)}
                   errorMessage={errors.birthDate as any}
                 >
@@ -245,7 +245,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                 </FormItem>
                 <FormItem
                   label="Pasaporte"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.passport && touched.passport}
                   errorMessage={errors.passport}
                 >
@@ -258,11 +258,11 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                   />
                 </FormItem>
               </div>
-              <div className="flex justify-between items-center gap-5">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
                 <FormItem
                   asterisk
                   label="Correo electrónico"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.email && touched.email}
                   errorMessage={errors.email}
                 >
@@ -277,7 +277,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                 <FormItem
                   asterisk
                   label="Teléfono"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.phone && touched.phone}
                   errorMessage={errors.phone}
                 >
@@ -291,7 +291,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                 </FormItem>
                 <FormItem
                   label="Instagram"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.instagram && touched.instagram}
                   errorMessage={errors.instagram}
                 >
@@ -306,7 +306,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                 <FormItem
                   asterisk
                   label="País de origen"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.country && touched.country}
                   errorMessage={errors.country}
                 >
@@ -327,7 +327,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                 </FormItem>
                 <FormItem
                   asterisk
-                  className="w-1/5 text-center"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   label="¿Viajero frecuente?"
                   invalid={errors.frequentTraveler && touched.frequentTraveler}
                   errorMessage={errors.frequentTraveler}
@@ -347,11 +347,11 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                   </Field>
                 </FormItem>
               </div>
-              <div className="flex items-center gap-5">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
                 <FormItem
                   asterisk
                   label="Estado"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.state && touched.state}
                   errorMessage={errors.state}
                 >
@@ -366,7 +366,7 @@ function ClientForm({ clientData }: { clientData: CreateClientFormModel }) {
                 <FormItem
                   asterisk
                   label="Calle"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.street && touched.street}
                   errorMessage={errors.street}
                 >
