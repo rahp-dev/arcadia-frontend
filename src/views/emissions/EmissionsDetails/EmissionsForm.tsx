@@ -1,4 +1,3 @@
-import * as Yup from 'yup'
 import {
   Button,
   DatePicker,
@@ -84,12 +83,15 @@ function EmissionsForm({
         return (
           <Form>
             <FormContainer>
-              <div className="flex items-center gap-4">
-                <FormItem label="Fecha" className="w-1/4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
+                <FormItem
+                  label="Fecha"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="date">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <DatePicker
-                        placeholder="Selecciona la fecha"
+                        placeholder="Selecciona..."
                         field={field}
                         form={form}
                         value={values.date}
@@ -102,7 +104,10 @@ function EmissionsForm({
                     )}
                   </Field>
                 </FormItem>
-                <FormItem label="Agencia" className="w-1/4">
+                <FormItem
+                  label="Agencia"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="agencyId">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -117,12 +122,15 @@ function EmissionsForm({
                           form.setFieldValue(field.name, option?.value)
                         }}
                         isDisabled={editActive}
-                        placeholder="Selecciona una agencia..."
+                        placeholder="Selecciona..."
                       />
                     )}
                   </Field>
                 </FormItem>
-                <FormItem label="Aerolínea" className="w-1/4">
+                <FormItem
+                  label="Aerolínea"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="airline">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -136,12 +144,15 @@ function EmissionsForm({
                           form.setFieldValue(field.name, option?.value)
                         }}
                         isDisabled={editActive}
-                        placeholder="Selecciona una aerolinea..."
+                        placeholder="Selecciona..."
                       />
                     )}
                   </Field>
                 </FormItem>
-                <FormItem label="Conteo de pasajeros" className="w-1/4">
+                <FormItem
+                  label="Conteo de pasajeros"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field
                     type="number"
                     name="passengerCount"
@@ -151,15 +162,18 @@ function EmissionsForm({
                 </FormItem>
               </div>
 
-              <div className="flex items-center gap-4">
-                <FormItem label="Sistema Proveedor" className="w-1/4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
+                <FormItem
+                  label="Sistema Proveedor"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="providerSystemId">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
                         field={field}
                         form={form}
                         options={providerOptions}
-                        placeholder="Selecciona el proveedor..."
+                        placeholder="Selecciona..."
                         onChange={(option: SelectProvider) => {
                           form.setFieldValue(field.name, option.value)
                           form.setFieldValue('providerFee', option.price)
@@ -174,7 +188,10 @@ function EmissionsForm({
                   </Field>
                 </FormItem>
 
-                <FormItem label="Tarifa del Proveedor" className="w-1/4">
+                <FormItem
+                  label="Tarifa del Proveedor"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field
                     type="number"
                     name="providerFee"
@@ -183,7 +200,10 @@ function EmissionsForm({
                   />
                 </FormItem>
 
-                <FormItem label="Precio costo" className="w-1/4">
+                <FormItem
+                  label="Precio costo"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field
                     type="number"
                     name="costPrice"
@@ -192,7 +212,10 @@ function EmissionsForm({
                   />
                 </FormItem>
 
-                <FormItem label="Total a Pagar" className="w-1/4">
+                <FormItem
+                  label="Total a Pagar"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field
                     type="number"
                     name="totalToPay"
@@ -202,8 +225,11 @@ function EmissionsForm({
                 </FormItem>
               </div>
 
-              <div className="flex items-center gap-4">
-                <FormItem label="Pago del Cliente" className="w-1/4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col justify-center items-center gap-4 gap-y-0">
+                <FormItem
+                  label="Pago del Cliente"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field
                     type="number"
                     name="clientPayment"
@@ -212,7 +238,10 @@ function EmissionsForm({
                   />
                 </FormItem>
 
-                <FormItem label="Tarifa generada" className="w-1/4">
+                <FormItem
+                  label="Tarifa generada"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field
                     type="number"
                     name="generatedFee"
@@ -221,7 +250,10 @@ function EmissionsForm({
                   />
                 </FormItem>
 
-                <FormItem label="Monto pagado" className="w-1/4">
+                <FormItem
+                  label="Monto pagado"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="amountPaid">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -235,7 +267,7 @@ function EmissionsForm({
                           form.setFieldValue(field.name, option.value)
                         }
                         isDisabled={editActive}
-                        placeholder="Selecciona uno"
+                        placeholder="Selecciona..."
                       />
                     )}
                   </Field>
@@ -246,8 +278,11 @@ function EmissionsForm({
                 <h4 className="text-center text-slate-700 mb-2">
                   Comisiones Generadas
                 </h4>
-                <div className="flex justify-center items-center gap-4">
-                  <FormItem label="Comisión del Asesor" className="w-1/4">
+                <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col justify-center items-center gap-4 gap-y-0">
+                  <FormItem
+                    label="Comisión del Asesor"
+                    className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                  >
                     <Field
                       type="number"
                       name="advisorCommission"
@@ -255,7 +290,10 @@ function EmissionsForm({
                       component={Input}
                     />
                   </FormItem>
-                  <FormItem label="Comisión de la oficina" className="w-1/4">
+                  <FormItem
+                    label="Comisión de la oficina"
+                    className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                  >
                     <Field
                       type="number"
                       name="officeCommission"
@@ -265,7 +303,7 @@ function EmissionsForm({
                   </FormItem>
                   <FormItem
                     label="Comisión del Líder de Ventas"
-                    className="w-1/4"
+                    className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   >
                     <Field
                       type="number"
@@ -277,8 +315,11 @@ function EmissionsForm({
                 </div>
               </div>
 
-              <div className="flex justify-center items-center gap-4 border-t pt-4">
-                <FormItem label="Método de pago" className="w-1/4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0 justify-center border-t pt-4">
+                <FormItem
+                  label="Método de pago"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="paymentMethodId">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -298,7 +339,10 @@ function EmissionsForm({
                   </Field>
                 </FormItem>
 
-                <FormItem label="Estatus" className="w-1/4">
+                <FormItem
+                  label="Estatus"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="status">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -318,7 +362,10 @@ function EmissionsForm({
                   </Field>
                 </FormItem>
 
-                <FormItem label="Observaciones" className="w-1/4">
+                <FormItem
+                  label="Observaciones"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field
                     type="text"
                     name="observation"

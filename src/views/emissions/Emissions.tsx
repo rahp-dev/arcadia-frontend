@@ -53,12 +53,12 @@ function DebouncedInput({
     return () => clearTimeout(timeout)
   }, [value])
 
-  const navigate = useNavigate()
-
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between xl:flex-row lg:flex-row md:flex-row  mobile:flex-col xs:flex-col">
       <div>
-        <h3>Emisiones</h3>
+        <h3 className="xl:mb-0 lg:mb-0 md:mb-0 mobile:mb-4 xs:mb-4">
+          Emisiones
+        </h3>
       </div>
 
       <div className="flex items-center gap-4 mb-4">

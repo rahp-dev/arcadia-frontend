@@ -212,7 +212,7 @@ const EmissionsDetails = () => {
   return (
     <>
       <div className="flex items-center justify-between mb-6">
-        <h3>Detalles de la emisión</h3>
+        <h3>Detalles de Emisión</h3>
         <Button
           size="sm"
           variant="solid"
@@ -224,9 +224,12 @@ const EmissionsDetails = () => {
       </div>
 
       <div className="container mx-auto">
-        <div className="flex flex-row gap-4">
-          <Card footer={cardFooter} className="w-[400px]">
-            <div className="grid gap-y-4">
+        <div className="flex xl:flex-row lg:flex-row md:flex-row mobile:flex-col xs:flex-col gap-4">
+          <Card
+            footer={cardFooter}
+            className="xl:w-[400px] lg:w-[400px] md:w-[400px] mobile:w-full xs:w-full"
+          >
+            <div className="flex flex-col items-center mb-6">
               {isFetching ? (
                 <>
                   <Skeleton className="mt-4 w-[60%]" />
@@ -237,7 +240,9 @@ const EmissionsDetails = () => {
                   Emisión N°{data?.id}
                 </h5>
               )}
+            </div>
 
+            <div className="grid xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-1 xs:grid-cols-2 gap-y-4">
               <div className="flex flex-col">
                 {isFetching ? (
                   <>

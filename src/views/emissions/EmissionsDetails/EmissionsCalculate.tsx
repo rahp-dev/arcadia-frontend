@@ -83,8 +83,11 @@ function EmisionsCalculate({
         return (
           <Form>
             <FormContainer>
-              <div className="flex items-center gap-4">
-                <FormItem label="Fecha" className="w-1/4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
+                <FormItem
+                  label="Fecha"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="date">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <DatePicker
@@ -101,7 +104,10 @@ function EmisionsCalculate({
                     )}
                   </Field>
                 </FormItem>
-                <FormItem label="Aerolínea" className="w-1/4">
+                <FormItem
+                  label="Aerolínea"
+                  className="xl:w-1/4 lg:w-144 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="airline">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -120,7 +126,10 @@ function EmisionsCalculate({
                     )}
                   </Field>
                 </FormItem>
-                <FormItem label="Sistema Proveedor" className="w-1/4">
+                <FormItem
+                  label="Sistema Proveedor"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="providerSystemId">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -140,7 +149,10 @@ function EmisionsCalculate({
                     )}
                   </Field>
                 </FormItem>
-                <FormItem label="Precio costo" className="w-1/4">
+                <FormItem
+                  label="Precio costo"
+                  className="xl:w-1/4 lg:4-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field
                     type="number"
                     name="costPrice"
@@ -150,8 +162,11 @@ function EmisionsCalculate({
                 </FormItem>
               </div>
 
-              <div className="flex items-center gap-4">
-                <FormItem label="Monto pagado" className="w-1/4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
+                <FormItem
+                  label="Monto pagado"
+                  className="xl:w-1/4 lg:4-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="amountPaid">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -170,7 +185,10 @@ function EmisionsCalculate({
                     )}
                   </Field>
                 </FormItem>
-                <FormItem label="Estatus" className="w-1/4">
+                <FormItem
+                  label="Estatus"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="status">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -190,7 +208,10 @@ function EmisionsCalculate({
                   </Field>
                 </FormItem>
 
-                <FormItem label="Observaciones" className="w-1/4">
+                <FormItem
+                  label="Observaciones"
+                  className="xl:w-1/4 lg4w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field
                     type="text"
                     name="observation"
@@ -200,7 +221,10 @@ function EmisionsCalculate({
                   />
                 </FormItem>
 
-                <FormItem label="ID de Orden" className="w-1/4">
+                <FormItem
+                  label="ID de Orden"
+                  className="xl:w-1/4 lg:w41/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field
                     type="number"
                     name="orderId"
