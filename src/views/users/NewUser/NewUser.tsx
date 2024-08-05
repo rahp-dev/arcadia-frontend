@@ -78,15 +78,15 @@ const NewUser = () => {
           Regresar
         </Button>
       </div>
-      <div className="container mt-6">
+      <div className="container mx-auto mt-6">
         <Card>
           <Tabs value={currentTab} onChange={(value) => setCurrentTab(value)}>
             <TabList>
               <TabNav value="tab1" icon={<HiOutlineUser />}>
-                Información del Usuario
+                Información
               </TabNav>
               <TabNav value="tab2" disabled icon={<HiOutlineLockClosed />}>
-                Contraseña del Usuario
+                Contraseña
               </TabNav>
             </TabList>
             <div className="pt-4">

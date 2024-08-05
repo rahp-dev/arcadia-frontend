@@ -1,6 +1,6 @@
 import { Button, Input, Select, Table, Pagination } from '@/components/ui'
-import React, { InputHTMLAttributes, useEffect, useMemo, useState } from 'react'
-import { HiOutlineSearch } from 'react-icons/hi'
+import { InputHTMLAttributes, useEffect, useMemo, useState } from 'react'
+import { HiOutlineSearch, HiOutlineUserAdd } from 'react-icons/hi'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Select as SelectType } from '@/@types/select'
 import {
@@ -53,9 +53,11 @@ function DebouncedInput({
   const navigate = useNavigate()
 
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between xl:flex-row lg:flex-row md:flex-row  mobile:flex-col xs:flex-col">
       <div>
-        <h3>Usuarios</h3>
+        <h3 className="xl:mb-0 lg:mb-0 md:mb-0 mobile:mb-4 xs:mb-4">
+          Usuarios
+        </h3>
       </div>
 
       <div className="flex items-center gap-4 mb-4">
@@ -73,6 +75,7 @@ function DebouncedInput({
           onClick={() => {
             navigate('crear')
           }}
+          icon={<HiOutlineUserAdd />}
         >
           Crear usuario
         </Button>

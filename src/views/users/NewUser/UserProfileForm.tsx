@@ -11,10 +11,7 @@ import {
 import { Select as SelectType } from '@/@types/select'
 import useAuth from '@/utils/hooks/useAuth'
 import { RolesEnum } from '@/enums/roles.enum'
-import {
-  HiOutlineArrowCircleLeft,
-  HiOutlineArrowCircleRight,
-} from 'react-icons/hi'
+import { HiOutlineArrowCircleRight } from 'react-icons/hi'
 
 type FormModel = {
   name: string
@@ -98,11 +95,11 @@ const UserProfileForm = ({
         return (
           <Form>
             <FormContainer>
-              <div className="flex items-center gap-3">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
                 <FormItem
                   asterisk
                   label="Nombre"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.name && touched.name}
                   errorMessage={errors.name}
                 >
@@ -117,7 +114,7 @@ const UserProfileForm = ({
                 <FormItem
                   asterisk
                   label="Apellido"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.lastName && touched.lastName}
                   errorMessage={errors.lastName}
                 >
@@ -132,7 +129,7 @@ const UserProfileForm = ({
                 <FormItem
                   asterisk
                   label="Correo electrónico"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.email && touched.email}
                   errorMessage={errors.email}
                 >
@@ -146,7 +143,7 @@ const UserProfileForm = ({
                 </FormItem>
                 <FormItem
                   asterisk
-                  className="z-[10] customer-personal-info-suffix w-1/5"
+                  className="z-[10] customer-personal-info-suffix xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   label="Cédula"
                   invalid={errors.identityCard && touched.identityCard}
                   errorMessage={errors.identityCard}
@@ -197,7 +194,7 @@ const UserProfileForm = ({
                 <FormItem
                   asterisk
                   label="Teléfono"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.primaryPhone && touched.primaryPhone}
                   errorMessage={errors.primaryPhone}
                 >
@@ -210,11 +207,11 @@ const UserProfileForm = ({
                   />
                 </FormItem>
               </div>
-              <div className="flex items-center mb-4 gap-3">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
                 <FormItem
                   asterisk
                   label="Rol"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.rolId && touched.rolId}
                   errorMessage={errors.rolId}
                 >
@@ -238,7 +235,7 @@ const UserProfileForm = ({
                 <FormItem
                   asterisk
                   label="Sede"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.sedeId && touched.sedeId}
                   errorMessage={errors.sedeId}
                 >

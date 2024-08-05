@@ -7,8 +7,6 @@ import {
 } from '@/components/ui'
 import { Field, Form, Formik } from 'formik'
 import { Dispatch, SetStateAction } from 'react'
-import { BsSave } from 'react-icons/bs'
-import { FaSave } from 'react-icons/fa'
 import { HiOutlineSave } from 'react-icons/hi'
 import * as Yup from 'yup'
 
@@ -70,10 +68,10 @@ const UserPasswordForm = ({
         return (
           <Form>
             <FormContainer>
-              <div className="flex items-center gap-4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
                 <FormItem
                   asterisk
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   label="Contraseña"
                   invalid={errors.password && touched.password}
                   errorMessage={errors.password}
@@ -94,7 +92,7 @@ const UserPasswordForm = ({
                 </FormItem>
                 <FormItem
                   asterisk
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   label="Confirma la contraseña"
                   invalid={errors.confirmPassword && touched.confirmPassword}
                   errorMessage={errors.confirmPassword}
