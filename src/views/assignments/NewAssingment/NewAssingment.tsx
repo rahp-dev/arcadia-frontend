@@ -43,7 +43,7 @@ const NewAssingment = () => {
         </div>
       </div>
 
-      <div className="container mx-auto mt-6">
+      <div className="xl:container mt-6">
         <Card>
           <NewAssingmentForm
             assingmentData={assingmentData}

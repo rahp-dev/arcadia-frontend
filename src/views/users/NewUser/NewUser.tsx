@@ -66,7 +66,7 @@ const NewUser = () => {
   }, [isError, isSuccess])
 
   return (
-    <div className="container mx-auto">
+    <div className="xl:container">
       <div className="flex items-center justify-between mb-4">
         <h3>Crear usuario</h3>
         <Button
@@ -78,7 +78,7 @@ const NewUser = () => {
           Regresar
         </Button>
       </div>
-      <div className="container mx-auto mt-6">
+      <div className="xl:container mt-6">
         <Card>
           <Tabs value={currentTab} onChange={(value) => setCurrentTab(value)}>
             <TabList>
