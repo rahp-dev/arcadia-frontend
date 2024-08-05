@@ -18,6 +18,7 @@ import { useEffect, useState } from 'react'
 import { UpdateOrderFormModel } from '@/services/orders/types/orders.type'
 import UpdateOrderForm from './UpdateOrderForm'
 import openNotification from '@/utils/useNotification'
+import { capitalizeFirstLetter } from '@/utils/capitalizeFirstLetter'
 
 type FormModel = UpdateOrderFormModel
 
@@ -59,7 +60,7 @@ const OrderDetails = () => {
         amount: data?.amount,
         financed: data?.financed,
         numQuotes: data?.numQuotes,
-        paymentMethodId: data?.paymentMethodId,
+        paymentMethodId: data?.paymentMethod?.id,
         paymentReference: data?.paymentReference,
         status: data?.status,
         transactionDate: new Date(data?.transactionDate),
@@ -127,10 +128,13 @@ const OrderDetails = () => {
         </Button>
       </div>
 
-      <div className="container">
-        <div className="flex justify-between flex-row gap-4">
-          <Card className="w-[400px]" footer={cardFooter}>
-            <div className="grid gap-y-4 gap-x-4">
+      <div className="xl:container">
+        <div className="flex xl:flex-row lg:flex-row md:flex-row mobile:flex-col xs:flex-col gap-4">
+          <Card
+            className="xl:w-[380px] lg:w-[380px] md:w-[380px] mobile:w-full xs:w-full"
+            footer={cardFooter}
+          >
+            <div className="flex flex-col items-center mb-6">
               {isFetching ? (
                 <>
                   <Skeleton className="mt-4 w-[60%]" />
@@ -141,7 +145,9 @@ const OrderDetails = () => {
                   Orden N°{data?.id}
                 </h5>
               )}
+            </div>
 
+            <div className="grid xl:grid-cols-1 lg:grid-cols-1 md:grid-cols-1 xs:grid-cols-2 gap-y-4">
               <div className="flex flex-col">
                 {isFetching ? (
                   <>
@@ -195,7 +201,10 @@ const OrderDetails = () => {
                 ) : (
                   <>
                     <span className="font-semibold">Método de Pago:</span>
-                    <span>{data?.paymentMethod?.name || 'N/A'}</span>
+                    <span>
+                      {capitalizeFirstLetter(data?.paymentMethod?.name) ||
+                        'N/A'}
+                    </span>
                   </>
                 )}
               </div>
@@ -283,8 +292,6 @@ const OrderDetails = () => {
               </div>
             </div>
           </Card>
-
-          <div id="customer-form-edit" className="h-[70px]"></div>
 
           <Card className="w-full h-1/3">
             <Tabs value="tab1">

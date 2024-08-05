@@ -42,7 +42,7 @@ const CreateOrder = () => {
         </div>
       </div>
 
-      <div className="container mt-6">
+      <div className="xl:container mt-6">
         <Card>
           <OrderForm orderData={orderData} setOrderData={setOrderData} />
         </Card>

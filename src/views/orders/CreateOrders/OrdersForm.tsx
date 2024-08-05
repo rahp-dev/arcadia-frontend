@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect } from 'react'
 import { Field, FieldProps, Form, Formik } from 'formik'
 import * as Yup from 'yup'
 import {
@@ -23,6 +23,7 @@ import { useNavigate } from 'react-router-dom'
 import CreatableSelect from 'react-select/creatable'
 import { HiOutlineSave } from 'react-icons/hi'
 import { paymentMethods } from '@/constants/paymentsMethods.constant'
+import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker'
 
 type FormModel = CreateOrderFormModel
 
@@ -173,7 +174,7 @@ function OrderForm({
                   </Field>
                 </FormItem>
               </div>
-              <div className="flex items-center">
+              <div className="flex xl:justify-start mobile:justify-center xs:justify-center items-center">
                 <FormItem
                   errorMessage={errors.financed}
                   invalid={errors.financed && touched.financed}
@@ -200,11 +201,11 @@ function OrderForm({
                   </Field>
                 </FormItem>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
                 <FormItem
                   asterisk
                   label="Monto total"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   errorMessage={errors.amount}
                   invalid={errors.amount && touched.amount}
                 >
@@ -216,7 +217,10 @@ function OrderForm({
                     disabled
                   />
                 </FormItem>
-                <FormItem label="Método de Pago" className="w-1/5">
+                <FormItem
+                  label="Método de Pago"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="paymentMethodId">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -236,7 +240,7 @@ function OrderForm({
                 </FormItem>
                 <FormItem
                   label="Referencia del pago"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   errorMessage={errors.paymentReference}
                   invalid={errors.paymentReference && touched.paymentReference}
                 >
@@ -250,7 +254,7 @@ function OrderForm({
                 </FormItem>
                 <FormItem
                   label="Fecha del pago"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={
                     errors.transactionDate && (touched.transactionDate as any)
                   }
@@ -258,23 +262,22 @@ function OrderForm({
                 >
                   <Field name="transactionDate">
                     {({ field, form }: FieldProps<FormModel>) => (
-                      <DatePicker
+                      <DateTimepicker
                         placeholder="Selecciona la fecha"
                         field={field}
                         form={form}
                         onChange={(day) => {
                           form.setFieldValue(field.name, day)
                         }}
-                        inputFormat="DD-MM-YYYY"
                       />
                     )}
                   </Field>
                 </FormItem>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
                 <FormItem
                   label="N° de cuotas"
-                  className="w-1/5"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   errorMessage={errors.numQuotes}
                   invalid={errors.numQuotes && touched.numQuotes}
                 >
@@ -304,7 +307,10 @@ function OrderForm({
                     )}
                   </Field>
                 </FormItem>
-                <FormItem label="Estatus" className="w-1/5">
+                <FormItem
+                  label="Estatus"
+                  className="xl:w-1/5 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="status">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select

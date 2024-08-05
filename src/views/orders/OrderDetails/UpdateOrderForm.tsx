@@ -13,6 +13,7 @@ import {
 
 import { HiOutlineSave } from 'react-icons/hi'
 import { paymentMethods } from '@/constants/paymentsMethods.constant'
+import DateTimepicker from '@/components/ui/DatePicker/DateTimepicker'
 
 type FormModel = Pick<
   UpdateOrderFormModel,
@@ -75,7 +76,7 @@ function UpdateOrderForm({
         return (
           <Form>
             <FormContainer>
-              <div className="flex items-center">
+              <div className="flex justify-center items-center border-b border-slate-300 mb-6 mobile:justify-center">
                 <FormItem
                   errorMessage={errors.financed}
                   invalid={errors.financed && touched.financed}
@@ -103,11 +104,11 @@ function UpdateOrderForm({
                   </Field>
                 </FormItem>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
                 <FormItem
                   asterisk
                   label="Monto total"
-                  className="w-1/4"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   errorMessage={errors.amount}
                   invalid={errors.amount && touched.amount}
                 >
@@ -121,7 +122,7 @@ function UpdateOrderForm({
                 </FormItem>
                 <FormItem
                   label="Método de Pago"
-                  className="w-1/4"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={errors.paymentMethodId && touched.paymentMethodId}
                   errorMessage={errors.paymentMethodId}
                 >
@@ -145,7 +146,7 @@ function UpdateOrderForm({
                 </FormItem>
                 <FormItem
                   label="Referencia del pago"
-                  className="w-1/4"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   errorMessage={errors.paymentReference}
                   invalid={errors.paymentReference && touched.paymentReference}
                 >
@@ -160,7 +161,7 @@ function UpdateOrderForm({
                 </FormItem>
                 <FormItem
                   label="Fecha del pago"
-                  className="w-1/4"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   invalid={
                     errors.transactionDate && (touched.transactionDate as any)
                   }
@@ -168,7 +169,7 @@ function UpdateOrderForm({
                 >
                   <Field name="transactionDate">
                     {({ field, form }: FieldProps<FormModel>) => (
-                      <DatePicker
+                      <DateTimepicker
                         placeholder="Selecciona la fecha"
                         field={field}
                         form={form}
@@ -177,16 +178,15 @@ function UpdateOrderForm({
                         onChange={(day) => {
                           form.setFieldValue(field.name, day)
                         }}
-                        inputFormat="DD-MM-YYYY"
                       />
                     )}
                   </Field>
                 </FormItem>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex xl:flex-row lg:flex-row mobile:flex-col xs:flex-col items-center gap-4 gap-y-0">
                 <FormItem
                   label="N° de cuotas"
-                  className="w-1/4"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
                   errorMessage={errors.numQuotes}
                   invalid={errors.numQuotes && touched.numQuotes}
                 >
@@ -216,7 +216,10 @@ function UpdateOrderForm({
                     )}
                   </Field>
                 </FormItem>
-                <FormItem label="Estatus" className="w-1/4">
+                <FormItem
+                  label="Estatus"
+                  className="xl:w-1/4 lg:w-1/4 md:lg:w-1/4 sm:lg:w-1/4 mobile:w-full xs:w-full"
+                >
                   <Field name="status">
                     {({ field, form }: FieldProps<FormModel>) => (
                       <Select
@@ -237,18 +240,16 @@ function UpdateOrderForm({
                 </FormItem>
               </div>
 
-              <div className="flex items-center justify-end">
-                <FormItem>
-                  <Button
-                    type="submit"
-                    size="sm"
-                    variant="solid"
-                    disabled={editActive}
-                    icon={<HiOutlineSave />}
-                  >
-                    Guardar
-                  </Button>
-                </FormItem>
+              <div className="flex items-center justify-end border-t pt-4">
+                <Button
+                  type="submit"
+                  size="sm"
+                  variant="solid"
+                  disabled={editActive}
+                  icon={<HiOutlineSave />}
+                >
+                  Guardar
+                </Button>
               </div>
             </FormContainer>
           </Form>

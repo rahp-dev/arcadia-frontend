@@ -19,6 +19,8 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useGetAllOrdersQuery } from '@/services/RtkQueryService'
 import { HiOutlineEye, HiOutlineSearch } from 'react-icons/hi'
 import { TableRowSkeleton } from '@/components/shared'
+import { capitalizeFirstLetter } from '@/utils/capitalizeFirstLetter'
+import { format } from 'date-fns'
 
 interface DebouncedInputProps
   extends Omit<
@@ -55,9 +57,9 @@ function DebouncedInput({
   const navigate = useNavigate()
 
   return (
-    <div className="flex justify-between">
+    <div className="flex justify-between xl:flex-row lg:flex-row md:flex-row  mobile:flex-col xs:flex-col">
       <div>
-        <h3>Ordenes</h3>
+        <h3 className="xl:mb-0 lg:mb-0 md:mb-0 mobile:mb-4 xs:mb-4">Ordenes</h3>
       </div>
 
       <div className="flex items-center gap-4 mb-4">
@@ -117,6 +119,12 @@ const Orders = () => {
     setSearchParams(queryParams)
   }, [pageSize, currentPage, search])
 
+  const formattedDate = (date: Date | null) => {
+    if (!date) return
+
+    return format(new Date(date), 'dd-MM-yyyy - h:mm:ss a')
+  }
+
   const columns = useMemo(
     () => [
       {
@@ -139,11 +147,19 @@ const Orders = () => {
       },
       {
         header: 'Fecha de la transacción',
-        accessorKey: 'transactionDate',
+        cell: (cellProps: any) => (
+          <>{formattedDate(cellProps.row.original.transactionDate) || 'N/A'}</>
+        ),
       },
       {
-        header: 'Forma de pago',
-        accessorKey: 'paymentMethod.name',
+        header: 'Método de Pago',
+        cell: (cellProps: any) => (
+          <>
+            {capitalizeFirstLetter(
+              cellProps.row.original.paymentMethod?.name,
+            ) || 'N/A'}
+          </>
+        ),
       },
       {
         header: 'Estatus',
