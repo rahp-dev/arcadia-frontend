@@ -1,8 +1,7 @@
 import { Button, Card } from '@/components/ui'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { HiArrowLeft } from 'react-icons/hi'
 import { useNavigate } from 'react-router-dom'
-import NewOrder from '../NewOrder/NewOrder'
 import OrderForm from './OrdersForm'
 import { CreateOrderFormModel } from '@/services/orders/types/orders.type'
 

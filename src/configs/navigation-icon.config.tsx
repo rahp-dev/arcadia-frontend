@@ -1,8 +1,10 @@
-import { FaPlaneArrival, FaPlaneDeparture } from 'react-icons/fa'
+import { BsAirplane, BsFileMedical, BsHospital } from 'react-icons/bs'
+import { FaPlaneDeparture } from 'react-icons/fa'
 import {
   HiOutlineClipboardCheck,
   HiOutlineClipboardCopy,
   HiOutlineHome,
+  HiOutlineLibrary,
   HiOutlineUserAdd,
   HiOutlineUserCircle,
   HiOutlineUserGroup,
@@ -12,7 +14,9 @@ export type NavigationIcons = Record<string, JSX.Element>
 
 const navigationIcon: NavigationIcons = {
   home: <HiOutlineHome />,
-  tickets: <FaPlaneDeparture />,
+  tickets: <BsAirplane />,
+  lodging: <HiOutlineLibrary />,
+  insurance: <BsHospital />,
   orders: <HiOutlineClipboardCheck />,
   assingments: <HiOutlineUserAdd />,
   users: <HiOutlineUserGroup />,

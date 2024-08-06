@@ -24,6 +24,34 @@ export const protectedRoutes = [
     authority: [],
   },
   {
+    key: 'insurance',
+    path: '/seguros',
+    component: lazy(() => import('@/views/insurances/Insurances')),
+    authority: [],
+  },
+  {
+    key: 'createInsurance',
+    path: '/seguros/crear',
+    component: lazy(
+      () => import('@/views/insurances/CreateInsurance/CreateInsurance'),
+    ),
+    authority: [],
+  },
+  {
+    key: 'lodging',
+    path: '/hospedajes',
+    component: lazy(() => import('@/views/lodging/Lodging')),
+    authority: [],
+  },
+  {
+    key: 'createLodging',
+    path: '/hospedajes/crear',
+    component: lazy(
+      () => import('@/views/lodging/CreateLodging/CreateLodging'),
+    ),
+    authority: [],
+  },
+  {
     key: 'orders',
     path: '/ordenes',
     component: lazy(() => import('@/views/orders/Orders')),
