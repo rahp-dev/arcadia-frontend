@@ -1,6 +1,6 @@
 import { Button, Input, Select, Table, Pagination } from '@/components/ui'
 import { InputHTMLAttributes, useEffect, useMemo, useState } from 'react'
-import { HiOutlineSearch, HiOutlineUserAdd } from 'react-icons/hi'
+import { HiOutlinePlus, HiOutlineSearch } from 'react-icons/hi'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Select as SelectType } from '@/@types/select'
 import {
@@ -14,9 +14,8 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useGetAllUsersQuery } from '@/services/RtkQueryService'
+import { useGetAllInsurancesQuery } from '@/services/RtkQueryService'
 import { TableRowSkeleton } from '@/components/shared'
-import { capitalizeFirstLetter } from '@/utils/capitalizeFirstLetter'
 
 interface DebouncedInputProps
   extends Omit<
@@ -55,9 +54,7 @@ function DebouncedInput({
   return (
     <div className="flex justify-between xl:flex-row lg:flex-row md:flex-row  mobile:flex-col xs:flex-col">
       <div>
-        <h3 className="xl:mb-0 lg:mb-0 md:mb-0 mobile:mb-4 xs:mb-4">
-          Usuarios
-        </h3>
+        <h3 className="xl:mb-0 lg:mb-0 md:mb-0 mobile:mb-4 xs:mb-4">Seguros</h3>
       </div>
 
       <div className="flex items-center gap-4 mb-4">
@@ -75,9 +72,9 @@ function DebouncedInput({
           onClick={() => {
             navigate('crear')
           }}
-          icon={<HiOutlineUserAdd />}
+          icon={<HiOutlinePlus />}
         >
-          Crear usuario
+          Crear seguro
         </Button>
       </div>
     </div>
@@ -105,42 +102,33 @@ const Insurances = () => {
         accessorKey: 'id',
       },
       {
-        header: 'Usuario',
+        header: 'Cliente',
         cell: (cellProps: any) => (
-          <span className="font-bold cursor-pointer">
-            {cellProps.row.original.name} {cellProps.row.original.lastName}
+          <span className="font-bold">
+            {cellProps.row.original.customer.name}{' '}
+            {cellProps.row.original.customer.last_name}
           </span>
         ),
       },
       {
-        header: 'Correo electronico',
-        accessorKey: 'session.email',
-      },
-      {
-        header: 'Documento de Identidad',
+        header: 'Nombre del seguro',
         cell: (cellProps: any) => (
-          <>{cellProps.row.original.identityCard || 'N/A'}</>
+          <span className="font-bold">{cellProps.row.original.name}</span>
         ),
       },
       {
-        header: 'Sede',
-        cell: (cellProps: any) => (
-          <>{capitalizeFirstLetter(cellProps.row.original.sede.name)}</>
-        ),
+        header: 'Localizador',
+        accessorKey: 'locator',
       },
       {
-        header: 'Telefono del usuario',
-        accessorKey: 'primaryPhone',
-      },
-      {
-        header: 'Rol del usuario',
-        accessorKey: 'session.rol.name',
+        header: 'Precio del seguro',
+        cell: (cellProps: any) => <>{cellProps.row.original.price}$</>,
       },
     ],
     [],
   )
 
-  const { data, isFetching } = useGetAllUsersQuery(
+  const { data, isFetching } = useGetAllInsurancesQuery(
     {
       page: currentPage || 1,
       limit: pageSize,
@@ -193,7 +181,7 @@ const Insurances = () => {
       <DebouncedInput
         value={search}
         className="p-2 font-lg shadow-sm"
-        placeholder="Buscar usuario..."
+        placeholder="Buscar seguro..."
         onChange={setSearch}
       />
       <Table>
@@ -218,7 +206,7 @@ const Insurances = () => {
           ))}
         </THead>
         {isFetching ? (
-          <TableRowSkeleton columns={7} rows={pageSize} />
+          <TableRowSkeleton columns={5} rows={pageSize} />
         ) : (
           <TBody>
             {table.getRowModel().rows.map((row) => {

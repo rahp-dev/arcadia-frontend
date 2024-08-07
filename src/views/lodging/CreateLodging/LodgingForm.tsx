@@ -67,7 +67,7 @@ function LodgingForm({
       )
 
       setTimeout(() => {
-        navigate('/ordenes')
+        navigate('/hospedajes')
       }, 1 * 2000)
     }
 

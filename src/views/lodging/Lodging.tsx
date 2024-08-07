@@ -1,10 +1,6 @@
 import { Button, Input, Select, Table, Pagination } from '@/components/ui'
 import { InputHTMLAttributes, useEffect, useMemo, useState } from 'react'
-import {
-  HiOutlineSearch,
-  HiOutlineUserAdd,
-  HiOutlineViewGridAdd,
-} from 'react-icons/hi'
+import { HiOutlineSearch, HiOutlineViewGridAdd } from 'react-icons/hi'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Select as SelectType } from '@/@types/select'
 import {
@@ -18,9 +14,8 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { useGetAllUsersQuery } from '@/services/RtkQueryService'
+import { useGetAllLodgingQuery } from '@/services/RtkQueryService'
 import { TableRowSkeleton } from '@/components/shared'
-import { capitalizeFirstLetter } from '@/utils/capitalizeFirstLetter'
 
 interface DebouncedInputProps
   extends Omit<
@@ -109,42 +104,33 @@ const Lodging = () => {
         accessorKey: 'id',
       },
       {
-        header: 'Usuario',
+        header: 'Cliente',
         cell: (cellProps: any) => (
-          <span className="font-bold cursor-pointer">
-            {cellProps.row.original.name} {cellProps.row.original.lastName}
+          <span className="font-bold">
+            {cellProps.row.original.customer.name}{' '}
+            {cellProps.row.original.customer.last_name}
           </span>
         ),
       },
       {
-        header: 'Correo electronico',
-        accessorKey: 'session.email',
-      },
-      {
-        header: 'Documento de Identidad',
+        header: 'Nombre del hospedaje',
         cell: (cellProps: any) => (
-          <>{cellProps.row.original.identityCard || 'N/A'}</>
+          <span className="font-bold">{cellProps.row.original.name}</span>
         ),
       },
       {
-        header: 'Sede',
-        cell: (cellProps: any) => (
-          <>{capitalizeFirstLetter(cellProps.row.original.sede.name)}</>
-        ),
+        header: 'Localizador',
+        accessorKey: 'locator',
       },
       {
-        header: 'Telefono del usuario',
-        accessorKey: 'primaryPhone',
-      },
-      {
-        header: 'Rol del usuario',
-        accessorKey: 'session.rol.name',
+        header: 'Precio del hospedaje',
+        cell: (cellProps: any) => <>{cellProps.row.original.price}$</>,
       },
     ],
     [],
   )
 
-  const { data, isFetching } = useGetAllUsersQuery(
+  const { data, isFetching } = useGetAllLodgingQuery(
     {
       page: currentPage || 1,
       limit: pageSize,
@@ -222,7 +208,7 @@ const Lodging = () => {
           ))}
         </THead>
         {isFetching ? (
-          <TableRowSkeleton columns={7} rows={pageSize} />
+          <TableRowSkeleton columns={5} rows={pageSize} />
         ) : (
           <TBody>
             {table.getRowModel().rows.map((row) => {
