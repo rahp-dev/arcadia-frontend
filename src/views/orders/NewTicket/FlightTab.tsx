@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Select as SelectTypes } from '@/@types/select'
 import {
   Button,
@@ -9,36 +9,23 @@ import {
   Select,
   Switcher,
 } from '@/components/ui'
-import { useGetOneUserQuery } from '@/services/RtkQueryService'
+import {
+  useCreateTicketMutation,
+  useGetOneUserQuery,
+} from '@/services/RtkQueryService'
 import { CreateTicketFormModel } from '@/services/tickets/types/tickets.type'
 import { Field, FieldProps, Form, Formik } from 'formik'
 import * as Yup from 'yup'
-import {
-  HiOutlineArrowCircleRight,
-  HiOutlinePlus,
-  HiOutlineTrash,
-} from 'react-icons/hi'
+import { HiOutlinePlus, HiOutlineSave, HiOutlineTrash } from 'react-icons/hi'
+import openNotification from '@/utils/useNotification'
+import { useNavigate } from 'react-router-dom'
 
 type Option = {
   value: string
   label: string
 }
 
-type FormModel = Pick<
-  CreateTicketFormModel,
-  | 'customerId'
-  | 'origin'
-  | 'destination'
-  | 'flightDate'
-  | 'flightDateReturn'
-  | 'price'
-  | 'child'
-  | 'international'
-  | 'flightClass'
-  | 'location'
-  | 'handBaggage'
-  | 'baggage'
->
+type FormModel = CreateTicketFormModel
 
 const flights: Option[] = [
   { value: 'Economy', label: 'Economy (Coach)' },
@@ -69,14 +56,16 @@ const validationSchema = Yup.object().shape({
 })
 
 function FlightTab({
+  ticketData,
   setTicketData,
-  setCurrentTab,
-  submitButtonText,
 }: {
+  ticketData: CreateTicketFormModel[]
   setTicketData: Dispatch<SetStateAction<CreateTicketFormModel[]>>
-  setCurrentTab?: Dispatch<SetStateAction<'tab1' | 'tab2' | 'tab3' | 'tab4'>>
-  submitButtonText?: string
 }) {
+  const navigate = useNavigate()
+  const [createTicket, { data, isError, isSuccess, isUninitialized }] =
+    useCreateTicketMutation()
+
   const { data: userOptions } = useGetOneUserQuery(
     { transformToSelectOptions: true },
     { refetchOnMountOrArgChange: true },
@@ -132,10 +121,85 @@ function FlightTab({
   }
 
   const handleSubmit = (values: FormModel[]) => {
-    setTicketData(values)
-    console.log('Tickets: ', values)
-    setCurrentTab('tab2')
+    setTicketData((prevData) => {
+      const updatedData = [...prevData]
+      values.forEach((value, index) => {
+        updatedData[index] = {
+          ...updatedData[index],
+          ...value,
+        }
+      })
+      return updatedData
+    })
+
+    const formattedTicketData = values.map((value, index) => {
+      const {
+        customerId,
+        origin,
+        destination,
+        flightDate,
+        flightDateReturn,
+        price,
+        child,
+        international,
+        flightClass,
+        location,
+        handBaggage,
+        baggage,
+      } = {
+        ...ticketData[index],
+        ...value,
+      }
+
+      const details_ticket = {
+        type_flight_class: flightClass,
+        hand_baggage: handBaggage,
+        baggage,
+        location,
+      }
+
+      return {
+        customerId,
+        origin,
+        destination,
+        flightDate,
+        flightDateReturn,
+        price,
+        child,
+        international,
+        details_ticket,
+      }
+    })
+
+    formattedTicketData.forEach((formattedTicket) => {
+      console.log('Respuesta final: ', formattedTicket)
+      createTicket(formattedTicket)
+    })
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      openNotification(
+        'success',
+        'El ticket de vuelo ha sido creado exitosamente!',
+        'Ha creado el ticket con éxito.',
+        8,
+      )
+
+      setTimeout(() => {
+        navigate('/tickets')
+      }, 1 * 2000)
+    }
+
+    if (!isUninitialized && isError) {
+      openNotification(
+        'warning',
+        'Ha ocurrido un error al crear el ticket :(',
+        'Verifique la información e inténtelo nuevamente.',
+        8,
+      )
+    }
+  }, [isSuccess, isError])
 
   return (
     <Formik
@@ -389,9 +453,9 @@ function FlightTab({
                 variant="solid"
                 size="sm"
                 type="submit"
-                icon={<HiOutlineArrowCircleRight />}
+                icon={<HiOutlineSave />}
               >
-                {submitButtonText ? submitButtonText : 'Siguiente'}
+                Guardar
               </Button>
             </div>
           </FormContainer>

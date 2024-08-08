@@ -155,10 +155,8 @@ const Tickets = () => {
       },
       {
         header: 'Precio',
-        accessorKey: 'totalPrice',
-        cell: (cellProps: any) => (
-          <span>{cellProps.row.original.totalPrice}$</span>
-        ),
+        accessorKey: 'price',
+        cell: (cellProps: any) => <span>{cellProps.row.original.price}$</span>,
       },
     ],
     [],

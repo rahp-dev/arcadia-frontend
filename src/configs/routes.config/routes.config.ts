@@ -20,7 +20,7 @@ export const protectedRoutes = [
   {
     key: 'crearTicket',
     path: '/tickets/crear',
-    component: lazy(() => import('@/views/orders/NewOrder/NewOrder')),
+    component: lazy(() => import('@/views/orders/NewTicket/NewTicket')),
     authority: [],
   },
   {
